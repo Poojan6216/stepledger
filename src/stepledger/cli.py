@@ -195,3 +195,63 @@ def gc_cmd(
                 typer.echo(f"{k}: {v}")
 
     _run(go())
+
+
+@app.command("materialize")
+def materialize_cmd(
+    workflow_id: str = typer.Argument(...),
+    graph: str = typer.Option(
+        ..., "--graph", help="module:attr of a StateGraph, a compiled graph, or a factory for one"
+    ),
+    run_id: str | None = typer.Option(None, "--run-id"),
+    chain: bool = typer.Option(False, "--chain", help="Fill task-cache gaps from earlier runs."),
+    include_provisional: bool = typer.Option(False, "--include-provisional"),
+    show_state: bool = typer.Option(False, "--state", help="Print the rebuilt state as JSON."),
+    dsn: str | None = DsnOption,
+) -> None:
+    """Rebuild a run's graph state from the ledger and say whether it is EXACT."""
+    import importlib
+    import json
+    import os
+    import sys
+
+    from stepledger.read.materialize import materialize
+
+    if os.getcwd() not in sys.path:  # like uvicorn: --graph resolves from the working directory
+        sys.path.insert(0, os.getcwd())
+    module, _, attr = graph.partition(":")
+    obj: Any = getattr(importlib.import_module(module), attr)
+    if callable(obj) and not hasattr(obj, "compile") and not hasattr(obj, "channels"):
+        obj = obj()
+    compiled = obj.compile() if hasattr(obj, "compile") else obj
+    result = _run(
+        materialize(
+            resolve_dsn(dsn),
+            compiled,
+            workflow_id,
+            run_id,
+            include_provisional=include_provisional,
+            chain=chain,
+        )
+    )
+    typer.echo(f"{result.completeness}: {result.reason}")
+    typer.echo(f"rows used: {result.rows_used}  chain rows used: {result.chain_rows_used}")
+    for p in result.positions:
+        typer.echo(f"  gap: {p}")
+    if show_state:
+        typer.echo(json.dumps(result.state, indent=1, default=str))
+
+
+@app.command("bench")
+def bench_cmd(
+    demo: str = typer.Argument(..., help="cliff | chaos | growth | materialize | cost"),
+) -> None:
+    """Run a demo from a repository checkout (the bench is not part of the wheel)."""
+    import subprocess
+    import sys
+    from pathlib import Path
+
+    if not Path("bench/demo.py").is_file():
+        typer.echo("run this from a stepledger repository checkout (bench/ is not installed)")
+        raise typer.Exit(2)
+    raise typer.Exit(subprocess.call([sys.executable, "bench/demo.py", "--demo", demo]))

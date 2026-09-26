@@ -1,0 +1,907 @@
+{
+ "command": "uv run python -m bench.materialize --runs 100",
+ "generated_at": "2026-09-26T18:18:13+00:00",
+ "environment": {
+  "python": "3.11.9",
+  "platform": "macOS-15.7.9-x86_64-i386-64bit",
+  "temporalio": "1.33.0",
+  "langgraph": "1.2.12",
+  "fastcdc": "1.7.0",
+  "psycopg": "3.3.6",
+  "temporal_cli": "temporal version 1.9.1 (Server 1.32.0, UI 2.54.1)"
+ },
+ "seed": 1894,
+ "runs": 100,
+ "equal": 80,
+ "gap": 20,
+ "unequal": 0,
+ "open": 0,
+ "by_kind": {
+  "plain": {
+   "equal": 80
+  },
+  "continue_as_new": {
+   "gap": 8
+  },
+  "workflow_side": {
+   "gap": 6
+  },
+  "cache_hit": {
+   "gap": 6
+  }
+ },
+ "chain": {
+  "equal": 8,
+  "gap": 0,
+  "unequal": 0
+ },
+ "rows": [
+  {
+   "kind": "plain",
+   "workflow_id": "mat-plain-cf03c811",
+   "completeness": "EXACT",
+   "equal": true,
+   "positions": [],
+   "reason": "rebuilt state hashes to the final-state hash recorded at seal"
+  },
+  {
+   "kind": "continue_as_new",
+   "workflow_id": "mat-continue_as_new-5c5d1c4b",
+   "completeness": "GAP",
+   "equal": false,
+   "positions": [],
+   "reason": "rebuilt state differs from the final state recorded at seal; this run has no ledger rows (every node was served from the task cache or ran in the workflow)",
+   "chain_completeness": "EXACT",
+   "chain_equal": true,
+   "chain_rows_used": 21
+  },
+  {
+   "kind": "workflow_side",
+   "workflow_id": "mat-workflow_side-15d2f463",
+   "completeness": "GAP",
+   "equal": false,
+   "positions": [
+    "before step 4: input of enrich_cve_1 (~__pregel_pull, enrich_cve_1) does not match the fold",
+    "steps 3..3: no rows",
+    "before step 5: input of enrich_cve_2 (~__pregel_pull, enrich_cve_2) does not match the fold"
+   ],
+   "reason": "rebuilt state differs from the final state recorded at seal"
+  },
+  {
+   "kind": "plain",
+   "workflow_id": "mat-plain-96da879b",
+   "completeness": "EXACT",
+   "equal": true,
+   "positions": [],
+   "reason": "rebuilt state hashes to the final-state hash recorded at seal"
+  },
+  {
+   "kind": "plain",
+   "workflow_id": "mat-plain-75c49f7f",
+   "completeness": "EXACT",
+   "equal": true,
+   "positions": [],
+   "reason": "rebuilt state hashes to the final-state hash recorded at seal"
+  },
+  {
+   "kind": "plain",
+   "workflow_id": "mat-plain-c6aa63ed",
+   "completeness": "EXACT",
+   "equal": true,
+   "positions": [],
+   "reason": "rebuilt state hashes to the final-state hash recorded at seal"
+  },
+  {
+   "kind": "plain",
+   "workflow_id": "mat-plain-ff98606f",
+   "completeness": "EXACT",
+   "equal": true,
+   "positions": [],
+   "reason": "rebuilt state hashes to the final-state hash recorded at seal"
+  },
+  {
+   "kind": "plain",
+   "workflow_id": "mat-plain-661f65c7",
+   "completeness": "EXACT",
+   "equal": true,
+   "positions": [],
+   "reason": "rebuilt state hashes to the final-state hash recorded at seal"
+  },
+  {
+   "kind": "plain",
+   "workflow_id": "mat-plain-7c004e17",
+   "completeness": "EXACT",
+   "equal": true,
+   "positions": [],
+   "reason": "rebuilt state hashes to the final-state hash recorded at seal"
+  },
+  {
+   "kind": "plain",
+   "workflow_id": "mat-plain-0d0373e6",
+   "completeness": "EXACT",
+   "equal": true,
+   "positions": [],
+   "reason": "rebuilt state hashes to the final-state hash recorded at seal"
+  },
+  {
+   "kind": "cache_hit",
+   "workflow_id": "mat-cache_hit-d6fedbf3",
+   "completeness": "GAP",
+   "equal": false,
+   "positions": [
+    "before step 5: input of cs_e (~__pregel_pull, cs_e) does not match the fold",
+    "steps 4..4: no rows"
+   ],
+   "reason": "rebuilt state differs from the final state recorded at seal"
+  },
+  {
+   "kind": "plain",
+   "workflow_id": "mat-plain-57c57420",
+   "completeness": "EXACT",
+   "equal": true,
+   "positions": [],
+   "reason": "rebuilt state hashes to the final-state hash recorded at seal"
+  },
+  {
+   "kind": "cache_hit",
+   "workflow_id": "mat-cache_hit-ef3a1eb3",
+   "completeness": "GAP",
+   "equal": false,
+   "positions": [
+    "before step 5: input of cs_e (~__pregel_pull, cs_e) does not match the fold",
+    "steps 4..4: no rows"
+   ],
+   "reason": "rebuilt state differs from the final state recorded at seal"
+  },
+  {
+   "kind": "plain",
+   "workflow_id": "mat-plain-d052c00a",
+   "completeness": "EXACT",
+   "equal": true,
+   "positions": [],
+   "reason": "rebuilt state hashes to the final-state hash recorded at seal"
+  },
+  {
+   "kind": "cache_hit",
+   "workflow_id": "mat-cache_hit-b8233d52",
+   "completeness": "GAP",
+   "equal": false,
+   "positions": [
+    "before step 5: input of cs_e (~__pregel_pull, cs_e) does not match the fold",
+    "steps 4..4: no rows"
+   ],
+   "reason": "rebuilt state differs from the final state recorded at seal"
+  },
+  {
+   "kind": "cache_hit",
+   "workflow_id": "mat-cache_hit-62dcc4cd",
+   "completeness": "GAP",
+   "equal": false,
+   "positions": [
+    "before step 5: input of cs_e (~__pregel_pull, cs_e) does not match the fold",
+    "steps 4..4: no rows"
+   ],
+   "reason": "rebuilt state differs from the final state recorded at seal"
+  },
+  {
+   "kind": "plain",
+   "workflow_id": "mat-plain-4ddd582a",
+   "completeness": "EXACT",
+   "equal": true,
+   "positions": [],
+   "reason": "rebuilt state hashes to the final-state hash recorded at seal"
+  },
+  {
+   "kind": "plain",
+   "workflow_id": "mat-plain-2fbcbaf7",
+   "completeness": "EXACT",
+   "equal": true,
+   "positions": [],
+   "reason": "rebuilt state hashes to the final-state hash recorded at seal"
+  },
+  {
+   "kind": "plain",
+   "workflow_id": "mat-plain-0cd74a75",
+   "completeness": "EXACT",
+   "equal": true,
+   "positions": [],
+   "reason": "rebuilt state hashes to the final-state hash recorded at seal"
+  },
+  {
+   "kind": "plain",
+   "workflow_id": "mat-plain-cb35ec7c",
+   "completeness": "EXACT",
+   "equal": true,
+   "positions": [],
+   "reason": "rebuilt state hashes to the final-state hash recorded at seal"
+  },
+  {
+   "kind": "plain",
+   "workflow_id": "mat-plain-f750791e",
+   "completeness": "EXACT",
+   "equal": true,
+   "positions": [],
+   "reason": "rebuilt state hashes to the final-state hash recorded at seal"
+  },
+  {
+   "kind": "plain",
+   "workflow_id": "mat-plain-fed597fe",
+   "completeness": "EXACT",
+   "equal": true,
+   "positions": [],
+   "reason": "rebuilt state hashes to the final-state hash recorded at seal"
+  },
+  {
+   "kind": "plain",
+   "workflow_id": "mat-plain-6db868d0",
+   "completeness": "EXACT",
+   "equal": true,
+   "positions": [],
+   "reason": "rebuilt state hashes to the final-state hash recorded at seal"
+  },
+  {
+   "kind": "plain",
+   "workflow_id": "mat-plain-27218090",
+   "completeness": "EXACT",
+   "equal": true,
+   "positions": [],
+   "reason": "rebuilt state hashes to the final-state hash recorded at seal"
+  },
+  {
+   "kind": "workflow_side",
+   "workflow_id": "mat-workflow_side-04a9e7cc",
+   "completeness": "GAP",
+   "equal": false,
+   "positions": [
+    "before step 4: input of enrich_cve_1 (~__pregel_pull, enrich_cve_1) does not match the fold",
+    "steps 3..3: no rows",
+    "before step 5: input of enrich_cve_2 (~__pregel_pull, enrich_cve_2) does not match the fold"
+   ],
+   "reason": "rebuilt state differs from the final state recorded at seal"
+  },
+  {
+   "kind": "cache_hit",
+   "workflow_id": "mat-cache_hit-5a923ae2",
+   "completeness": "GAP",
+   "equal": false,
+   "positions": [
+    "before step 5: input of cs_e (~__pregel_pull, cs_e) does not match the fold",
+    "steps 4..4: no rows"
+   ],
+   "reason": "rebuilt state differs from the final state recorded at seal"
+  },
+  {
+   "kind": "plain",
+   "workflow_id": "mat-plain-fd7723ae",
+   "completeness": "EXACT",
+   "equal": true,
+   "positions": [],
+   "reason": "rebuilt state hashes to the final-state hash recorded at seal"
+  },
+  {
+   "kind": "plain",
+   "workflow_id": "mat-plain-0ffb51e8",
+   "completeness": "EXACT",
+   "equal": true,
+   "positions": [],
+   "reason": "rebuilt state hashes to the final-state hash recorded at seal"
+  },
+  {
+   "kind": "continue_as_new",
+   "workflow_id": "mat-continue_as_new-a5dffc30",
+   "completeness": "GAP",
+   "equal": false,
+   "positions": [],
+   "reason": "rebuilt state differs from the final state recorded at seal; this run has no ledger rows (every node was served from the task cache or ran in the workflow)",
+   "chain_completeness": "EXACT",
+   "chain_equal": true,
+   "chain_rows_used": 23
+  },
+  {
+   "kind": "plain",
+   "workflow_id": "mat-plain-090aff29",
+   "completeness": "EXACT",
+   "equal": true,
+   "positions": [],
+   "reason": "rebuilt state hashes to the final-state hash recorded at seal"
+  },
+  {
+   "kind": "continue_as_new",
+   "workflow_id": "mat-continue_as_new-1d279b84",
+   "completeness": "GAP",
+   "equal": false,
+   "positions": [],
+   "reason": "rebuilt state differs from the final state recorded at seal; this run has no ledger rows (every node was served from the task cache or ran in the workflow)",
+   "chain_completeness": "EXACT",
+   "chain_equal": true,
+   "chain_rows_used": 18
+  },
+  {
+   "kind": "plain",
+   "workflow_id": "mat-plain-0461c655",
+   "completeness": "EXACT",
+   "equal": true,
+   "positions": [],
+   "reason": "rebuilt state hashes to the final-state hash recorded at seal"
+  },
+  {
+   "kind": "plain",
+   "workflow_id": "mat-plain-4f7f33b7",
+   "completeness": "EXACT",
+   "equal": true,
+   "positions": [],
+   "reason": "rebuilt state hashes to the final-state hash recorded at seal"
+  },
+  {
+   "kind": "plain",
+   "workflow_id": "mat-plain-3893f1ae",
+   "completeness": "EXACT",
+   "equal": true,
+   "positions": [],
+   "reason": "rebuilt state hashes to the final-state hash recorded at seal"
+  },
+  {
+   "kind": "plain",
+   "workflow_id": "mat-plain-03d4af8f",
+   "completeness": "EXACT",
+   "equal": true,
+   "positions": [],
+   "reason": "rebuilt state hashes to the final-state hash recorded at seal"
+  },
+  {
+   "kind": "plain",
+   "workflow_id": "mat-plain-537c0636",
+   "completeness": "EXACT",
+   "equal": true,
+   "positions": [],
+   "reason": "rebuilt state hashes to the final-state hash recorded at seal"
+  },
+  {
+   "kind": "plain",
+   "workflow_id": "mat-plain-9d03e5f4",
+   "completeness": "EXACT",
+   "equal": true,
+   "positions": [],
+   "reason": "rebuilt state hashes to the final-state hash recorded at seal"
+  },
+  {
+   "kind": "plain",
+   "workflow_id": "mat-plain-1ecbb577",
+   "completeness": "EXACT",
+   "equal": true,
+   "positions": [],
+   "reason": "rebuilt state hashes to the final-state hash recorded at seal"
+  },
+  {
+   "kind": "plain",
+   "workflow_id": "mat-plain-4212d6d1",
+   "completeness": "EXACT",
+   "equal": true,
+   "positions": [],
+   "reason": "rebuilt state hashes to the final-state hash recorded at seal"
+  },
+  {
+   "kind": "plain",
+   "workflow_id": "mat-plain-5d2e0222",
+   "completeness": "EXACT",
+   "equal": true,
+   "positions": [],
+   "reason": "rebuilt state hashes to the final-state hash recorded at seal"
+  },
+  {
+   "kind": "plain",
+   "workflow_id": "mat-plain-14d56d51",
+   "completeness": "EXACT",
+   "equal": true,
+   "positions": [],
+   "reason": "rebuilt state hashes to the final-state hash recorded at seal"
+  },
+  {
+   "kind": "plain",
+   "workflow_id": "mat-plain-e0d4c6af",
+   "completeness": "EXACT",
+   "equal": true,
+   "positions": [],
+   "reason": "rebuilt state hashes to the final-state hash recorded at seal"
+  },
+  {
+   "kind": "plain",
+   "workflow_id": "mat-plain-b6382d8f",
+   "completeness": "EXACT",
+   "equal": true,
+   "positions": [],
+   "reason": "rebuilt state hashes to the final-state hash recorded at seal"
+  },
+  {
+   "kind": "workflow_side",
+   "workflow_id": "mat-workflow_side-59b9e110",
+   "completeness": "GAP",
+   "equal": false,
+   "positions": [
+    "before step 4: input of enrich_cve_1 (~__pregel_pull, enrich_cve_1) does not match the fold",
+    "steps 3..3: no rows",
+    "before step 5: input of score_risk (~__pregel_pull, score_risk) does not match the fold"
+   ],
+   "reason": "rebuilt state differs from the final state recorded at seal"
+  },
+  {
+   "kind": "plain",
+   "workflow_id": "mat-plain-12fa0fe9",
+   "completeness": "EXACT",
+   "equal": true,
+   "positions": [],
+   "reason": "rebuilt state hashes to the final-state hash recorded at seal"
+  },
+  {
+   "kind": "plain",
+   "workflow_id": "mat-plain-bf10f81f",
+   "completeness": "EXACT",
+   "equal": true,
+   "positions": [],
+   "reason": "rebuilt state hashes to the final-state hash recorded at seal"
+  },
+  {
+   "kind": "plain",
+   "workflow_id": "mat-plain-29c3c149",
+   "completeness": "EXACT",
+   "equal": true,
+   "positions": [],
+   "reason": "rebuilt state hashes to the final-state hash recorded at seal"
+  },
+  {
+   "kind": "plain",
+   "workflow_id": "mat-plain-aefea821",
+   "completeness": "EXACT",
+   "equal": true,
+   "positions": [],
+   "reason": "rebuilt state hashes to the final-state hash recorded at seal"
+  },
+  {
+   "kind": "plain",
+   "workflow_id": "mat-plain-dc35e86f",
+   "completeness": "EXACT",
+   "equal": true,
+   "positions": [],
+   "reason": "rebuilt state hashes to the final-state hash recorded at seal"
+  },
+  {
+   "kind": "plain",
+   "workflow_id": "mat-plain-56dd60e7",
+   "completeness": "EXACT",
+   "equal": true,
+   "positions": [],
+   "reason": "rebuilt state hashes to the final-state hash recorded at seal"
+  },
+  {
+   "kind": "workflow_side",
+   "workflow_id": "mat-workflow_side-2c510e47",
+   "completeness": "GAP",
+   "equal": false,
+   "positions": [
+    "before step 4: input of enrich_cve_1 (~__pregel_pull, enrich_cve_1) does not match the fold",
+    "steps 3..3: no rows",
+    "before step 5: input of enrich_cve_2 (~__pregel_pull, enrich_cve_2) does not match the fold"
+   ],
+   "reason": "rebuilt state differs from the final state recorded at seal"
+  },
+  {
+   "kind": "plain",
+   "workflow_id": "mat-plain-101df103",
+   "completeness": "EXACT",
+   "equal": true,
+   "positions": [],
+   "reason": "rebuilt state hashes to the final-state hash recorded at seal"
+  },
+  {
+   "kind": "plain",
+   "workflow_id": "mat-plain-a3486a5a",
+   "completeness": "EXACT",
+   "equal": true,
+   "positions": [],
+   "reason": "rebuilt state hashes to the final-state hash recorded at seal"
+  },
+  {
+   "kind": "plain",
+   "workflow_id": "mat-plain-8f37765a",
+   "completeness": "EXACT",
+   "equal": true,
+   "positions": [],
+   "reason": "rebuilt state hashes to the final-state hash recorded at seal"
+  },
+  {
+   "kind": "plain",
+   "workflow_id": "mat-plain-12034994",
+   "completeness": "EXACT",
+   "equal": true,
+   "positions": [],
+   "reason": "rebuilt state hashes to the final-state hash recorded at seal"
+  },
+  {
+   "kind": "plain",
+   "workflow_id": "mat-plain-e4f31d4f",
+   "completeness": "EXACT",
+   "equal": true,
+   "positions": [],
+   "reason": "rebuilt state hashes to the final-state hash recorded at seal"
+  },
+  {
+   "kind": "plain",
+   "workflow_id": "mat-plain-752adfbc",
+   "completeness": "EXACT",
+   "equal": true,
+   "positions": [],
+   "reason": "rebuilt state hashes to the final-state hash recorded at seal"
+  },
+  {
+   "kind": "plain",
+   "workflow_id": "mat-plain-69073771",
+   "completeness": "EXACT",
+   "equal": true,
+   "positions": [],
+   "reason": "rebuilt state hashes to the final-state hash recorded at seal"
+  },
+  {
+   "kind": "cache_hit",
+   "workflow_id": "mat-cache_hit-e62e575d",
+   "completeness": "GAP",
+   "equal": false,
+   "positions": [
+    "before step 5: input of cs_e (~__pregel_pull, cs_e) does not match the fold",
+    "steps 4..4: no rows"
+   ],
+   "reason": "rebuilt state differs from the final state recorded at seal"
+  },
+  {
+   "kind": "continue_as_new",
+   "workflow_id": "mat-continue_as_new-f678fe1b",
+   "completeness": "GAP",
+   "equal": false,
+   "positions": [],
+   "reason": "rebuilt state differs from the final state recorded at seal; this run has no ledger rows (every node was served from the task cache or ran in the workflow)",
+   "chain_completeness": "EXACT",
+   "chain_equal": true,
+   "chain_rows_used": 9
+  },
+  {
+   "kind": "plain",
+   "workflow_id": "mat-plain-eb43e151",
+   "completeness": "EXACT",
+   "equal": true,
+   "positions": [],
+   "reason": "rebuilt state hashes to the final-state hash recorded at seal"
+  },
+  {
+   "kind": "plain",
+   "workflow_id": "mat-plain-3d795559",
+   "completeness": "EXACT",
+   "equal": true,
+   "positions": [],
+   "reason": "rebuilt state hashes to the final-state hash recorded at seal"
+  },
+  {
+   "kind": "plain",
+   "workflow_id": "mat-plain-30154276",
+   "completeness": "EXACT",
+   "equal": true,
+   "positions": [],
+   "reason": "rebuilt state hashes to the final-state hash recorded at seal"
+  },
+  {
+   "kind": "workflow_side",
+   "workflow_id": "mat-workflow_side-8caa0d04",
+   "completeness": "GAP",
+   "equal": false,
+   "positions": [
+    "before step 4: input of enrich_cve_1 (~__pregel_pull, enrich_cve_1) does not match the fold",
+    "steps 3..3: no rows",
+    "before step 5: input of enrich_cve_2 (~__pregel_pull, enrich_cve_2) does not match the fold"
+   ],
+   "reason": "rebuilt state differs from the final state recorded at seal"
+  },
+  {
+   "kind": "plain",
+   "workflow_id": "mat-plain-fbf46945",
+   "completeness": "EXACT",
+   "equal": true,
+   "positions": [],
+   "reason": "rebuilt state hashes to the final-state hash recorded at seal"
+  },
+  {
+   "kind": "plain",
+   "workflow_id": "mat-plain-31c68356",
+   "completeness": "EXACT",
+   "equal": true,
+   "positions": [],
+   "reason": "rebuilt state hashes to the final-state hash recorded at seal"
+  },
+  {
+   "kind": "plain",
+   "workflow_id": "mat-plain-4feba56c",
+   "completeness": "EXACT",
+   "equal": true,
+   "positions": [],
+   "reason": "rebuilt state hashes to the final-state hash recorded at seal"
+  },
+  {
+   "kind": "plain",
+   "workflow_id": "mat-plain-daa6ad35",
+   "completeness": "EXACT",
+   "equal": true,
+   "positions": [],
+   "reason": "rebuilt state hashes to the final-state hash recorded at seal"
+  },
+  {
+   "kind": "plain",
+   "workflow_id": "mat-plain-cdba4aa0",
+   "completeness": "EXACT",
+   "equal": true,
+   "positions": [],
+   "reason": "rebuilt state hashes to the final-state hash recorded at seal"
+  },
+  {
+   "kind": "plain",
+   "workflow_id": "mat-plain-7a28ed18",
+   "completeness": "EXACT",
+   "equal": true,
+   "positions": [],
+   "reason": "rebuilt state hashes to the final-state hash recorded at seal"
+  },
+  {
+   "kind": "plain",
+   "workflow_id": "mat-plain-3bd2b13e",
+   "completeness": "EXACT",
+   "equal": true,
+   "positions": [],
+   "reason": "rebuilt state hashes to the final-state hash recorded at seal"
+  },
+  {
+   "kind": "plain",
+   "workflow_id": "mat-plain-301e3b11",
+   "completeness": "EXACT",
+   "equal": true,
+   "positions": [],
+   "reason": "rebuilt state hashes to the final-state hash recorded at seal"
+  },
+  {
+   "kind": "plain",
+   "workflow_id": "mat-plain-4a6f7227",
+   "completeness": "EXACT",
+   "equal": true,
+   "positions": [],
+   "reason": "rebuilt state hashes to the final-state hash recorded at seal"
+  },
+  {
+   "kind": "plain",
+   "workflow_id": "mat-plain-8b9bed7e",
+   "completeness": "EXACT",
+   "equal": true,
+   "positions": [],
+   "reason": "rebuilt state hashes to the final-state hash recorded at seal"
+  },
+  {
+   "kind": "plain",
+   "workflow_id": "mat-plain-53ddca1a",
+   "completeness": "EXACT",
+   "equal": true,
+   "positions": [],
+   "reason": "rebuilt state hashes to the final-state hash recorded at seal"
+  },
+  {
+   "kind": "continue_as_new",
+   "workflow_id": "mat-continue_as_new-b23c4ccd",
+   "completeness": "GAP",
+   "equal": false,
+   "positions": [],
+   "reason": "rebuilt state differs from the final state recorded at seal; this run has no ledger rows (every node was served from the task cache or ran in the workflow)",
+   "chain_completeness": "EXACT",
+   "chain_equal": true,
+   "chain_rows_used": 14
+  },
+  {
+   "kind": "plain",
+   "workflow_id": "mat-plain-9d46d620",
+   "completeness": "EXACT",
+   "equal": true,
+   "positions": [],
+   "reason": "rebuilt state hashes to the final-state hash recorded at seal"
+  },
+  {
+   "kind": "continue_as_new",
+   "workflow_id": "mat-continue_as_new-e57c4670",
+   "completeness": "GAP",
+   "equal": false,
+   "positions": [],
+   "reason": "rebuilt state differs from the final state recorded at seal; this run has no ledger rows (every node was served from the task cache or ran in the workflow)",
+   "chain_completeness": "EXACT",
+   "chain_equal": true,
+   "chain_rows_used": 16
+  },
+  {
+   "kind": "plain",
+   "workflow_id": "mat-plain-d189baa9",
+   "completeness": "EXACT",
+   "equal": true,
+   "positions": [],
+   "reason": "rebuilt state hashes to the final-state hash recorded at seal"
+  },
+  {
+   "kind": "plain",
+   "workflow_id": "mat-plain-dbe4442f",
+   "completeness": "EXACT",
+   "equal": true,
+   "positions": [],
+   "reason": "rebuilt state hashes to the final-state hash recorded at seal"
+  },
+  {
+   "kind": "plain",
+   "workflow_id": "mat-plain-45af4021",
+   "completeness": "EXACT",
+   "equal": true,
+   "positions": [],
+   "reason": "rebuilt state hashes to the final-state hash recorded at seal"
+  },
+  {
+   "kind": "plain",
+   "workflow_id": "mat-plain-b75032af",
+   "completeness": "EXACT",
+   "equal": true,
+   "positions": [],
+   "reason": "rebuilt state hashes to the final-state hash recorded at seal"
+  },
+  {
+   "kind": "plain",
+   "workflow_id": "mat-plain-b89b5305",
+   "completeness": "EXACT",
+   "equal": true,
+   "positions": [],
+   "reason": "rebuilt state hashes to the final-state hash recorded at seal"
+  },
+  {
+   "kind": "workflow_side",
+   "workflow_id": "mat-workflow_side-d10cf7e1",
+   "completeness": "GAP",
+   "equal": false,
+   "positions": [
+    "before step 4: input of enrich_cve_1 (~__pregel_pull, enrich_cve_1) does not match the fold",
+    "steps 3..3: no rows",
+    "before step 5: input of enrich_cve_2 (~__pregel_pull, enrich_cve_2) does not match the fold"
+   ],
+   "reason": "rebuilt state differs from the final state recorded at seal"
+  },
+  {
+   "kind": "plain",
+   "workflow_id": "mat-plain-fcec81b0",
+   "completeness": "EXACT",
+   "equal": true,
+   "positions": [],
+   "reason": "rebuilt state hashes to the final-state hash recorded at seal"
+  },
+  {
+   "kind": "plain",
+   "workflow_id": "mat-plain-2734999a",
+   "completeness": "EXACT",
+   "equal": true,
+   "positions": [],
+   "reason": "rebuilt state hashes to the final-state hash recorded at seal"
+  },
+  {
+   "kind": "plain",
+   "workflow_id": "mat-plain-d480149e",
+   "completeness": "EXACT",
+   "equal": true,
+   "positions": [],
+   "reason": "rebuilt state hashes to the final-state hash recorded at seal"
+  },
+  {
+   "kind": "plain",
+   "workflow_id": "mat-plain-274cfe9b",
+   "completeness": "EXACT",
+   "equal": true,
+   "positions": [],
+   "reason": "rebuilt state hashes to the final-state hash recorded at seal"
+  },
+  {
+   "kind": "plain",
+   "workflow_id": "mat-plain-82471bee",
+   "completeness": "EXACT",
+   "equal": true,
+   "positions": [],
+   "reason": "rebuilt state hashes to the final-state hash recorded at seal"
+  },
+  {
+   "kind": "plain",
+   "workflow_id": "mat-plain-24c2f403",
+   "completeness": "EXACT",
+   "equal": true,
+   "positions": [],
+   "reason": "rebuilt state hashes to the final-state hash recorded at seal"
+  },
+  {
+   "kind": "plain",
+   "workflow_id": "mat-plain-cdfea708",
+   "completeness": "EXACT",
+   "equal": true,
+   "positions": [],
+   "reason": "rebuilt state hashes to the final-state hash recorded at seal"
+  },
+  {
+   "kind": "continue_as_new",
+   "workflow_id": "mat-continue_as_new-7f5a5ec9",
+   "completeness": "GAP",
+   "equal": false,
+   "positions": [],
+   "reason": "rebuilt state differs from the final state recorded at seal; this run has no ledger rows (every node was served from the task cache or ran in the workflow)",
+   "chain_completeness": "EXACT",
+   "chain_equal": true,
+   "chain_rows_used": 8
+  },
+  {
+   "kind": "plain",
+   "workflow_id": "mat-plain-4a1f6a4e",
+   "completeness": "EXACT",
+   "equal": true,
+   "positions": [],
+   "reason": "rebuilt state hashes to the final-state hash recorded at seal"
+  },
+  {
+   "kind": "plain",
+   "workflow_id": "mat-plain-38e5f021",
+   "completeness": "EXACT",
+   "equal": true,
+   "positions": [],
+   "reason": "rebuilt state hashes to the final-state hash recorded at seal"
+  },
+  {
+   "kind": "plain",
+   "workflow_id": "mat-plain-3a26ad10",
+   "completeness": "EXACT",
+   "equal": true,
+   "positions": [],
+   "reason": "rebuilt state hashes to the final-state hash recorded at seal"
+  },
+  {
+   "kind": "plain",
+   "workflow_id": "mat-plain-54a59ddf",
+   "completeness": "EXACT",
+   "equal": true,
+   "positions": [],
+   "reason": "rebuilt state hashes to the final-state hash recorded at seal"
+  },
+  {
+   "kind": "plain",
+   "workflow_id": "mat-plain-0e4c4a0f",
+   "completeness": "EXACT",
+   "equal": true,
+   "positions": [],
+   "reason": "rebuilt state hashes to the final-state hash recorded at seal"
+  },
+  {
+   "kind": "plain",
+   "workflow_id": "mat-plain-3c245196",
+   "completeness": "EXACT",
+   "equal": true,
+   "positions": [],
+   "reason": "rebuilt state hashes to the final-state hash recorded at seal"
+  },
+  {
+   "kind": "plain",
+   "workflow_id": "mat-plain-61309a01",
+   "completeness": "EXACT",
+   "equal": true,
+   "positions": [],
+   "reason": "rebuilt state hashes to the final-state hash recorded at seal"
+  },
+  {
+   "kind": "continue_as_new",
+   "workflow_id": "mat-continue_as_new-35c8a089",
+   "completeness": "GAP",
+   "equal": false,
+   "positions": [],
+   "reason": "rebuilt state differs from the final state recorded at seal; this run has no ledger rows (every node was served from the task cache or ran in the workflow)",
+   "chain_completeness": "EXACT",
+   "chain_equal": true,
+   "chain_rows_used": 13
+  }
+ ],
+ "elapsed_s": 30.2
+}

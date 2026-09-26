@@ -1,0 +1,59 @@
+{
+ "command": "uv run python -m bench.cost --runs 10",
+ "generated_at": "2026-09-26T18:30:03+00:00",
+ "environment": {
+  "python": "3.11.9",
+  "platform": "macOS-15.7.9-x86_64-i386-64bit",
+  "temporalio": "1.33.0",
+  "langgraph": "1.2.12",
+  "fastcdc": "1.7.0",
+  "psycopg": "3.3.6",
+  "temporal_cli": "temporal version 1.9.1 (Server 1.32.0, UI 2.54.1)"
+ },
+ "model_priced_as": "claude-haiku-4-5",
+ "price_usd_per_mtok": {
+  "input": 1.0,
+  "output": 5.0
+ },
+ "tokens_per_call": 2000,
+ "modes": [
+  {
+   "mode": "no-journal",
+   "runs": 10,
+   "f2_faults_fired": 30,
+   "worker_restarts": 30,
+   "model_calls_billed": 401,
+   "tokens_billed": 1604000,
+   "usd_billed": 4.812,
+   "wasted_calls": 121,
+   "billed_in_a_failed_attempt_then_replayed": 0,
+   "wasted_tokens": 484000,
+   "wasted_usd": 1.452,
+   "journal_replays": 0,
+   "ledger_retry_waste_tokens": 4000,
+   "replayed_nodes_committing_first_decision": [
+    0,
+    0
+   ]
+  },
+  {
+   "mode": "journal",
+   "runs": 10,
+   "f2_faults_fired": 30,
+   "worker_restarts": 30,
+   "model_calls_billed": 297,
+   "tokens_billed": 1188000,
+   "usd_billed": 3.564,
+   "wasted_calls": 17,
+   "billed_in_a_failed_attempt_then_replayed": 53,
+   "wasted_tokens": 68000,
+   "wasted_usd": 0.204,
+   "journal_replays": 79,
+   "ledger_retry_waste_tokens": 4000,
+   "replayed_nodes_committing_first_decision": [
+    53,
+    53
+   ]
+  }
+ ]
+}

@@ -6,9 +6,11 @@ The 30-node agent with a priced fake LLM (it reports model claude-haiku-4-5 and 
 real call in a provider-style bill, bench_llm_bill). Each run gets three seeded F2 faults: the
 worker dies right after a model call, before the node returns, so Temporal retries the node.
 The same plan runs with the LLM journal off and on. Waste is read from the bill against
-Temporal's history: a billed call whose attempt is not the attempt Temporal accepted was paid
-for nothing. With the journal on, the retry replays the journaled response instead of calling
-the model again, and the node's committed output is the first attempt's decision.
+Temporal's history: a billed call was paid for nothing when its response never reached the
+attempt Temporal accepted (it came from another attempt and was not the journaled response the
+accepted attempt replayed). With the journal on, the retry replays the journaled response
+instead of calling the model again, and the node's committed output is the first attempt's
+decision.
 
 Dollars use the published Anthropic rates for claude-haiku-4-5 (USD 1 / 5 per 1M input / output
 tokens, https://platform.claude.com/docs/en/about-claude/pricing, checked 2026-09-26); the model
@@ -105,9 +107,30 @@ async def run_mode(journal: bool, runs: int, seed: int, workdir: Path) -> dict[s
             " WHERE l.workflow_id = ANY(%s) AND l.replays > 0",
             (list(plans),),
         ).fetchone()
+        # which attempt first journaled each node's model call (each node makes one call)
+        journaled = {
+            (wf, act): first
+            for wf, act, first in conn.execute(
+                "SELECT n.workflow_id, n.activity_id, l.first_attempt FROM sl_llm_calls l"
+                " JOIN sl_nodes n ON n.workflow_id = l.workflow_id AND n.run_id = l.run_id"
+                " AND n.seq = l.seq WHERE l.workflow_id = ANY(%s) AND l.call_idx = 0",
+                (list(plans),),
+            ).fetchall()
+        }
     total_in = sum(r[3] for r in bill)
     total_out = sum(r[4] for r in bill)
-    wasted = [r for r in bill if accepted.get((r[0], r[1])) not in (None, r[2])]
+    # A billed call is wasted when its response never reached the accepted attempt: it came
+    # from another attempt and was not the journaled response the accepted attempt replayed.
+    wasted = [
+        r
+        for r in bill
+        if accepted.get((r[0], r[1])) not in (None, r[2]) and journaled.get((r[0], r[1])) != r[2]
+    ]
+    replayed_not_wasted = sum(
+        1
+        for r in bill
+        if accepted.get((r[0], r[1])) not in (None, r[2]) and journaled.get((r[0], r[1])) == r[2]
+    )
     w_in, w_out = sum(r[3] for r in wasted), sum(r[4] for r in wasted)
     fired = len(faults.read_log(log_file))
     return {
@@ -119,6 +142,7 @@ async def run_mode(journal: bool, runs: int, seed: int, workdir: Path) -> dict[s
         "tokens_billed": total_in + total_out,
         "usd_billed": float(round(dollars(total_in, total_out), 6)),
         "wasted_calls": len(wasted),
+        "billed_in_a_failed_attempt_then_replayed": replayed_not_wasted,
         "wasted_tokens": w_in + w_out,
         "wasted_usd": float(round(dollars(w_in, w_out), 6)),
         "journal_replays": int(replays[0]) if replays else 0,
