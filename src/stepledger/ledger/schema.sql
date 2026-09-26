@@ -76,3 +76,5 @@ CREATE TABLE IF NOT EXISTS sl_payload_refs (           -- who may still need a c
   last_ref_at timestamptz NOT NULL DEFAULT now(),
   PRIMARY KEY (claim, namespace, workflow_id, run_id));
 CREATE INDEX IF NOT EXISTS sl_payload_refs_wf ON sl_payload_refs (namespace, workflow_id);
+-- GC asks "does any manifest still list this chunk?" per chunk; GIN answers without a scan.
+CREATE INDEX IF NOT EXISTS sl_payloads_chunks ON sl_payloads USING gin (chunks);

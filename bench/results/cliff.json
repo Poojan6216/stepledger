@@ -1,6 +1,6 @@
 {
  "command": "uv run python -m bench.cliff ",
- "generated_at": "2026-09-26T17:50:59+00:00",
+ "generated_at": "2026-09-26T17:55:20+00:00",
  "environment": {
   "python": "3.11.9",
   "platform": "macOS-15.7.9-x86_64-i386-64bit",
@@ -22,15 +22,15 @@
    "payload_check": "sdk_default",
    "outcome": "STUCK",
    "workflow_task_failed_cause": "WORKFLOW_TASK_FAILED_CAUSE_PAYLOADS_TOO_LARGE",
-   "terminated_by": "76322@MacBook-Pro.local",
+   "terminated_by": "78727@MacBook-Pro.local",
    "terminated_reason": "stepledger bench: run stuck; terminated by the bench",
    "stopped_at": "persist_all",
    "node_activities_scheduled": 36,
-   "largest_payload_bytes": 2067952,
-   "history_size_bytes": 41280671,
+   "largest_payload_bytes": 2067953,
+   "history_size_bytes": 41280683,
    "history_events": 218,
-   "elapsed_s": 61.84,
-   "workflow_id": "investigate-1be3793077"
+   "elapsed_s": 61.62,
+   "workflow_id": "investigate-71527c8f06"
   },
   {
    "config": "B0",
@@ -45,11 +45,11 @@
    "terminated_reason": "BadScheduleActivityAttributes: ScheduleActivityTaskCommandAttributes.Input exceeds size limit.",
    "stopped_at": "persist_all",
    "node_activities_scheduled": 36,
-   "largest_payload_bytes": 2067952,
-   "history_size_bytes": 41280341,
+   "largest_payload_bytes": 2067953,
+   "history_size_bytes": 41280329,
    "history_events": 215,
-   "elapsed_s": 5.98,
-   "workflow_id": "investigate-7d022a923a"
+   "elapsed_s": 4.9,
+   "workflow_id": "investigate-001ae65b65"
   },
   {
    "config": "B1",
@@ -60,15 +60,15 @@
    "payload_check": "sdk_default",
    "outcome": "STUCK",
    "workflow_task_failed_cause": "WORKFLOW_TASK_FAILED_CAUSE_PAYLOADS_TOO_LARGE",
-   "terminated_by": "76322@MacBook-Pro.local",
+   "terminated_by": "78727@MacBook-Pro.local",
    "terminated_reason": "stepledger bench: run stuck; terminated by the bench",
    "stopped_at": "node 35",
    "node_activities_scheduled": 34,
-   "largest_payload_bytes": 2067855,
-   "history_size_bytes": 37143143,
+   "largest_payload_bytes": 2067854,
+   "history_size_bytes": 37143159,
    "history_events": 206,
-   "elapsed_s": 61.57,
-   "workflow_id": "investigate-2bd4fc941c"
+   "elapsed_s": 61.4,
+   "workflow_id": "investigate-23f84ed101"
   },
   {
    "config": "B1",
@@ -83,11 +83,11 @@
    "terminated_reason": "BadScheduleActivityAttributes: ScheduleActivityTaskCommandAttributes.Input exceeds size limit.",
    "stopped_at": "node 35",
    "node_activities_scheduled": 34,
-   "largest_payload_bytes": 2067855,
-   "history_size_bytes": 37142825,
+   "largest_payload_bytes": 2067853,
+   "history_size_bytes": 37142796,
    "history_events": 203,
-   "elapsed_s": 4.72,
-   "workflow_id": "investigate-a24abfcf11"
+   "elapsed_s": 4.79,
+   "workflow_id": "investigate-d3461e4d21"
   },
   {
    "config": "B2",
@@ -98,15 +98,18 @@
    "payload_check": "sdk_default",
    "outcome": "STUCK",
    "workflow_task_failed_cause": "WORKFLOW_TASK_FAILED_CAUSE_PAYLOADS_TOO_LARGE",
-   "terminated_by": "76322@MacBook-Pro.local",
+   "terminated_by": "78727@MacBook-Pro.local",
    "terminated_reason": "stepledger bench: run stuck; terminated by the bench",
    "stopped_at": "node 35",
    "node_activities_scheduled": 34,
    "largest_payload_bytes": 2067853,
-   "history_size_bytes": 37146843,
+   "history_size_bytes": 37146835,
    "history_events": 209,
-   "elapsed_s": 61.3,
-   "workflow_id": "investigate-84604a8953"
+   "elapsed_s": 61.28,
+   "workflow_id": "investigate-181350fddd",
+   "store_whole_blob_bytes": 0,
+   "store_unique_chunk_bytes": 0,
+   "ledger_committed": 33
   },
   {
    "config": "B2",
@@ -121,11 +124,14 @@
    "terminated_reason": "BadScheduleActivityAttributes: ScheduleActivityTaskCommandAttributes.Input exceeds size limit.",
    "stopped_at": "node 35",
    "node_activities_scheduled": 34,
-   "largest_payload_bytes": 2067853,
-   "history_size_bytes": 37146531,
+   "largest_payload_bytes": 2067852,
+   "history_size_bytes": 37146533,
    "history_events": 206,
-   "elapsed_s": 5.28,
-   "workflow_id": "investigate-48dc17269e"
+   "elapsed_s": 5.89,
+   "workflow_id": "investigate-fc8ce0c80c",
+   "store_whole_blob_bytes": 0,
+   "store_unique_chunk_bytes": 0,
+   "ledger_committed": 33
   },
   {
    "config": "B3",
@@ -140,11 +146,14 @@
    "terminated_reason": null,
    "stopped_at": null,
    "node_activities_scheduled": 41,
-   "largest_payload_bytes": 63833,
-   "history_size_bytes": 2622527,
+   "largest_payload_bytes": 63832,
+   "history_size_bytes": 2622525,
    "history_events": 250,
-   "elapsed_s": 6.25,
-   "workflow_id": "investigate-306dd38886"
+   "elapsed_s": 7.35,
+   "workflow_id": "investigate-6a931c7ce2",
+   "store_whole_blob_bytes": 50707514,
+   "store_unique_chunk_bytes": 50707514,
+   "ledger_committed": 40
   },
   {
    "config": "B3",
@@ -160,10 +169,13 @@
    "stopped_at": null,
    "node_activities_scheduled": 41,
    "largest_payload_bytes": 63833,
-   "history_size_bytes": 2622500,
+   "history_size_bytes": 2622525,
    "history_events": 250,
-   "elapsed_s": 6.82,
-   "workflow_id": "investigate-9516046255"
+   "elapsed_s": 9.08,
+   "workflow_id": "investigate-7bc643a722",
+   "store_whole_blob_bytes": 50707517,
+   "store_unique_chunk_bytes": 50707517,
+   "ledger_committed": 40
   },
   {
    "config": "B4",
@@ -179,10 +191,13 @@
    "stopped_at": null,
    "node_activities_scheduled": 41,
    "largest_payload_bytes": 63832,
-   "history_size_bytes": 2622175,
-   "history_events": 247,
-   "elapsed_s": 4.71,
-   "workflow_id": "investigate-096e494257"
+   "history_size_bytes": 2622528,
+   "history_events": 250,
+   "elapsed_s": 6.9,
+   "workflow_id": "investigate-f8fe0055d3",
+   "store_whole_blob_bytes": 50707517,
+   "store_unique_chunk_bytes": 3525576,
+   "ledger_committed": 40
   },
   {
    "config": "B4",
@@ -197,11 +212,14 @@
    "terminated_reason": null,
    "stopped_at": null,
    "node_activities_scheduled": 41,
-   "largest_payload_bytes": 63832,
-   "history_size_bytes": 2622178,
-   "history_events": 247,
-   "elapsed_s": 4.68,
-   "workflow_id": "investigate-6fc0c63e74"
+   "largest_payload_bytes": 63833,
+   "history_size_bytes": 2622517,
+   "history_events": 250,
+   "elapsed_s": 6.28,
+   "workflow_id": "investigate-8599ffe374",
+   "store_whole_blob_bytes": 50707512,
+   "store_unique_chunk_bytes": 3525571,
+   "ledger_committed": 40
   }
  ]
 }

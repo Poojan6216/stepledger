@@ -147,3 +147,51 @@ def status_cmd(
             f"{wf:<36} {run:<13} {status:<17} {'yes' if sealed else 'no ':<6} {c or 0:>9}"
             f" {a or 0:>9}{flag}"
         )
+
+
+@app.command("gc")
+def gc_cmd(
+    execute: bool = typer.Option(False, "--execute", help="Delete for real (default: dry run)."),
+    retention_days: float | None = typer.Option(None, "--retention-days"),
+    margin_days: float | None = typer.Option(None, "--margin-days"),
+    grace_hours: float | None = typer.Option(None, "--grace-hours"),
+    orphan_ref_days: float | None = typer.Option(None, "--orphan-ref-days"),
+    dsn: str | None = DsnOption,
+    address: str = AddressOption,
+    namespace: str = NamespaceOption,
+) -> None:
+    """Mark and sweep the dedup store. Dry run unless --execute."""
+    from datetime import timedelta
+
+    from stepledger.config import load_settings
+
+    cfg = load_settings().gc
+    retention = timedelta(days=retention_days if retention_days is not None else cfg.retention_days)
+    margin = timedelta(days=margin_days if margin_days is not None else cfg.margin_days)
+    grace = timedelta(hours=grace_hours if grace_hours is not None else cfg.grace_hours)
+    orphan = timedelta(days=orphan_ref_days if orphan_ref_days is not None else cfg.orphan_ref_days)
+
+    async def go() -> None:
+        from temporalio.client import Client
+
+        from stepledger.storage.gc import check_retention, namespace_retention, summary, sweep
+
+        client = await Client.connect(address, namespace=namespace)
+        problem = check_retention(retention, await namespace_retention(client))
+        if problem:
+            typer.echo(f"refusing to run: {problem}", err=True)
+            raise typer.Exit(2)
+        report = await sweep(
+            client,
+            resolve_dsn(dsn),
+            retention=retention,
+            margin=margin,
+            grace=grace,
+            orphan_ref_age=orphan,
+            dry_run=not execute,
+        )
+        for k, v in summary(report).items():
+            if k != "details":
+                typer.echo(f"{k}: {v}")
+
+    _run(go())

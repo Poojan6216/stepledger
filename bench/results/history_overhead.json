@@ -1,0 +1,44 @@
+{
+ "command": "uv run python -m bench.history_overhead",
+ "generated_at": "2026-09-26T17:55:40+00:00",
+ "environment": {
+  "python": "3.11.9",
+  "platform": "macOS-15.7.9-x86_64-i386-64bit",
+  "temporalio": "1.33.0",
+  "langgraph": "1.2.12",
+  "fastcdc": "1.7.0",
+  "psycopg": "3.3.6",
+  "temporal_cli": "temporal version 1.9.1 (Server 1.32.0, UI 2.54.1)"
+ },
+ "rows": [
+  {
+   "nodes": 10,
+   "history_without": 142033,
+   "history_with": 144257,
+   "plugin_bytes": 2224
+  },
+  {
+   "nodes": 20,
+   "history_without": 526296,
+   "history_with": 529564,
+   "plugin_bytes": 3268
+  },
+  {
+   "nodes": 40,
+   "history_without": 1958604,
+   "history_with": 1963927,
+   "plugin_bytes": 5323
+  },
+  {
+   "nodes": 80,
+   "history_without": 7476585,
+   "history_with": 7485960,
+   "plugin_bytes": 9375
+  }
+ ],
+ "marginal_plugin_bytes_per_node": [
+  104.4,
+  102.75,
+  101.3
+ ]
+}
