@@ -96,7 +96,11 @@ class LedgerOutbound(WorkflowOutboundInterceptor):
         input = dataclasses.replace(
             input, headers=headers.with_headers(input.headers, seq, *carried)
         )
-        handle = self.next.start_activity(input)
+        try:
+            handle = self.next.start_activity(input)
+        except BaseException:
+            self._state.next_seq -= 1  # nothing was scheduled under this seq
+            raise
         handle.add_done_callback(lambda h: self._state.observe(seq, h, carried))
         return handle
 
@@ -134,13 +138,13 @@ class LedgerInbound(WorkflowInboundInterceptor):
             status = classify(e)
             if status is None:
                 raise
-            await self._seal(status, None, cancelled=status == "CANCELLED")
+            await self._seal(status, None)
             raise
         final_hash = serialize(result, workflow.payload_converter()).hash
-        await self._seal("COMPLETED", final_hash, cancelled=False)
+        await self._seal("COMPLETED", final_hash)
         return result
 
-    async def _seal(self, status: str, final_hash: str | None, *, cancelled: bool) -> None:
+    async def _seal(self, status: str, final_hash: str | None) -> None:
         if not self.seal_enabled:
             return
         if self._state.next_seq == 0 and not langgraph_used_in_this_run():
@@ -157,18 +161,20 @@ class LedgerInbound(WorkflowInboundInterceptor):
             final_state_hash=final_hash,
             workflow_type=workflow.info().workflow_type,
         )
-        if cancelled:
-            # The run is being cancelled; the seal must still run. ABANDON means the workflow
-            # does not wait for a cancel acknowledgement, and shield keeps a second cancel from
-            # interrupting the await.
-            handle = workflow.start_activity(
-                SEAL_ACTIVITY,
-                seal_input,
-                start_to_close_timeout=self.seal_timeout,
-                cancellation_type=ActivityCancellationType.ABANDON,
-            )
-            await asyncio.shield(handle)
-        else:
-            await workflow.execute_activity(
-                SEAL_ACTIVITY, seal_input, start_to_close_timeout=self.seal_timeout
-            )
+        # The outcome is decided by now; a cancel request that lands while the seal runs must not
+        # change it (a completed run would otherwise end CANCELLED with a ledger that says
+        # COMPLETED). ABANDON: the workflow never waits for a cancel acknowledgement; the loop
+        # consumes any cancellation that reaches this await and keeps waiting for the seal.
+        handle = workflow.start_activity(
+            SEAL_ACTIVITY,
+            seal_input,
+            start_to_close_timeout=self.seal_timeout,
+            cancellation_type=ActivityCancellationType.ABANDON,
+        )
+        while True:
+            try:
+                await asyncio.shield(handle)
+                return
+            except asyncio.CancelledError:
+                if handle.done():
+                    return

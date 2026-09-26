@@ -24,12 +24,12 @@
    "B3": 2.5,
    "B4": 2.5
   },
-  "cliff_largest_payload_kb": {
-   "B0": 2068.0,
-   "B1": 2067.9,
-   "B2": 2067.9,
-   "B3": 63.9,
-   "B4": 63.9
+  "cliff_largest_payload_kib": {
+   "B0": 2019.5,
+   "B1": 2019.4,
+   "B2": 2019.4,
+   "B3": 62.4,
+   "B4": 62.4
   },
   "retry_waste_cut_percent": 86,
   "growth_store_mb_80": {

@@ -9,6 +9,7 @@ from __future__ import annotations
 import asyncio
 import os
 import socket
+import zlib
 from collections.abc import AsyncIterator, Sequence
 from contextlib import asynccontextmanager
 from dataclasses import dataclass
@@ -32,6 +33,11 @@ Outcome = Literal["WROTE", "FENCED_OUT", "DB_ERROR", "DIVERGENCE_REPAIRED"]
 TERMINAL = ("COMPLETED", "FAILED", "CANCELLED", "TERMINATED", "TIMED_OUT", "CONTINUED_AS_NEW")
 
 WORKER = f"{socket.gethostname()}:{os.getpid()}"
+
+
+def _run_lock_key(run: RunKey) -> int:
+    """A 31-bit advisory-lock key for a run (the second key is the seq)."""
+    return zlib.crc32(f"{run.namespace}|{run.workflow_id}|{run.run_id}".encode()) & 0x7FFFFFFF
 
 
 def _sql(package: str, name: str) -> str:
@@ -136,16 +142,33 @@ class LedgerTx:
     def __init__(self, conn: psycopg.AsyncConnection[Any]) -> None:
         self.conn = conn
 
-    async def ensure_run(self, run: RunKey, workflow_type: str | None = None) -> bool:
-        """Create the run row if missing and lock it FOR SHARE; return whether it is sealed.
+    async def lock_seqs(self, run: RunKey, seqs: Sequence[int]) -> None:
+        """Transaction-scoped advisory locks on (run, seq) for every row this transaction will
+        write, taken in one sorted pass so two writers of one run (a carrier and a zombie, say)
+        cannot deadlock on each other's rows."""
+        wanted = sorted(set(seqs))
+        if wanted:
+            await self.conn.execute(
+                "SELECT pg_advisory_xact_lock(%s, s) FROM"
+                " (SELECT s FROM unnest(%s::int[]) AS s ORDER BY s) AS ordered",
+                (_run_lock_key(run), wanted),
+            )
 
-        The share lock serializes node writes against `seal_run`, which locks FOR UPDATE, so
-        no write can slip into a run between its seal's reads and its commit."""
+    async def ensure_run(
+        self, run: RunKey, workflow_type: str | None = None, *, lock: bool = True
+    ) -> bool:
+        """Create the run row if missing; with `lock`, hold it FOR SHARE and return whether the
+        run is sealed. The share lock serializes node writes against `seal_run`, which locks
+        FOR UPDATE, so no write can slip into a run between its seal's reads and its commit.
+        Callers that will take the FOR UPDATE lock themselves pass lock=False (a share lock
+        upgraded to exclusive deadlocks against another such caller)."""
         await self.conn.execute(
             "INSERT INTO sl_runs (namespace, workflow_id, run_id, workflow_type)"
             " VALUES (%s, %s, %s, %s) ON CONFLICT DO NOTHING",
             (run.namespace, run.workflow_id, run.run_id, workflow_type),
         )
+        if not lock:
+            return False
         cur = await self.conn.execute(
             "SELECT sealed_at IS NOT NULL FROM sl_runs"
             " WHERE namespace = %s AND workflow_id = %s AND run_id = %s FOR SHARE",
@@ -357,7 +380,7 @@ class LedgerTx:
         return int(row[0]), int(row[1])
 
     async def mark_degraded(self, run: RunKey) -> None:
-        await self.ensure_run(run)
+        await self.ensure_run(run, lock=False)
         await self.conn.execute(
             "UPDATE sl_runs SET degraded = true"
             " WHERE namespace = %s AND workflow_id = %s AND run_id = %s",

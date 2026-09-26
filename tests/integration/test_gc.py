@@ -73,7 +73,13 @@ async def input_of_latest_run(client: Client, wid: str) -> Any:
 
 
 async def gc(env: GcEnv, wids: list[str], **kw: Any) -> gcmod.SweepReport:
-    opts: dict[str, Any] = {"retention": ZERO, "margin": ZERO, "grace": ZERO, "dry_run": False}
+    opts: dict[str, Any] = {
+        "retention": ZERO,
+        "margin": ZERO,
+        "grace": ZERO,
+        "dry_run": False,
+        "enforce_namespace_retention": False,
+    }
     opts.update(kw)
     return await sweep(env.client, env.dsn, only_workflows=wids, **opts)
 
@@ -243,3 +249,89 @@ async def test_cli_refuses_retention_below_namespace(gc_env: GcEnv) -> None:
     assert ns > ZERO
     assert check_retention(ns - timedelta(hours=1), ns) is not None
     assert check_retention(ns, ns) is None
+
+
+async def _latest_refs(dsn: str, wid: str) -> int:
+    with psycopg.connect(dsn) as conn:
+        row = conn.execute(
+            "SELECT count(*) FROM sl_payload_refs WHERE workflow_id = %s", (wid,)
+        ).fetchone()
+    return int(row[0]) if row else 0
+
+
+@pytest.mark.never_skip
+async def test_schedule_start_input_survives_while_the_schedule_exists(gc_env: GcEnv) -> None:
+    """A schedule stores its action's start input under the action's workflow id, which never
+    runs as such (firings get timestamped ids). GC must keep it while the schedule exists, and
+    while a firing is open or within retention after the schedule is gone."""
+    from temporalio.client import (
+        Schedule,
+        ScheduleActionStartWorkflow,
+        ScheduleIntervalSpec,
+        ScheduleSpec,
+        ScheduleState,
+    )
+
+    action_id = f"gc-sched-{uuid.uuid4().hex[:8]}"
+    value = big(21) + action_id
+    handle = await gc_env.client.create_schedule(
+        f"sched-{action_id}",
+        Schedule(
+            action=ScheduleActionStartWorkflow(
+                DoneWorkflow.run, value, id=action_id, task_queue=gc_env.tq
+            ),
+            spec=ScheduleSpec(intervals=[ScheduleIntervalSpec(every=timedelta(days=365))]),
+            state=ScheduleState(paused=True),
+        ),
+    )
+    try:
+        assert await _latest_refs(gc_env.dsn, action_id) == 1  # stored at creation, no run id
+        report = await gc(gc_env, [action_id])
+        assert report.schedule_actions_kept == 1 and report.manifests_deleted == 0
+        # the next firing must still decode its input
+        await handle.trigger()
+        for _ in range(100):
+            fired = [
+                w
+                async for w in gc_env.client.list_workflows(
+                    f"WorkflowId STARTS_WITH '{action_id}-'"
+                )
+            ]
+            if fired and fired[0].status and fired[0].status.name != "RUNNING":
+                break
+            await asyncio.sleep(0.1)
+        assert fired and fired[0].status is not None and fired[0].status.name == "COMPLETED"
+        assert await gc_env.client.get_workflow_handle(fired[0].id).result() == len(value)
+    finally:
+        await handle.delete()
+    # schedule gone: the firing closed within retention still keeps the input
+    kept = await gc(gc_env, [action_id], retention=timedelta(days=1))
+    assert kept.workflows_kept_retained == 1 and kept.manifests_deleted == 0
+    # and once nothing is left within retention, it expires (created_at floor at 0 retention)
+    gone = await gc(gc_env, [action_id])
+    assert gone.workflows_expired == 1 and gone.refs_expired == 1
+
+
+async def test_dry_run_takes_no_locks_and_counts_what_a_sweep_would_delete(gc_env: GcEnv) -> None:
+    driver = DedupStorageDriver(PostgresChunkBackend(gc_env.dsn))
+    closed = f"gc-dry-{uuid.uuid4().hex[:8]}"
+    h = await gc_env.client.start_workflow(DoneWorkflow.run, "x", id=closed, task_queue=gc_env.tq)
+    await h.result()
+    payload = _payload(31)
+    (claim,) = await driver.store(_ctx(closed), [payload])
+    dry = await gc(gc_env, [closed], dry_run=True)
+    assert dry.refs_expired == 1 and dry.manifests_deleted >= 1 and dry.chunks_deleted >= 1
+    (back,) = await driver.retrieve(StorageDriverRetrieveContext(), [claim])  # nothing deleted
+    assert back == payload
+    real = await gc(gc_env, [closed])
+    assert (real.refs_expired, real.manifests_deleted, real.chunks_deleted) == (
+        dry.refs_expired,
+        dry.manifests_deleted,
+        dry.chunks_deleted,
+    )
+    await driver.close()
+
+
+async def test_sweep_refuses_short_retention_unless_told(gc_env: GcEnv) -> None:
+    with pytest.raises(ValueError, match="shorter than the namespace"):
+        await sweep(gc_env.client, gc_env.dsn, retention=ZERO, dry_run=True)

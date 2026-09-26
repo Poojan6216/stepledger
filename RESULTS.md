@@ -23,13 +23,13 @@ Attacks that defeat a claimed benefit, with the measured rate (`bench/results/at
 
 The investigator agent at 60 KiB of new output per node. B0 runs at 36 nodes, where every node input stays under 2 MiB and only the final bulk persist is over it (the issue's shape); the others at 40. `uv run python -m bench.cliff`
 
-| config | nodes | SDK default | payload check disabled | largest payload (bytes) | history (MiB) | events |
-|---|---|---|---|---|---|---|
-| B0 bulk persist at end | 36 | STUCK at persist_all (PAYLOADS_TOO_LARGE) | TERMINATED at persist_all (BAD_SCHEDULE_ACTIVITY_ATTRIBUTES) | 2,067,993 | 39.37 | 218 |
-| B1 naive per-node write | 40 | STUCK at node 35 (PAYLOADS_TOO_LARGE) | TERMINATED at node 35 (BAD_SCHEDULE_ACTIVITY_ATTRIBUTES) | 2,067,894 | 35.42 | 206 |
-| B2 stepledger (no ext storage) | 40 | STUCK at node 35 (PAYLOADS_TOO_LARGE) | TERMINATED at node 35 (BAD_SCHEDULE_ACTIVITY_ATTRIBUTES) | 2,067,894 | 35.43 | 206 |
-| B3 stepledger + whole-blob storage | 40 | COMPLETED | COMPLETED | 63,872 | 2.50 | 250 |
-| B4 stepledger + dedup storage | 40 | COMPLETED | COMPLETED | 63,873 | 2.50 | 250 |
+| config | nodes | SDK default | payload check disabled | largest payload in history (bytes) | rejected payload (bytes) | history (MiB) | events |
+|---|---|---|---|---|---|---|---|
+| B0 bulk persist at end | 36 | STUCK at persist_all (PAYLOADS_TOO_LARGE) | TERMINATED at persist_all (BAD_SCHEDULE_ACTIVITY_ATTRIBUTES) | 2,067,992 | 2,129,481 | 39.37 | 218 |
+| B1 naive per-node write | 40 | STUCK at node 35 (PAYLOADS_TOO_LARGE) | TERMINATED at node 35 (BAD_SCHEDULE_ACTIVITY_ATTRIBUTES) | 2,067,894 | 2,131,471 | 35.42 | 206 |
+| B2 stepledger (no ext storage) | 40 | STUCK at node 35 (PAYLOADS_TOO_LARGE) | TERMINATED at node 35 (BAD_SCHEDULE_ACTIVITY_ATTRIBUTES) | 2,067,893 | 2,131,471 | 35.43 | 212 |
+| B3 stepledger + whole-blob storage | 40 | COMPLETED | COMPLETED | 63,873 |  | 2.50 | 253 |
+| B4 stepledger + dedup storage | 40 | COMPLETED | COMPLETED | 63,872 |  | 2.50 | 250 |
 
 Stored bytes at 40 nodes: B3 whole-blob 50.71 MB, B4 dedup 3.53 MB (14.4x less).
 
@@ -53,13 +53,15 @@ History size in MiB. Without External Storage (B2; B1 is within 0.2%) against St
 | 60 KiB | 3.31 | 29.03 | stopped at node 35 | stopped at node 35 | 0.67 | 1.89 | 3.72 | 4.94 |
 | 100 KiB | 5.46 | stopped at node 22 | stopped at node 22 | stopped at node 22 | 0.02 | 0.04 | 0.08 | 0.11 |
 
-Stored bytes per run in MB, whole-blob (B3, one object per payload like the S3 driver) / dedup chunks (B4):
+Stored bytes per run in MB, whole-blob (B3, one object per payload like the S3 driver) / dedup chunks (B4). Both are logical payload bytes; the B4 figure is chunk bytes only and excludes manifests (32 bytes per chunk per payload) and reference rows, under 2% here. One run per cell; the bytes are seeded and deterministic.
 
 | new output per node | 10 nodes | 30 nodes | 60 nodes | 80 nodes | ratio at 80 |
 |---|---|---|---|---|---|
 | 20 KiB | 0.96 / 0.34 | 9.87 / 1.37 | 39.48 / 2.79 | 70.05 / 3.53 | 19.8 |
 | 60 KiB | 2.76 / 0.67 | 28.46 / 2.59 | 113.98 / 5.16 | 202.31 / 6.72 | 30.1 |
 | 100 KiB | 5.71 / 1.30 | 50.28 / 4.51 | 194.82 / 9.12 | 342.97 / 12.15 | 28.2 |
+
+The B4 history column is not monotonic in output size: at 60 KiB per node each node's 61 KiB output sits just under the 64 KiB threshold and stays in history, so history grows faster there than at 100 KiB, where the outputs are externalized too.
 
 ![history](bench/plots/history-light.png)
 
@@ -82,9 +84,9 @@ With the journal, 53 of 53 replayed nodes committed the first attempt's model re
 
 ## Overhead
 
-30-node agent, 10 runs each: ledger write p50 1.842 ms, p95 6.109 ms; median wall clock 1.4465 s without the plugin, 1.4881 s with it (1.387 ms per node). `uv run python -m bench.overhead --runs 10`
+30-node agent, 1 KiB per node, storage driver off, 10 runs each on the local dev server: ledger write p50 1.842 ms, p95 6.109 ms; median wall clock 1.4465 s without the plugin, 1.4881 s with it (1.387 ms per node). With the storage driver on (threshold sweep, 60 KiB nodes) the ledger write p95 is 14.645 ms at 16 KiB, 17.555 ms at 64 KiB, 14.772 ms at 256 KiB; that sweep has no without-plugin baseline. `uv run python -m bench.overhead --runs 10`
 
-History bytes the plugin adds (Hard Rule 11: constant per node): 2,224 at 10 nodes, 3,268 at 20 nodes, 5,323 at 40 nodes, 9,375 at 80 nodes; marginal bytes per node [104.4, 102.75, 101.3]. `uv run python -m bench.history_overhead`
+History bytes the plugin adds (one run per size, storage driver off): 2,224 at 10 nodes, 3,268 at 20 nodes, 5,323 at 40 nodes, 9,375 at 80 nodes; marginal bytes per node [104.4, 102.75, 101.3]. `uv run python -m bench.history_overhead`
 
 ## External Storage threshold
 
@@ -94,11 +96,11 @@ History bytes the plugin adds (Hard Rule 11: constant per node): 2,224 at 10 nod
 | 64 | 1,984,104 | 63,873 | 2,588,273 | 3.183 | 17.555 |
 | 256 | 2,235,589 | 251,787 | 2,563,921 | 2.804 | 14.772 |
 
-64 KiB stays the default: 256 KiB is worse on history size and largest payload. `uv run python -m bench.threshold_sweep`
+The trade in this table: 16 KiB cuts history about 43x and the largest history payload about 50x against 64 KiB, for about 38% more stored chunk bytes and twice the storage round trips; 256 KiB is worse than 64 KiB on history and largest payload and saves under 1% of storage. The default stays at the design's 64 KiB (the rule was to move only if 256 KiB won on every metric); an agent whose node outputs sit just under 64 KiB, like this one, should set 16 KiB. Wall-clock differences here are within run-to-run noise. `uv run python -m bench.threshold_sweep`
 
 ## Ledger outage
 
-Postgres stopped for 20 s during a 20-node run. Fail mode: the run stalled and completed in 62.5 s, counters {'rows': 20, 'duplicate_rows': 0, 'divergent_rows': 0, 'lost_rows': 0, 'orphan_rows': 0, 'duplicate_side_effects': 0, 'wrongly_committed': 0}. Warn mode: completed in 57.4 s, degraded, missing [3, 4, 5]; after reconcile {'rows': 20, 'duplicate_rows': 0, 'divergent_rows': 0, 'lost_rows': 0, 'orphan_rows': 0, 'duplicate_side_effects': 0, 'wrongly_committed': 0}. `uv run python -m bench.outage`
+Postgres stopped for 20 s during a 20-node run. Fail mode: the run stalled and completed in 62.5 s, counters {'rows': 20, 'duplicate_rows': 0, 'divergent_rows': 0, 'lost_rows': 0, 'orphan_rows': 0, 'duplicate_side_effects': 0, 'wrongly_committed': 0}. Warn mode: completed in 57.4 s, degraded, missing [3, 4, 5]; completed in 57.4 s, degraded, seqs [3, 4, 5] missing and seq [2] left PROVISIONAL (its commit rode on a write that failed); reconcile inserted 3 rows and committed 1: {'rows': 20, 'duplicate_rows': 0, 'divergent_rows': 0, 'lost_rows': 0, 'orphan_rows': 0, 'duplicate_side_effects': 0, 'wrongly_committed': 0}. `uv run python -m bench.outage`
 
 ## What holds under attack
 

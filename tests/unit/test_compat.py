@@ -12,7 +12,7 @@ from packaging.version import Version
 
 from stepledger import _compat
 
-PINNED_TEMPORALIO = ("1.33", "2")  # [lower, upper) matching pyproject
+PINNED_TEMPORALIO = ("1.33", "1.34")  # [lower, upper) matching pyproject
 PINNED_LANGGRAPH = ("1.2", "1.3")
 
 

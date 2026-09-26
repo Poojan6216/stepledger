@@ -46,6 +46,45 @@ def init_db_cmd(dsn: str | None = DsnOption) -> None:
 
 AddressOption = typer.Option("localhost:7233", "--address", envvar="TEMPORAL_ADDRESS")
 NamespaceOption = typer.Option("default", "--namespace", "-n", envvar="TEMPORAL_NAMESPACE")
+ConverterOption = typer.Option(
+    None,
+    "--data-converter",
+    help="module:attr of the DataConverter your workers use (codecs, pydantic); Stepledger's"
+    " storage driver is added to it when storage is enabled in stepledger.yaml.",
+)
+
+
+def build_data_converter(dsn: str, ref: str | None = None) -> Any:
+    """The data converter a client needs to read this deployment's payloads: the user's own
+    (`module:attr`) or the default, plus the dedup storage driver when storage is enabled.
+    Every client that reads histories or results (starters, tooling, `reconcile`) needs it;
+    a bare client raises TMPRL1105 on externally stored payloads."""
+    import dataclasses
+    import importlib
+    import os
+    import sys
+
+    from temporalio.converter import DataConverter
+
+    from stepledger.config import load_settings
+    from stepledger.storage import make_external_storage
+
+    base = DataConverter.default
+    if ref:
+        if os.getcwd() not in sys.path:
+            sys.path.insert(0, os.getcwd())
+        module, _, attr = ref.partition(":")
+        base = getattr(importlib.import_module(module), attr)
+    cfg = load_settings()
+    if cfg.storage.enabled and base.external_storage is None:
+        _, ext = make_external_storage(
+            dsn,
+            dedupe=cfg.storage.dedupe,
+            payload_size_threshold=cfg.storage.payload_size_threshold,
+            chunk_sizes=(cfg.storage.chunk.min, cfg.storage.chunk.avg, cfg.storage.chunk.max),
+        )
+        base = dataclasses.replace(base, external_storage=ext)
+    return base
 
 
 def _run(coro: Any) -> Any:
@@ -58,9 +97,18 @@ def _run(coro: Any) -> Any:
 def reconcile_cmd(
     workflow_id: str | None = typer.Argument(None, help="Reconcile every run of this workflow."),
     all_open: bool = typer.Option(False, "--all-open", help="Every run the ledger has not sealed."),
+    include_open: bool = typer.Option(
+        False, "--include-open", help="Also repair runs that are still running (racy)."
+    ),
+    cancellation_type: str = typer.Option(
+        "TRY_CANCEL",
+        "--cancellation-type",
+        help="ActivityCancellationType your tracked nodes use; history does not record it.",
+    ),
     dsn: str | None = DsnOption,
     address: str = AddressOption,
     namespace: str = NamespaceOption,
+    data_converter: str | None = ConverterOption,
 ) -> None:
     """Repair the ledger from Temporal's history (terminations, timeouts, degraded runs)."""
     if not workflow_id and not all_open:
@@ -69,13 +117,27 @@ def reconcile_cmd(
     async def go() -> None:
         from temporalio.client import Client
 
+        from stepledger.config import load_settings
         from stepledger.ledger.reconcile import reconcile
         from stepledger.ledger.store import LedgerStore
 
-        client = await Client.connect(address, namespace=namespace)
-        store = LedgerStore(resolve_dsn(dsn))
+        resolved = resolve_dsn(dsn)
+        client = await Client.connect(
+            address,
+            namespace=namespace,
+            data_converter=build_data_converter(resolved, data_converter),
+        )
+        store = LedgerStore(resolved)
         try:
-            reports = await reconcile(client, store, workflow_id, all_open=all_open)
+            reports = await reconcile(
+                client,
+                store,
+                workflow_id,
+                all_open=all_open,
+                include_open=include_open,
+                cancellation_type=cancellation_type,
+                store_outputs=load_settings().ledger.store_outputs,
+            )
         finally:
             await store.close()
         if not reports:

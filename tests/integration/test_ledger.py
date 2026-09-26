@@ -12,8 +12,10 @@ import pytest
 from temporalio.api.enums.v1 import EventType
 from temporalio.client import WorkflowFailureError, WorkflowHandle
 
-from bench.common import RunConfig
+from bench.common import RunConfig, run_in_process
+from bench.metrics import collect
 from stepledger import headers
+from stepledger.canonical import canonical_json
 from stepledger.testing.history import check_stepledger, history_nodes
 from tests.integration import workflows as wfs
 from tests.integration.conftest import INVESTIGATOR, Env
@@ -90,13 +92,34 @@ async def test_thirty_node_agent_rows_equal_history(env: Env) -> None:
     h = await env.client.start_workflow(
         "Investigate", cfg.workflow_input(), id=_wid("inv"), task_queue=env.task_queue
     )
-    await h.result()
+    result = await h.result()
     run_id = h.result_run_id or ""
     got = rows(env.dsn, h.id, run_id)
     assert len(got) == 30 and {r[2] for r in got} == {"COMMITTED"}
     counters = await check_stepledger(env.client, env.dsn, h.id, run_id)
     assert counters.zero(), counters.details
     assert counters.rows == 30
+    # 1.1: the same graph and seed with no Temporal gives the same final state
+    assert canonical_json(result) == canonical_json(await run_in_process(cfg))
+    # 1.2: the server's history size and the sum of serialized events agree within 5%
+    m = await collect(h)
+    assert abs(m.history_size_bytes - m.history_bytes_summed) / m.history_size_bytes < 0.05
+    # 5.3: the views count what the ledger holds
+    with psycopg.connect(env.dsn) as conn:
+        summary = conn.execute(
+            "SELECT rows, committed, provisional, abandoned FROM sl_run_summary"
+            " WHERE workflow_id = %s AND run_id = %s",
+            (h.id, run_id),
+        ).fetchone()
+        timeline = conn.execute(
+            "SELECT count(*) FROM sl_node_timeline WHERE workflow_id = %s AND run_id = %s",
+            (h.id, run_id),
+        ).fetchone()
+        totals = conn.execute(
+            "SELECT (SELECT count(*) FROM sl_run_summary) = (SELECT count(*) FROM sl_runs),"
+            " (SELECT count(*) FROM sl_node_timeline) = (SELECT count(*) FROM sl_nodes)"
+        ).fetchone()
+    assert summary == (30, 30, 0, 0) and timeline == (30,) and totals == (True, True)
 
 
 async def test_failed_carrier_keeps_its_commits_pending(env: Env) -> None:

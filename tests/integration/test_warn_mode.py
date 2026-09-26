@@ -31,12 +31,14 @@ async def test_warn_mode_audits_degrades_and_reconciles(dsn: str) -> None:
     )
     sl = StepledgerPlugin(dsn, langgraph=lg, external_storage=False, on_ledger_error="warn")
     real_tx = sl.store.tx
-    failures = {"left": 1}
+    calls = {"n": 0}
+    # tx calls in order: a (1, fails), a's degrade audit (2), b..e (3-6), the seal (7, fails)
+    failing = {1, 7}
 
     @asynccontextmanager
     async def flaky_tx() -> AsyncIterator[Any]:
-        if failures["left"]:
-            failures["left"] -= 1
+        calls["n"] += 1
+        if calls["n"] in failing:
             raise psycopg.OperationalError("injected: database unreachable")
         async with real_tx() as tx:
             yield tx
@@ -64,19 +66,19 @@ async def test_warn_mode_audits_degrades_and_reconciles(dsn: str) -> None:
             (h.id,),
         ).fetchall()
         run = conn.execute(
-            "SELECT status, degraded, missing_seqs, committed_count FROM sl_runs"
-            " WHERE workflow_id = %s",
+            "SELECT status, degraded, sealed_at IS NOT NULL FROM sl_runs WHERE workflow_id = %s",
             (h.id,),
         ).fetchone()
-    assert [r[0] for r in rows] == [1, 2, 3, 4] and all(r[1] == "COMMITTED" for r in rows)
+    assert [r[0] for r in rows] == [1, 2, 3, 4]
+    assert [r[1] for r in rows] == ["COMMITTED", "COMMITTED", "COMMITTED", "PROVISIONAL"]
     assert len(audit) == 1 and audit[0][0] == 0 and "injected" in audit[0][2]
-    assert run == ("COMPLETED", True, [0], 4)
-    before = await check_stepledger(client, dsn, h.id, run_id)
-    assert before.lost_rows == 1 and before.zero() is False
+    assert run == ("RUNNING", True, False)  # the seal failed: left open, marked degraded
+    before = await check_stepledger(client, dsn, h.id, run_id, expect_sealed=False)
+    assert before.lost_rows == 1
 
     sl.store.tx = real_tx  # type: ignore[method-assign]
     (report,) = await reconcile(client, sl.store, h.id)
     await sl.store.close()
-    assert report.inserted == [0]
+    assert report.action == "sealed" and report.inserted == [0] and report.committed == [4]
     after = await check_stepledger(client, dsn, h.id, run_id)
     assert after.zero(), after.details

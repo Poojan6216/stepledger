@@ -37,12 +37,12 @@ MiB = 1024 * 1024
 LIMIT = 2 * MiB  # limit.blobSize.error on the dev server (scripts/dev.sh)
 
 
-async def preflight(kb: int, llm_bytes: int, lo: int = 20, hi: int = 60) -> int:
-    """Largest node count whose node inputs stay under LIMIT while the final state exceeds it.
-
-    Serializes each node's ActivityInput exactly as the plugin builds it, with Temporal's
-    default converter, in-process (no server).
-    """
+async def preflight(
+    kb: int, llm_bytes: int, nodes: int, lo: int = 20, hi: int = 60
+) -> dict[str, Any]:
+    """Offline, with Temporal's default converter: the largest node count whose node inputs stay
+    under LIMIT while the final state exceeds it (B0's shape), and the sizes of the payloads the
+    server will reject: B0's final state, and the first node input over LIMIT at `nodes`."""
     from langgraph.checkpoint.memory import InMemorySaver
     from temporalio.contrib.langgraph._activity import ActivityInput
     from temporalio.converter import DataConverter
@@ -50,32 +50,43 @@ async def preflight(kb: int, llm_bytes: int, lo: int = 20, hi: int = 60) -> int:
     from bench.agents.investigator import initial_state
 
     conv = DataConverter.default.payload_converter
-    best = None
-    for n in range(lo, hi + 1):
+    pad = {"pad": "x" * 2048}  # langgraph_config adds ~1 KB per input; a conservative stand-in
+
+    async def sizes(n: int) -> tuple[list[int], int]:
         cfg = RunConfig(shape=Shape(nodes=n), kb_per_node=kb, llm_bytes=llm_bytes)
         app = cfg.shape.build().compile(checkpointer=InMemorySaver())
         states: list[Any] = [initial_state()]
-        async for s in app.astream(
+        async for st in app.astream(
             initial_state(),
             {"configurable": {"thread_id": "1"}},
             context=cfg.context(),
             stream_mode="values",
         ):
-            states.append(s)
-        # langgraph_config adds ~1 KB per input; use a conservative 2 KiB stand-in.
-        pad = {"pad": "x" * 2048}
+            states.append(st)
         inputs = [
             conv.to_payload(ActivityInput(args=(st,), kwargs={}, langgraph_config=pad)).ByteSize()
             for st in states[:-1]
         ]
-        final = conv.to_payload(states[-1]).ByteSize()
+        return inputs, conv.to_payload(states[-1]).ByteSize()
+
+    best: int | None = None
+    b0_final = 0
+    for n in range(lo, hi + 1):
+        inputs, final = await sizes(n)
         if max(inputs) >= LIMIT:
             break
         if final > LIMIT:
-            best = n
+            best, b0_final = n, final
     if best is None:
         raise RuntimeError(f"no node count in {lo}..{hi} has the B0 shape at {kb} KiB")
-    return best
+    inputs, _ = await sizes(nodes)
+    over = next(((i + 1, b) for i, b in enumerate(inputs) if b > LIMIT), (None, None))
+    return {
+        "b0_nodes": best,
+        "b0_rejected_payload_bytes": b0_final,
+        "first_input_over_limit_node": over[0],
+        "first_input_over_limit_bytes": over[1],
+    }
 
 
 async def run_one(
@@ -135,7 +146,7 @@ async def run_one(
 def fmt(rows: list[dict[str, Any]]) -> str:
     out = [
         f"{'config':<34} {'nodes':>5}  {'SDK default':<34} {'check disabled':<34} "
-        f"{'largest payload':>15} {'history bytes':>13} {'events':>6}"
+        f"{'largest in history':>18} {'rejected':>10} {'history bytes':>13} {'events':>6}"
     ]
     by: dict[str, dict[str, dict[str, Any]]] = {}
     for r in rows:
@@ -157,8 +168,9 @@ def fmt(rows: list[dict[str, Any]]) -> str:
         name = f"{cid} {any_row['label']}"
         out.append(
             f"{name:<34} {any_row['nodes']:>5}  {cell(d):<34} {cell(x):<34} "
-            f"{any_row['largest_payload_bytes']:>15,} {any_row['history_size_bytes']:>13,} "
-            f"{any_row['history_events']:>6}"
+            f"{any_row['largest_payload_bytes']:>18,}"
+            f" {(any_row.get('rejected_payload_bytes') or 0):>10,}"
+            f" {any_row['history_size_bytes']:>13,} {any_row['history_events']:>6}"
         )
     return "\n".join(out)
 
@@ -173,8 +185,15 @@ async def main(argv: list[str]) -> None:
     ap.add_argument("--out", default="cliff")
     args = ap.parse_args(argv)
 
-    b0_nodes = await preflight(args.kb, args.llm_bytes)
-    print(f"preflight: B0 shape at {b0_nodes} nodes x {args.kb} KiB", flush=True)
+    pre = await preflight(args.kb, args.llm_bytes, args.nodes)
+    b0_nodes = pre["b0_nodes"]
+    print(
+        f"preflight: B0 shape at {b0_nodes} nodes x {args.kb} KiB (final state"
+        f" {pre['b0_rejected_payload_bytes']:,} bytes); at {args.nodes} nodes the first node"
+        f" input over {LIMIT:,} bytes is node {pre['first_input_over_limit_node']}"
+        f" ({pre['first_input_over_limit_bytes']:,} bytes)",
+        flush=True,
+    )
     rows = []
     for cid in args.configs:
         b = BASELINES[cid]
@@ -193,12 +212,18 @@ async def main(argv: list[str]) -> None:
             print(
                 f"  {cid} {r['payload_check']}: {r['outcome']} {r['stopped_at'] or ''}", flush=True
             )
+            if r["outcome"] != "COMPLETED":
+                r["rejected_payload_bytes"] = (
+                    pre["b0_rejected_payload_bytes"]
+                    if cid == "B0"
+                    else pre["first_input_over_limit_bytes"]
+                )
             rows.append(r)
     print(fmt(rows))
     path = write_results(
         args.out,
         "uv run python -m bench.cliff " + shlex.join(argv),
-        {"b0_nodes": b0_nodes, "limit_bytes": LIMIT, "rows": rows},
+        {"b0_nodes": b0_nodes, "limit_bytes": LIMIT, "preflight": pre, "rows": rows},
     )
     print(f"wrote {path}")
 

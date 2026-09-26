@@ -173,3 +173,33 @@ async def test_encrypted_payload_is_stored_whole_and_counted(
             " ORDER BY created_at DESC LIMIT 1"
         ).fetchone()
     assert row == (1, False, "binary/encrypted")
+
+
+async def test_concurrent_near_identical_stores_share_chunks_without_deadlock(dsn: str) -> None:
+    """Twelve payloads that are one growing state (each a few KB longer than the last), stored
+    at the same moment by twelve drivers: the shape a fan-out produces. They share almost all
+    chunks, so the locking must serialize them without a deadlock, and dedupe must hold."""
+    base = blob(200_000, 40)
+    payloads = [
+        Payload(
+            metadata={"encoding": b"json/plain"}, data=f'"{base}{blob(4_000, 41 + i)}"'.encode()
+        )
+        for i in range(12)
+    ]
+    drivers = [DedupStorageDriver(PostgresChunkBackend(dsn)) for _ in payloads]
+    try:
+        claims = await asyncio.gather(
+            *(
+                d.store(ctx(f"fan-{uuid.uuid4().hex[:6]}"), [p])
+                for d, p in zip(drivers, payloads, strict=True)
+            )
+        )
+        unique = sum(d.metrics.unique_bytes for d in drivers)
+        logical = sum(len(p.SerializeToString(deterministic=True)) for p in payloads)
+        assert unique < logical / 4  # the shared prefix was stored about once
+        for d, c, p in zip(drivers, claims, payloads, strict=True):
+            (back,) = await d.retrieve(StorageDriverRetrieveContext(), c)
+            assert back == p
+    finally:
+        for d in drivers:
+            await d.close()

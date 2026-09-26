@@ -74,6 +74,14 @@ def command_graph() -> StateGraph[Any, Any, Any, Any]:
     return g
 
 
+async def big_a(state: S) -> dict[str, Any]:
+    return {"log": ["a" * 5000]}  # over a 1 KiB storage threshold
+
+
+async def big_b(state: S) -> dict[str, Any]:
+    return {"log": ["b" * 5000]}
+
+
 def chain(*fns: Any) -> StateGraph[Any, Any, Any, Any]:
     g: StateGraph[Any, Any, Any, Any] = StateGraph(S)
     prev = START
@@ -95,6 +103,7 @@ def graphs() -> dict[str, StateGraph[Any, Any, Any, Any]]:
         "ab": chain(a, b),
         "cachehit": cache_hit_graph(),
         "commands": command_graph(),
+        "bigab": chain(big_a, big_b),
     }
 
 
@@ -187,8 +196,8 @@ class TaskBugWorkflow:
         self.fixed = True
 
     @workflow.run
-    async def run(self) -> dict[str, Any]:
-        result: dict[str, Any] = await lg_graph("ab").compile().ainvoke({"log": []})
+    async def run(self, graph: str = "ab") -> dict[str, Any]:
+        result: dict[str, Any] = await lg_graph(graph).compile().ainvoke({"log": []})
         if not self.fixed:
             raise RuntimeError("a bug in workflow code")
         return result

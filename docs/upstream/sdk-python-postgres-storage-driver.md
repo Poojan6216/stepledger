@@ -8,7 +8,7 @@ External Storage ships with one driver, S3, which stores one object per distinct
 SHA-256 (`contrib/aws/s3driver/_driver.py`). For workflows whose payloads are successive,
 slightly longer copies of one growing value (LangGraph agents are the common case: the plugin
 sends each node's whole state as its Activity input), that makes storage grow with the square of
-the run, even though history is fixed.
+the run, even though history is bounded.
 
 I measured this on a local dev server (temporalio 1.33.0, langgraph 1.2.12) with a LangGraph agent
 adding 60 KiB of tool output per node, External Storage at a 64 KiB threshold:
@@ -21,7 +21,7 @@ adding 60 KiB of tool output per node, External Storage at a 64 KiB threshold:
 (`bench/results/growth.json` in the linked repository; at 80 nodes x 100 KiB it is 343 MB against
 12.2 MB.)
 
-The driver I used for the right-hand column:
+The driver I used for the right-hand column (one run per cell):
 
 - splits each payload with FastCDC (4 / 16 / 64 KiB), stores each chunk once in Postgres, keeps a
   manifest per claim (`claim = sha256(serialized payload)`, the same claim shape as the S3 driver);

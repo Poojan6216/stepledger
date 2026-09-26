@@ -80,3 +80,6 @@ CREATE TABLE IF NOT EXISTS sl_payload_refs (           -- who may still need a c
 CREATE INDEX IF NOT EXISTS sl_payload_refs_wf ON sl_payload_refs (namespace, workflow_id);
 -- GC asks "does any manifest still list this chunk?" per chunk; GIN answers without a scan.
 CREATE INDEX IF NOT EXISTS sl_payloads_chunks ON sl_payloads USING gin (chunks);
+-- GC scans candidates by age; without these every sweep batch reads the whole table.
+CREATE INDEX IF NOT EXISTS sl_chunks_last_ref ON sl_chunks (last_ref_at);
+CREATE INDEX IF NOT EXISTS sl_payloads_last_ref ON sl_payloads (last_ref_at);

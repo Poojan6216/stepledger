@@ -46,7 +46,14 @@ run could never read the resolution.
 
 This is at-least-once delivery with dedupe, not exactly-once. An effect whose tool ignores the key
 can still repeat if the worker dies between the call and the `DONE` write; that is the case that
-goes to `reconcile` or to a person. `once()` covers retries within one run; a `workflow reset`
+goes to `reconcile` or to a person.
+
+An exception raised by the tool looks the same as a crash: the effect might have happened, so the
+retry does not call again and the outcome goes to `reconcile` or a person. When a failure proves
+nothing was sent (a validation error, say), name its type: `once(..., not_sent=(BadRequest,))`
+releases the claim so the retry calls the tool again. The wait for a person relies on the node's
+retry policy allowing it: a `maximum_attempts` or `schedule_to_close_timeout` on the node ends the
+run before `stepledger resolve` can act. `once()` covers retries within one run; a `workflow reset`
 creates a new run ID and so new keys, and only the tool's own upstream key can dedupe across it.
 Results are stored as JSON, so the function must return a JSON-serializable value.
 
@@ -68,7 +75,8 @@ does the same for raw SDK clients.
 
 It is opt-in per node, because a team may want a fresh answer when the failure was the answer.
 The journal only forwards and caches; nothing in Stepledger's control path calls a model or
-inspects a response (a test enforces this).
+inspects a response (a test enforces this). Inside a tracked node the wrapper must be called
+asynchronously (`ainvoke`); a synchronous node cannot use it.
 
 ## The cost meter
 
@@ -90,5 +98,7 @@ prices:
 
 The defaults are Anthropic's published first-party rates, checked on 2026-09-26 against
 https://platform.claude.com/docs/en/about-claude/pricing. Prices change; set them for the models
-you use. A call to a model with no configured price is counted in tokens and its cost is left
-empty rather than guessed.
+you use. A key matches the model id a provider reports exactly or as a prefix (`claude-haiku-4-5`
+also prices `claude-haiku-4-5-20251001`). A call to a model with no configured price is counted
+in tokens and its cost is left empty rather than guessed. Only the fake model has been metered in
+this repository; check one real response's `response_metadata` against your keys.

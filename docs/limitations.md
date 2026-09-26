@@ -16,6 +16,20 @@ is in `RESULTS.md` under "What beats it".
   the live run by up to one node. `PROVISIONAL` rows are visible at once.
 - **The fence assumes one cluster's clock.** It relies on the server's schedule time moving
   forward per Activity. Multi-cluster replication and failover are out of scope.
+- **`reconcile` assumes `TRY_CANCEL`.** History does not record an Activity's cancellation type.
+  Under the default `TRY_CANCEL`, a completion after a cancel request never reaches the workflow
+  and `reconcile` abandons it; under `WAIT_CANCELLATION_COMPLETED` it does reach the workflow, and
+  under `ABANDON` no cancel request is recorded at all. Pass `--cancellation-type` if your nodes
+  use another type. One case no history reading can settle: two parallel nodes where one fails and
+  the other completes in the same workflow task; LangGraph cancels the completed one and the
+  workflow never uses its result, but history shows only a completion. The live path abandons it
+  correctly; `reconcile` on a run terminated at that moment would commit it.
+- **`reconcile` leaves running runs alone** unless `--include-open`, because the workflow is
+  writing the same rows; repairing a live run races its own commits.
+- **Tracked Activities started from signal or update handlers** after the main workflow function
+  returned are outside the seal's accounting: the seal abandons their rows.
+- **Warn mode covers node writes and the seal, not effects or the journal.** `once()` and the LLM
+  journal fail their node when Postgres is unreachable, by design.
 - **Warn mode trades correctness for availability.** With `on_ledger_error="warn"` a node can
   complete without its row during a database outage; the run is marked degraded and
   `stepledger reconcile` repairs it from history afterwards.
@@ -52,8 +66,13 @@ is in `RESULTS.md` under "What beats it".
   `ActivityInput`/`ActivityOutput` and its task-cache context variable, and LangGraph's
   `task_path_str` and `MISSING`. An SDK release that moves one of them fails that test before it
   fails at runtime; the dependency ranges in `pyproject.toml` are the tested ones.
-- **Interceptor modules run inside the workflow sandbox.** They are pure (no I/O, no clock), so
-  this is a small per-workflow import cost, not a correctness issue.
+- **Interceptor classes are handed to the sandbox by reference.** The SDK re-imports only the
+  workflow class inside the sandbox; `LedgerInbound` is the out-of-sandbox class object and does
+  no I/O. Do not import `stepledger` from workflow code.
+- **An existing External Storage on the client is not composed with.** The plugin raises rather
+  than replace it; pass `external_storage=False` to keep yours.
+- **Removing the plugin, or turning `seal` off, is not covered by `workflow.patched`** for runs
+  that already recorded the patch marker; drain them first (see how-it-works.md).
 
 ## Effects
 
@@ -73,6 +92,9 @@ running.
 
 ## Scope
 
-A research prototype: Postgres; LangGraph Graph API and Functional API through Temporal's plugin;
-one demo agent in the bench. LangGraph `Store` is not supported inside Activities by the plugin
-itself.
+A research prototype (PyPI classifier: Alpha): Postgres only; LangGraph's Graph API through
+Temporal's plugin. Functional API tasks get ledger rows but are untested, and `materialize()`
+does not apply to them. Subgraphs and `Send` fan-out are untested; `materialize()` folds the
+top-level graph's channels only. One demo agent in the bench. Every number was measured on one
+macOS laptop against the dev server (SQLite persistence) and a local Postgres; Temporal Cloud is
+untested. LangGraph `Store` is not supported inside Activities by the plugin itself.

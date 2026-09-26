@@ -17,6 +17,7 @@ from typing import Any, Literal
 import psycopg
 import psycopg_pool
 from temporalio import activity
+from temporalio.exceptions import ApplicationError
 from temporalio.worker import ActivityInboundInterceptor, ExecuteActivityInput
 
 from stepledger import headers
@@ -78,7 +79,17 @@ class LedgerActivityInbound(ActivityInboundInterceptor):
         self._opts = options
 
     async def execute_activity(self, input: ExecuteActivityInput) -> Any:
-        seq, commits, abandons = headers.decode(input.headers)
+        try:
+            seq, commits, abandons = headers.decode(input.headers)
+        except ValueError as e:
+            # WORKFLOW_ONLY_CODEC encodes headers on the workflow side but never decodes them on
+            # the activity side; retrying would never help.
+            raise ApplicationError(
+                f"stepledger: cannot read its headers ({e}); use HeaderCodecBehavior.CODEC or"
+                " NO_CODEC on the client",
+                type="StepledgerHeaderError",
+                non_retryable=True,
+            ) from e
         if seq is None:
             return await self.next.execute_activity(input)
 
@@ -113,6 +124,7 @@ class LedgerActivityInbound(ActivityInboundInterceptor):
         try:
             t0 = time.perf_counter()
             async with self._store.tx() as tx:
+                await tx.lock_seqs(key.run, [seq, *commits, *abandons])
                 r = await tx.fenced_upsert(key, fence, write)
                 await tx.commit(key.run, commits)
                 await tx.abandon(key.run, abandons)

@@ -25,7 +25,7 @@ from temporalio.converter import (
 )
 
 from stepledger.storage.backends import ChunkBackend, IntegrityError, Manifest, PayloadRef
-from stepledger.storage.chunking import chunk, chunk_id
+from stepledger.storage.chunking import AVG_SIZE, MAX_SIZE, MIN_SIZE, chunk, chunk_id
 
 PLAINTEXT_ENCODINGS = frozenset({"json/plain", "json/protobuf", "binary/plain"})
 DRIVER_TYPE = "stepledger.dedup"
@@ -50,11 +50,13 @@ class DedupStorageDriver(StorageDriver):
         name: str = "stepledger.dedup",
         dedupe: bool = True,
         max_payload_size: int = 256 * 1024 * 1024,
+        chunk_sizes: tuple[int, int, int] = (MIN_SIZE, AVG_SIZE, MAX_SIZE),
     ) -> None:
         self.backend = backend
         self._name = name
         self.dedupe = dedupe
         self.max_payload_size = max_payload_size
+        self.chunk_sizes = chunk_sizes  # (min, avg, max) bytes for FastCDC
         self.metrics = DriverMetrics()
 
     def name(self) -> str:
@@ -85,7 +87,11 @@ class DedupStorageDriver(StorageDriver):
                 plaintext = encoding in PLAINTEXT_ENCODINGS
                 if not plaintext:
                     self.metrics.opaque_payloads += 1
-                parts = chunk(data) if (self.dedupe and plaintext) else [data]
+                if self.dedupe and plaintext:
+                    lo, avg, hi = self.chunk_sizes
+                    parts = chunk(data, min_size=lo, avg_size=avg, max_size=hi)
+                else:
+                    parts = [data]
                 ids = [chunk_id(c) for c in parts]
                 manifest = Manifest(claim, ids, len(data), encoding, self.dedupe and plaintext)
                 new = await self.backend.put(dict(zip(ids, parts, strict=True)), manifest, ref)

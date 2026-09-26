@@ -7,8 +7,13 @@
 
 `last_ref_at` on manifests and chunks is bumped by every store that uses them; the sweep only
 deletes what no reference needs *and* no store touched within a grace window, which closes the
-race with a concurrent store. Chunk rows are always locked in hash order, so concurrent stores
-that share chunks cannot deadlock.
+race with a concurrent store.
+
+Locking: before touching any row, a store takes transaction-scoped advisory locks on every
+chunk hash and on the claim it will use, in one sorted pass. Two stores that share a chunk or a
+claim therefore serialize before either holds a row lock, so concurrent near-identical stores
+(the normal case for an accumulating agent) cannot deadlock. The sweep never waits for a lock
+(`FOR UPDATE SKIP LOCKED`), so it cannot take part in a cycle either.
 """
 
 from __future__ import annotations
@@ -17,7 +22,7 @@ import asyncio
 import hashlib
 import json
 import os
-from collections.abc import Mapping, Sequence
+from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Protocol
@@ -72,6 +77,10 @@ class IntegrityError(Exception):
     """A retrieved payload does not hash to its claim. Never returned as data."""
 
 
+class MissingPayloadError(IntegrityError):
+    """No manifest for the claim: it was never stored here, or garbage collection removed it."""
+
+
 class PostgresChunkBackend:
     def __init__(self, dsn: str, *, max_size: int = 10) -> None:
         self.dsn = dsn
@@ -104,14 +113,20 @@ class PostgresChunkBackend:
     async def touch(self, claim: str, ref: PayloadRef) -> bool:
         pool = await self._open()
         async with pool.connection() as conn, conn.transaction():
-            cur = await conn.execute(
-                "UPDATE sl_payloads SET last_ref_at = now() WHERE claim = %s RETURNING chunks",
-                (claim,),
-            )
+            cur = await conn.execute("SELECT chunks FROM sl_payloads WHERE claim = %s", (claim,))
             row = await cur.fetchone()
             if row is None:
                 return False
-            await _bump_chunks(conn, sorted(set(row[0])))
+            chunk_ids = sorted({bytes(h) for h in row[0]})  # manifests never change
+            await _advisory_lock(conn, _lock_keys(claim, chunk_ids))
+            cur = await conn.execute(
+                "UPDATE sl_payloads SET last_ref_at = now() WHERE claim = %s RETURNING 1", (claim,)
+            )
+            if await cur.fetchone() is None:
+                return False  # swept between the read and the lock: store it again
+            await conn.execute(
+                "UPDATE sl_chunks SET last_ref_at = now() WHERE hash = ANY(%s)", (chunk_ids,)
+            )
             await _upsert_ref(conn, claim, ref)
             return True
 
@@ -119,18 +134,21 @@ class PostgresChunkBackend:
         pool = await self._open()
         hashes = sorted(chunks)
         async with pool.connection() as conn, conn.transaction():
-            # Lock existing chunks in hash order and bump them; only ship the missing bytes.
-            existing = set(await _bump_chunks(conn, hashes))
-            missing = [h for h in hashes if h not in existing]
+            await _advisory_lock(conn, _lock_keys(manifest.claim, hashes))
+            cur = await conn.execute(
+                "UPDATE sl_chunks SET last_ref_at = now() WHERE hash = ANY(%s) RETURNING hash",
+                (hashes,),
+            )
+            existing = {bytes(r[0]) for r in await cur.fetchall()}
+            missing = [h for h in hashes if h not in existing]  # only these bytes are shipped
             new_bytes = 0
             if missing:
                 cur = await conn.execute(
                     "INSERT INTO sl_chunks (hash, data, size)"
                     " SELECT h, d, length(d) FROM unnest(%s::bytea[], %s::bytea[]) AS u(h, d)"
-                    " ORDER BY h"
                     " ON CONFLICT (hash) DO UPDATE SET last_ref_at = now()"
                     " RETURNING (xmax = 0), size",
-                    ([h for h in missing], [chunks[h] for h in missing]),
+                    (missing, [chunks[h] for h in missing]),
                 )
                 new_bytes = sum(size for inserted, size in await cur.fetchall() if inserted)
             await conn.execute(
@@ -157,7 +175,7 @@ class PostgresChunkBackend:
             )
             row = await cur.fetchone()
             if row is None:
-                raise KeyError(f"no stored payload for claim {claim}")
+                raise MissingPayloadError(f"no stored payload for claim {claim}")
             ids, size, encoding, deduped = row
             cur = await conn.execute(
                 "SELECT u.i, c.data FROM unnest(%s::bytea[]) WITH ORDINALITY AS u(h, i)"
@@ -173,16 +191,21 @@ class PostgresChunkBackend:
         return Manifest(claim, list(ids), size, encoding, deduped), parts
 
 
-async def _bump_chunks(conn: Any, hashes: Sequence[bytes]) -> list[bytes]:
-    if not hashes:
-        return []
-    cur = await conn.execute(
-        "UPDATE sl_chunks SET last_ref_at = now() WHERE hash IN ("
-        " SELECT hash FROM sl_chunks WHERE hash = ANY(%s) ORDER BY hash FOR UPDATE)"
-        " RETURNING hash",
-        (list(hashes),),
-    )
-    return [bytes(r[0]) for r in await cur.fetchall()]
+def _lock_keys(claim: str | None, hashes: Iterable[bytes]) -> list[int]:
+    """Sorted advisory-lock keys: the first 8 bytes of each chunk hash and of the claim."""
+    keys = {int.from_bytes(h[:8], "big", signed=True) for h in hashes}
+    if claim is not None:
+        keys.add(int.from_bytes(bytes.fromhex(claim[:16]), "big", signed=True))
+    return sorted(keys)
+
+
+async def _advisory_lock(conn: Any, keys: Sequence[int]) -> None:
+    if keys:
+        await conn.execute(
+            "SELECT pg_advisory_xact_lock(k) FROM"
+            " (SELECT k FROM unnest(%s::bigint[]) AS k ORDER BY k) AS ordered",
+            (list(keys),),
+        )
 
 
 async def _upsert_ref(conn: Any, claim: str, ref: PayloadRef) -> None:

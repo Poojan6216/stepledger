@@ -38,7 +38,7 @@ class Usage:
         self.calls += 1
         self.tokens_in += tokens_in
         self.tokens_out += tokens_out
-        price = prices.get(model or "")
+        price = price_for(model, prices)
         if price is None:
             self.unpriced_models.add(model or "?")
             return
@@ -52,6 +52,17 @@ class Usage:
         return None if self.unpriced_models else self.cost_usd
 
 
+def price_for(model: str | None, prices: Mapping[str, Any]) -> Any:
+    """Exact key, else the longest configured key that is a prefix of the reported model id
+    (providers report versioned ids such as `claude-haiku-4-5-20251001`)."""
+    if not model:
+        return None
+    if model in prices:
+        return prices[model]
+    candidates = [k for k in prices if model.startswith(k)]
+    return prices[max(candidates, key=len)] if candidates else None
+
+
 def _field(price: Any, name: str) -> float:
     return float(price[name] if isinstance(price, Mapping) else getattr(price, name))
 
@@ -62,6 +73,8 @@ def model_name(message: Any, llm_output: Mapping[str, Any] | None = None) -> str
 
 
 class _UsageHandler(BaseCallbackHandler):
+    run_inline = True  # on the calling thread: Usage is not thread-safe
+
     def __init__(self, usage: Usage, prices: Mapping[str, Any]) -> None:
         self.usage = usage
         self.prices = prices
@@ -112,3 +125,20 @@ def record(model: str | None, tokens_in: int, tokens_out: int, *, replayed: bool
         handler.usage.replays += 1
     else:
         handler.usage.add(model, tokens_in, tokens_out, handler.prices)
+
+
+async def retry_waste(store: Any, namespace: str, workflow_id: str, run_id: str) -> dict[str, Any]:
+    """Tokens and dollars spent by attempts that were not the accepted attempt (the
+    `sl_retry_waste` view summed over the run)."""
+    async with store.read() as conn:
+        cur = await conn.execute(
+            "SELECT coalesce(sum(wasted_attempts), 0), coalesce(sum(wasted_tokens), 0),"
+            " sum(wasted_cost_usd) FROM sl_retry_waste"
+            " WHERE namespace = %s AND workflow_id = %s AND run_id = %s",
+            (namespace, workflow_id, run_id),
+        )
+        attempts, tokens, cost = await cur.fetchone() or (0, 0, None)
+    return {"wasted_attempts": int(attempts), "wasted_tokens": int(tokens), "wasted_cost_usd": cost}
+
+
+CostMeter.retry_waste = staticmethod(retry_waste)  # type: ignore[attr-defined]

@@ -93,6 +93,24 @@ If a fact below changes in a later SDK, the test named next to it fails.
 | `MISSING` sentinel for `channel.from_checkpoint(MISSING)`. Private module. | `langgraph/_internal/_typing.py:45` |
 | Channels: `from_checkpoint(checkpoint)`, `update(values)`, `get()`, `checkpoint()`. | `langgraph/channels/base.py:49-90` |
 
+## Enforced in the Rust core (not vendored)
+
+The local `start_to_close_timeout` enforcement that keys-and-fencing.md relies on (the core
+cancels a timed-out attempt with `ActivityCancelReason.TIMED_OUT`, `bridge/proto/activity_task`)
+lives in `sdk-core`, which this tree does not include; `temporalio/activity.py:173-194`
+(`ActivityCancellationDetails.timed_out`) is the Python side of it. It was confirmed empirically by
+the chaos harness (an async attempt that honors cancellation never wrote late), not by reading
+the core.
+
+## Private symbols in use
+
+All in `src/stepledger/_compat.py`, pinned by `tests/unit/test_compat.py`:
+`temporalio.activity._Definition` (activity names), `temporalio.contrib.langgraph._activity.
+ActivityInput/ActivityOutput`, `temporalio.contrib.langgraph._task_cache.get_task_cache`,
+`langgraph._internal._typing.MISSING`, `langgraph.pregel._algo.task_path_str`. The plugin also
+reads `LangGraphPlugin.activities` (a public attribute without a documented contract) and the
+`__pregel_task_id` configurable key. The tested versions are exactly the ones in `uv.lock`.
+
 ## Differences from the build spec
 
 - Heartbeat payloads target the Activity, not the workflow (`worker/_activity.py:263-271`). The spec lists only workflow targets. Refs from heartbeats are stored with `workflow_id=''` and expire by `orphan_ref_days`.

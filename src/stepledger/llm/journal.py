@@ -14,6 +14,8 @@ This module only forwards and caches; it never inspects or decides anything abou
 
 from __future__ import annotations
 
+import hashlib
+import json
 from collections.abc import Awaitable, Callable
 from typing import Any
 
@@ -31,8 +33,26 @@ from stepledger.ledger.context import current_node
 from stepledger.llm.meter import REPLAYED, model_name, record
 
 
+def _message_for_hash(m: BaseMessage) -> dict[str, Any]:
+    """The message as sent, minus what only the journal itself adds: LangChain assigns ids to
+    replies and the replay flag rides in response_metadata. Hashing those would make a second
+    call whose context contains a replayed reply look like a new request."""
+    d = message_to_dict(m)
+    data = d.get("data")
+    if isinstance(data, dict):
+        data.pop("id", None)
+        meta = data.get("response_metadata")
+        if isinstance(meta, dict):
+            meta.pop(REPLAYED, None)
+    return d
+
+
 def request_hash(messages: list[BaseMessage], params: dict[str, Any]) -> str:
-    return chash({"messages": [message_to_dict(m) for m in messages], "params": params})
+    payload = {"messages": [_message_for_hash(m) for m in messages], "params": params}
+    # tolerant of provider objects in params: repr() them rather than fail the node
+    return hashlib.sha256(
+        json.dumps(payload, sort_keys=True, separators=(",", ":"), default=repr).encode()
+    ).hexdigest()
 
 
 async def _lookup(key: str) -> dict[str, Any] | None:

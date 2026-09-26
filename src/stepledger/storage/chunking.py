@@ -15,13 +15,15 @@ AVG_SIZE = 16 * 1024
 MAX_SIZE = 64 * 1024
 
 
-def chunk(data: bytes) -> list[bytes]:
+def chunk(
+    data: bytes, *, min_size: int = MIN_SIZE, avg_size: int = AVG_SIZE, max_size: int = MAX_SIZE
+) -> list[bytes]:
     if not data:
         return [b""]
     return [
         bytes(c.data)
         for c in fastcdc.fastcdc(
-            data, min_size=MIN_SIZE, avg_size=AVG_SIZE, max_size=MAX_SIZE, fat=True
+            data, min_size=min_size, avg_size=avg_size, max_size=max_size, fat=True
         )
     ]
 

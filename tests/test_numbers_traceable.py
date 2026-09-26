@@ -35,3 +35,26 @@ def test_measured_number_passes(tmp_path: Path) -> None:
 def test_code_and_links_are_not_claims() -> None:
     text = "Run `sleep 30` or see [x](https://a/b/42).\n```\nfoo = 99\n```\nv<sup>2</sup>"
     assert readme_numbers(text) == []
+
+
+def test_summary_derivations_match_the_raw_results() -> None:
+    """bench/results/summary.json is written by bench/report.py; a derivation bug there would
+    self-certify, so the two headline ratios are recomputed here from the raw files."""
+    summary = json.loads((RESULTS / "summary.json").read_text())["summary"]
+    growth = json.loads((RESULTS / "growth.json").read_text())["rows"]
+
+    def one(cfg: str, kb: int, nodes: int) -> dict[str, float]:
+        return next(
+            r
+            for r in growth
+            if r["config"] == cfg and r["kb_per_node"] == kb and r["nodes"] == nodes
+        )
+
+    ratio = (
+        one("B3", 100, 80)["store_whole_blob_bytes"]
+        / one("B4", 100, 80)["store_unique_chunk_bytes"]
+    )
+    assert summary["store_ratio_whole_blob_over_dedup"]["100KiB_80nodes"] == round(ratio, 1)
+    cost = {m["mode"]: m for m in json.loads((RESULTS / "cost.json").read_text())["modes"]}
+    cut = round((1 - cost["journal"]["wasted_usd"] / cost["no-journal"]["wasted_usd"]) * 100)
+    assert summary["retry_waste_cut_percent"] == cut

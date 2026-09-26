@@ -1,7 +1,8 @@
 """Every private Temporal SDK or LangGraph symbol Stepledger uses, in one place (Hard Rule 5, D2).
 
-Pinned against temporalio 1.33.x and langgraph 1.2.x. tests/unit/test_compat.py fails loudly if
-an upgrade moves or changes any of them. Nothing else in the package imports a private module.
+Pinned against temporalio 1.33.x and langgraph 1.2.x (the ranges in pyproject.toml).
+tests/unit/test_compat.py fails loudly if an upgrade moves or changes any of them. Nothing else in
+the package imports a private module.
 """
 
 from __future__ import annotations

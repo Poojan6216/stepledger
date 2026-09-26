@@ -7,6 +7,7 @@ import dataclasses
 from collections.abc import AsyncIterator, Mapping
 from contextlib import asynccontextmanager
 from datetime import timedelta
+from pathlib import Path
 from typing import Any, Literal
 
 import temporalio.worker
@@ -86,9 +87,20 @@ class StepledgerPlugin(SimplePlugin):
         seal_timeout: timedelta = timedelta(seconds=30),
         dedupe: bool = True,
         prices: Mapping[str, Any] | None = None,
+        chunk_sizes: tuple[int, int, int] | None = None,
     ) -> None:
         if prices is None:
             prices = {k: v.model_dump() for k, v in load_settings().prices.items()}
+        self.options = {
+            "external_storage": external_storage,
+            "payload_size_threshold": payload_size_threshold,
+            "store_outputs": store_outputs,
+            "on_ledger_error": on_ledger_error,
+            "snapshot_first_input": snapshot_first_input,
+            "seal": seal,
+            "dedupe": dedupe,
+            "chunk_sizes": chunk_sizes,
+        }
         self.store = LedgerStore(dsn)
         self.dsn = dsn
         self.tracked = plugin_activity_names(langgraph)
@@ -112,18 +124,56 @@ class StepledgerPlugin(SimplePlugin):
             from stepledger.storage import make_external_storage
 
             self.storage_driver, ext = make_external_storage(
-                dsn, dedupe=dedupe, payload_size_threshold=payload_size_threshold
+                dsn,
+                dedupe=dedupe,
+                payload_size_threshold=payload_size_threshold,
+                chunk_sizes=chunk_sizes,
             )
 
             def converter(existing: DataConverter | None) -> DataConverter:
-                return dataclasses.replace(existing or DataConverter.default, external_storage=ext)
+                base = existing or DataConverter.default
+                if base.external_storage is not None:
+                    raise ValueError(
+                        "the client's data converter already has External Storage configured;"
+                        " Stepledger will not replace it (in-flight histories would become"
+                        " unreadable). Pass external_storage=False to StepledgerPlugin to keep"
+                        " the existing driver, or remove it to use Stepledger's."
+                    )
+                return dataclasses.replace(base, external_storage=ext)
 
         super().__init__(
             "stepledger.StepledgerPlugin",
             data_converter=converter,
             interceptors=[self.interceptor],
-            activities=[SealActivity(self.store).seal],
+            activities=[SealActivity(self.store, on_ledger_error).seal],
             run_context=self._run_context,
+        )
+
+    @classmethod
+    def from_config(
+        cls,
+        *,
+        langgraph: Any,
+        path: str | Path | None = None,
+        seal: bool = True,
+        seal_timeout: timedelta = timedelta(seconds=30),
+    ) -> StepledgerPlugin:
+        """Build the plugin from `stepledger.yaml` (or `path`, or `$STEPLEDGER_CONFIG`) with
+        environment variables (`STEPLEDGER_DSN`, ...) overriding the file."""
+        cfg = load_settings(path)
+        return cls(
+            cfg.dsn,
+            langgraph=langgraph,
+            external_storage=cfg.storage.enabled,
+            payload_size_threshold=cfg.storage.payload_size_threshold,
+            store_outputs=cfg.ledger.store_outputs,
+            on_ledger_error=cfg.ledger.on_ledger_error,
+            snapshot_first_input=cfg.ledger.snapshot_first_input,
+            seal=seal,
+            seal_timeout=seal_timeout,
+            dedupe=cfg.storage.dedupe,
+            prices={k: v.model_dump() for k, v in cfg.prices.items()},
+            chunk_sizes=(cfg.storage.chunk.min, cfg.storage.chunk.avg, cfg.storage.chunk.max),
         )
 
     @asynccontextmanager

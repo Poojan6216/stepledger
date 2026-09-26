@@ -11,7 +11,7 @@ What it shows:
 
 1. **Why the run fails.** The plugin sends each node's whole state as its Activity input, and
    history records every input, so history grows with the square of the run. The sample's README
-   explains the two walls (a single payload over 2 MB, or history over 50 MB) and that the Python
+   explains the two walls (a single payload over 2 MiB, or history over 50 MiB) and that the Python
    SDK's default reports an oversized payload as a retrying workflow task failure
    (`PAYLOADS_TOO_LARGE`) rather than a terminated run.
 2. **External Storage** configured on the client's data converter, so node inputs and results

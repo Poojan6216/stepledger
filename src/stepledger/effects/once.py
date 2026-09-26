@@ -24,10 +24,13 @@ worker dies between the call and the DONE write, which is why that case stops fo
 
 from __future__ import annotations
 
+import asyncio
 from collections.abc import Awaitable, Callable
 from datetime import timedelta
 from typing import Any, TypeVar
 
+import psycopg
+import psycopg_pool
 from psycopg.types.json import Jsonb
 
 from stepledger._hooks import fault
@@ -55,7 +58,12 @@ async def once(
     *,
     request: Any,
     reconcile: Callable[[str], Awaitable[T | None]] | None = None,
+    not_sent: tuple[type[BaseException], ...] = (),
 ) -> T:
+    """`not_sent` names exception types from `fn` that prove the effect did not happen (a 4xx
+    validation error, say). Such a failure releases the claim so a retry calls `fn` again;
+    any other exception leaves the outcome unknown, exactly like a crash, because it might
+    have happened."""
     node = current_node()
     if node is None:
         raise NotInTrackedNode("once() must be called inside a node Activity tracked by Stepledger")
@@ -72,11 +80,20 @@ async def once(
         )
         row = await cur.fetchone()
         if row is None:
-            await tx.conn.execute(
+            cur = await tx.conn.execute(
                 "INSERT INTO sl_effects (key, namespace, workflow_id, run_id, seq, name, idx,"
-                " request_hash, status) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, 'STARTED')",
+                " request_hash, status) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, 'STARTED')"
+                " ON CONFLICT (key) DO NOTHING RETURNING key",
                 (key, k.namespace, k.workflow_id, k.run_id, k.seq, name, idx, request_hash),
             )
+            if await cur.fetchone() is None:  # a concurrent attempt claimed it first
+                cur = await tx.conn.execute(
+                    "SELECT status, request_hash, result, resolution FROM sl_effects"
+                    " WHERE key = %s FOR UPDATE",
+                    (key,),
+                )
+                row = await cur.fetchone()
+        if row is None:
             claimed = True
         else:
             status, stored_hash, result, resolution = row
@@ -89,7 +106,7 @@ async def once(
                     (key,),
                 )
                 return result  # type: ignore[no-any-return]
-            if status == "RESOLVED" and resolution == "not-done":
+            if status == "RESOLVED" and resolution in ("not-done", "not-sent"):
                 await tx.conn.execute(
                     "UPDATE sl_effects SET status = 'STARTED', attempts = attempts + 1,"
                     " resolution = NULL WHERE key = %s",
@@ -100,7 +117,11 @@ async def once(
                 claimed = False  # STARTED or UNKNOWN: an earlier attempt's outcome is unknown
 
     if claimed:
-        result = await fn(key)
+        try:
+            result = await fn(key)
+        except not_sent:
+            await _release(node.store, key)  # provably not sent: the retry may call again
+            raise
         await fault("FE", effect=name)  # chaos only: a crash between the call and its record
         await _done(node.store, key, result)
         return result
@@ -124,11 +145,29 @@ async def once(
 
 
 async def _done(store: Any, key: str, result: Any, resolution: str | None = None) -> None:
+    """Record the result. The effect has happened by now, so a transient database error here
+    is retried briefly rather than turning a finished effect into an UNKNOWN one."""
+    for attempt in range(4):
+        try:
+            async with store.tx() as tx:
+                await tx.conn.execute(
+                    "UPDATE sl_effects SET status = 'DONE', result = %s, done_at = now(),"
+                    " resolution = coalesce(%s, resolution) WHERE key = %s AND status <> 'DONE'",
+                    (Jsonb(result), resolution, key),
+                )
+            return
+        except (psycopg.Error, psycopg_pool.PoolTimeout, OSError):
+            if attempt == 3:
+                raise
+            await asyncio.sleep(0.2 * (attempt + 1))
+
+
+async def _release(store: Any, key: str) -> None:
     async with store.tx() as tx:
         await tx.conn.execute(
-            "UPDATE sl_effects SET status = 'DONE', result = %s, done_at = now(),"
-            " resolution = coalesce(%s, resolution) WHERE key = %s",
-            (Jsonb(result), resolution, key),
+            "UPDATE sl_effects SET status = 'RESOLVED', resolution = 'not-sent'"
+            " WHERE key = %s AND status = 'STARTED'",
+            (key,),
         )
 
 

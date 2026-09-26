@@ -45,6 +45,7 @@ def gather() -> dict[str, Any]:
             "threshold",
             "outage",
             "attacks",
+            "ledger_sample",
         )
     }
     g = d["growth"]["rows"]
@@ -81,8 +82,8 @@ def gather() -> dict[str, Any]:
             for r in d["cliff"]["rows"]
             if r["payload_check"] == "sdk_default"
         },
-        "cliff_largest_payload_kb": {
-            r["config"]: round(r["largest_payload_bytes"] / 1000, 1)
+        "cliff_largest_payload_kib": {
+            r["config"]: round(r["largest_payload_bytes"] / 1024, 1)
             for r in d["cliff"]["rows"]
             if r["payload_check"] == "sdk_default"
         },
@@ -145,6 +146,7 @@ def cliff_table(d: dict[str, Any]) -> str:
                 cell(a),
                 cell(b),
                 f"{a['largest_payload_bytes']:,}",
+                f"{a['rejected_payload_bytes']:,}" if a.get("rejected_payload_bytes") else "",
                 mib(a["history_size_bytes"]),
                 a["history_events"],
             ]
@@ -155,7 +157,8 @@ def cliff_table(d: dict[str, Any]) -> str:
             "nodes",
             "SDK default",
             "payload check disabled",
-            "largest payload (bytes)",
+            "largest payload in history (bytes)",
+            "rejected payload (bytes)",
             "history (MiB)",
             "events",
         ],
@@ -322,9 +325,15 @@ def build_results(d: dict[str, Any]) -> str:
         hist,
         "",
         "Stored bytes per run in MB, whole-blob (B3, one object per payload like the S3 driver) / "
-        "dedup chunks (B4):",
+        "dedup chunks (B4). Both are logical payload bytes; the B4 figure is chunk bytes only and "
+        "excludes manifests (32 bytes per chunk per payload) and reference rows, under 2% here. One "
+        "run per cell; the bytes are seeded and deterministic.",
         "",
         store,
+        "",
+        "The B4 history column is not monotonic in output size: at 60 KiB per node each node's 61 KiB "
+        "output sits just under the 64 KiB threshold and stays in history, so history grows faster "
+        "there than at 100 KiB, where the outputs are externalized too.",
         "",
         "![history](bench/plots/history-light.png)",
         "",
@@ -371,13 +380,16 @@ def build_results(d: dict[str, Any]) -> str:
         "",
         "## Overhead",
         "",
-        f"30-node agent, {ov['runs_per_config']} runs each: ledger write p50 "
-        f"{ov['ledger_write_ms_p50']} ms, p95 {ov['ledger_write_ms_p95']} ms; median wall clock "
-        f"{ov['wall_s_without_plugin']['median']} s without the plugin, "
-        f"{ov['wall_s_with_plugin']['median']} s with it ({ov['wall_overhead_per_node_ms']} ms per "
-        "node). `uv run python -m bench.overhead --runs 10`",
+        f"30-node agent, 1 KiB per node, storage driver off, {ov['runs_per_config']} runs each on the "
+        f"local dev server: ledger write p50 {ov['ledger_write_ms_p50']} ms, p95 "
+        f"{ov['ledger_write_ms_p95']} ms; median wall clock {ov['wall_s_without_plugin']['median']} s "
+        f"without the plugin, {ov['wall_s_with_plugin']['median']} s with it "
+        f"({ov['wall_overhead_per_node_ms']} ms per node). With the storage driver on (threshold "
+        "sweep, 60 KiB nodes) the ledger write p95 is "
+        + ", ".join(f"{v['ledger_write_ms_p95']} ms at {k} KiB" for k, v in th.items())
+        + "; that sweep has no without-plugin baseline. `uv run python -m bench.overhead --runs 10`",
         "",
-        "History bytes the plugin adds (Hard Rule 11: constant per node): "
+        "History bytes the plugin adds (one run per size, storage driver off): "
         + ", ".join(f"{r['plugin_bytes']:,} at {r['nodes']} nodes" for r in ho["rows"])
         + f"; marginal bytes per node {ho['marginal_plugin_bytes_per_node']}. "
         "`uv run python -m bench.history_overhead`",
@@ -406,8 +418,12 @@ def build_results(d: dict[str, Any]) -> str:
             ],
         ),
         "",
-        "64 KiB stays the default: 256 KiB is worse on history size and largest payload. "
-        "`uv run python -m bench.threshold_sweep`",
+        "The trade in this table: 16 KiB cuts history about 43x and the largest history payload about "
+        "50x against 64 KiB, for about 38% more stored chunk bytes and twice the storage round trips; "
+        "256 KiB is worse than 64 KiB on history and largest payload and saves under 1% of storage. "
+        "The default stays at the design's 64 KiB (the rule was to move only if 256 KiB won on every "
+        "metric); an agent whose node outputs sit just under 64 KiB, like this one, should set 16 KiB. "
+        "Wall-clock differences here are within run-to-run noise. `uv run python -m bench.threshold_sweep`",
         "",
         "## Ledger outage",
         "",
@@ -415,7 +431,11 @@ def build_results(d: dict[str, Any]) -> str:
         f"{d['outage']['nodes']}-node run. Fail mode: the run stalled and completed in "
         f"{fail['run_wall_clock_s']} s, counters {fail['counters_before_reconcile']}. Warn mode: "
         f"completed in {warn['run_wall_clock_s']} s, degraded, missing {warn['missing_seqs']}; "
-        f"after reconcile {warn['counters_after_reconcile']}. `uv run python -m bench.outage`",
+        f"completed in {warn['run_wall_clock_s']} s, degraded, seqs {warn['missing_seqs']} missing and "
+        f"seq {warn['reconcile']['committed']} left PROVISIONAL (its commit rode on a write that failed); "
+        f"reconcile inserted {len(warn['reconcile']['inserted'])} rows and committed "
+        f"{len(warn['reconcile']['committed'])}: {warn['counters_after_reconcile']}. "
+        "`uv run python -m bench.outage`",
         "",
         "## What holds under attack",
         "",
@@ -476,6 +496,10 @@ def build_readme(d: dict[str, Any]) -> str:
         "plugin. It was built in response to "
         "[temporalio/sdk-python#1894](https://github.com/temporalio/sdk-python/issues/1894).",
         "",
+        "**Status:** alpha, a research prototype (see [limitations](https://github.com/Poojan6216/stepledger/blob/main/docs/limitations.md)). "
+        "Every number below was measured on one macOS laptop against the Temporal dev server and a local "
+        "Postgres 16; the environment is recorded in each results file.",
+        "",
         "## The problem, measured",
         "",
         "The LangGraph plugin sends each node's whole input state as its Activity input, and "
@@ -490,11 +514,17 @@ def build_readme(d: dict[str, Any]) -> str:
         f"With smaller outputs the 50 MiB history limit comes first.",
         f"- **Per-node writes are at-least-once.** Under injected crashes, a plain insert produced "
         f"{chaos['B1']['duplicate_rows']} duplicate and {chaos['B1']['divergent_rows']} divergent "
+        f"- **Per-node writes are at-least-once.** Under injected crashes, a plain insert produced "
+        f"{chaos['B1']['duplicate_rows']} duplicate and {chaos['B1']['divergent_rows']} divergent "
         f"rows in {chaos['B1']['runs']} runs; an upsert still produced "
-        f"{chaos['B1u']['divergent_rows']} divergent rows (a zombie attempt overwriting the "
-        f"accepted answer) and {chaos['B1u']['duplicate_side_effects']} duplicate side effects.",
+        f"{chaos['B1u']['divergent_rows']} divergent rows (a stale attempt overwriting the "
+        "accepted answer). Retried nodes also repeated their external calls: "
+        f"{chaos['B1']['duplicate_side_effects']} and {chaos['B1u']['duplicate_side_effects']} "
+        "duplicate side effects reached the fake ticket and Slack targets in those runs.",
         "- **External Storage fixes history, but storage then grows with the square of the run:** "
-        "one object per payload, and every node input is a slightly longer copy of the last.",
+        "- **External Storage fixes history, but storage then grows with the square of the run:** "
+        "one object per payload, and every node input is a slightly longer copy of the last "
+        "(history itself still grows, linearly, with references and sub-threshold payloads).",
         "",
         "## Install",
         "",
@@ -502,15 +532,21 @@ def build_readme(d: dict[str, Any]) -> str:
         "pip install stepledger",
         "```",
         "",
-        "Requires Python 3.11 or later, `temporalio[langgraph]` 1.33 or later, `langgraph` 1.2, and "
-        "Postgres 16. For the local environment the tests and benches use (Postgres plus a Temporal "
-        "dev server with explicit payload and history limits): `scripts/dev.sh up`.",
+        "Requires Python 3.11 or later, `temporalio[langgraph]` 1.33.x and `langgraph` 1.2.x (the tested "
+        "ranges: both upstream features are experimental in the SDK and Stepledger reads four private "
+        "symbols, see the section on private APIs), and Postgres (tested on 16). For the local "
+        "environment the tests and benches use (Postgres plus a Temporal dev server with explicit "
+        "payload and history limits): `scripts/dev.sh up`.",
         "",
         "## Integration",
         "",
         INTEGRATION,
         "",
-        "Then `stepledger init-db` once. Workers built from the client inherit the plugin.",
+        "Then `stepledger init-db` once. Workers built from the client inherit the plugin; "
+        "`StepledgerPlugin.from_config(langgraph=lg)` reads the same options from `stepledger.yaml`. "
+        "With External Storage on, every client that reads results or histories needs the same data "
+        "converter (`stepledger.cli.build_data_converter`); see "
+        "[how it works](https://github.com/Poojan6216/stepledger/blob/main/docs/how-it-works.md).",
         "",
         "## What beats it",
         "",
@@ -520,6 +556,9 @@ def build_readme(d: dict[str, Any]) -> str:
         "wasted: the worker died between the provider call and the journal write.",
         '- With `on_ledger_error="warn"`, a database outage leaves rows missing until '
         "`stepledger reconcile` repairs them from history.",
+        f'- **Two kinds of node never get a row:** `execute_in="workflow"` nodes and task-cache hits '
+        f"run no Activity. In Demo 4, {mat['gap']} of {mat['runs']} seeded runs were declared GAP for "
+        "those reasons; `materialize()` names the position and never claims EXACT there.",
         "- History still grows, linearly; unbounded runs still need continue-as-new.",
         "",
         "See [docs/limitations.md](https://github.com/Poojan6216/stepledger/blob/main/docs/limitations.md) and [RESULTS.md](https://github.com/Poojan6216/stepledger/blob/main/RESULTS.md).",
@@ -531,11 +570,16 @@ def build_readme(d: dict[str, Any]) -> str:
         f"zombie attempts writing late at F6), "
         f"Stepledger had {sl['duplicate_rows']} duplicate, {sl['divergent_rows']} divergent, "
         f"{sl['lost_rows']} lost and {sl['orphan_rows']} orphan rows, and "
-        f"{sl['duplicate_side_effects']} duplicate side effects, each checked against the result "
-        f"Temporal recorded.",
+        f"- **One row per node Activity execution, fenced and committed against history.** Across "
+        f"{sl['runs']} crash-injected runs (the worker killed at fault points F1 to F5, and "
+        f"zombie attempts writing late at F6), Stepledger had {sl['duplicate_rows']} duplicate, "
+        f"{sl['divergent_rows']} divergent, {sl['lost_rows']} lost and {sl['orphan_rows']} orphan "
+        "rows, each checked against the result Temporal recorded; with `once()` on the two effect "
+        f"nodes, {sl['duplicate_side_effects']} duplicate side effects reached the targets.",
         f"- **Past the wall.** With the dedup driver the 40-node run that stops B1 completes; the "
-        f"largest payload left in history is {s['cliff_largest_payload_kb']['B4']} KB and history "
-        f"is {s['cliff_history_mib']['B4']} MiB.",
+        f"- **Past the wall.** With the dedup driver the 40-node run that stops B1 completes; the "
+        f"largest payload left in history is {s['cliff_largest_payload_kib']['B4']} KiB (nothing "
+        f"above the 64 KiB threshold) and history is {s['cliff_history_mib']['B4']} MiB.",
         f"- **Linear storage.** At 80 nodes x 100 KiB per node: "
         f"{s['growth_store_mb_80']['B3_100']} MB as one object per payload, "
         f"{s['growth_store_mb_80']['B4_100']} MB as dedup chunks "
@@ -544,14 +588,17 @@ def build_readme(d: dict[str, Any]) -> str:
         f"rebuilt {mat['equal']} runs EXACT and equal to the workflow's result, declared "
         f"{mat['gap']} gaps (workflow-side nodes, task-cache hits), and gave {mat['unequal']} "
         "wrong answers.",
-        f"- **The retry bill.** With the LLM journal, money wasted on attempts Temporal did not "
-        f"accept fell from USD {cost['no-journal']['wasted_usd']} to USD "
-        f"{cost['journal']['wasted_usd']} ({s['retry_waste_cut_percent']}% less) under the same "
-        "seeded crash plan.",
+        f"- **The retry bill.** With the LLM journal, simulated spend wasted on attempts Temporal did "
+        "not accept (a fake model at a fixed token count, priced at claude-haiku-4-5 list rates) fell "
+        f"from USD {cost['no-journal']['wasted_usd']} to USD {cost['journal']['wasted_usd']} "
+        f"({s['retry_waste_cut_percent']}% less) under the same seeded crash plan.",
         f"- **Small overhead.** Ledger write p95 {ov['ledger_write_ms_p95']} ms; "
         f"{ov['wall_overhead_per_node_ms']} ms of wall clock per node; about "
-        f"{round(ho['marginal_plugin_bytes_per_node'][-1])} bytes of history per node, constant "
-        "as runs grow.",
+        f"- **Small overhead.** For the ledger write alone (storage driver off, 1 KiB nodes, 10 runs on "
+        f"a local dev server): p95 {ov['ledger_write_ms_p95']} ms and about "
+        f"{round(ov['wall_overhead_per_node_ms'], 1)} ms of wall clock per node; about "
+        f"{round(ho['marginal_plugin_bytes_per_node'][-1])} bytes of history per node (one run per "
+        "size; the commit header grows with pending ids after failed carriers).",
         "",
         "All numbers come from `bench/results/*.json` via the commands in [RESULTS.md](https://github.com/Poojan6216/stepledger/blob/main/RESULTS.md).",
         "",
@@ -586,6 +633,46 @@ def build_readme(d: dict[str, Any]) -> str:
             "storage", "External store bytes per run: one object per payload against dedup chunks"
         ),
         "",
+        "### Demo 4: the view equals the truth",
+        "",
+        f"{mat['runs']} seeded runs (parallel supersteps, `interrupt()` plus resume, effects, a cached "
+        f"continue-as-new, a workflow-side node, a within-run cache hit): equal {mat['equal']}, declared "
+        f"gap {mat['gap']}, unequal {mat['unequal']}. The cached continue-as-new runs are EXACT with "
+        f"`chain=True` ({mat['chain']['equal']} of {sum(mat['by_kind']['continue_as_new'].values())}).",
+        "",
+        "### Demo 5: the retry bill",
+        "",
+        table(
+            [
+                "",
+                "calls billed",
+                "USD billed (simulated)",
+                "wasted calls",
+                "wasted USD",
+                "journal replays",
+            ],
+            [
+                [
+                    m,
+                    cost[m]["model_calls_billed"],
+                    cost[m]["usd_billed"],
+                    cost[m]["wasted_calls"],
+                    cost[m]["wasted_usd"],
+                    cost[m]["journal_replays"],
+                ]
+                for m in ("no-journal", "journal")
+            ],
+        ),
+        "",
+        "### The run ledger",
+        "",
+        "The artifact itself: `stepledger ledger <workflow id>` for a crash-test run (attempt 1 of "
+        "`scan_iam` wrote a row and died before reporting; attempt 3 won; one duplicate effect prevented):",
+        "",
+        "```",
+        d["ledger_sample"]["ledger"],
+        "```",
+        "",
         "## What this is not",
         "",
         "- Not a LangGraph checkpointer, and not a replacement for Temporal's durability: Temporal "
@@ -593,6 +680,18 @@ def build_readme(d: dict[str, Any]) -> str:
         "- Not exactly-once for external effects: `once()` is at-least-once delivery with dedupe, "
         "and an unknown outcome stops for a person.",
         "- Not a hosted service, a UI, or a new agent framework.",
+        "",
+        "## Private APIs and upgrade policy",
+        "",
+        "Both upstream features Stepledger builds on, `LangGraphPlugin` and External Storage, are marked "
+        "experimental in temporalio 1.33. Stepledger reads five private symbols, all in "
+        "[`_compat.py`](https://github.com/Poojan6216/stepledger/blob/main/src/stepledger/_compat.py): the "
+        "plugin's `ActivityInput`/`ActivityOutput` and task-cache context variable, the SDK's activity "
+        "definition lookup, and LangGraph's `task_path_str` and `MISSING`. `tests/unit/test_compat.py` "
+        "checks each on every run, so an SDK release that moves one fails the test suite before it fails "
+        "at runtime; the dependency ranges are the tested ones and are widened release by release. "
+        "Enabling the plugin on in-flight runs is safe (`workflow.patched`); removing it is not, see "
+        "[limitations](https://github.com/Poojan6216/stepledger/blob/main/docs/limitations.md).",
         "",
         "## Docs",
         "",

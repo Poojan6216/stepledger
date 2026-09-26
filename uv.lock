@@ -2209,7 +2209,7 @@ wheels = [
 
 [[package]]
 name = "stepledger"
-version = "0.1.0"
+version = "0.1.1"
 source = { editable = "." }
 dependencies = [
     { name = "fastcdc" },
@@ -2245,7 +2245,7 @@ requires-dist = [
     { name = "pydantic", specifier = ">=2.7,<3" },
     { name = "pydantic-settings", specifier = ">=2.3" },
     { name = "pyyaml", specifier = ">=6" },
-    { name = "temporalio", extras = ["langgraph"], specifier = ">=1.33,<2" },
+    { name = "temporalio", extras = ["langgraph"], specifier = ">=1.33,<1.34" },
     { name = "typer", specifier = ">=0.12" },
 ]
 

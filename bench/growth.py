@@ -112,7 +112,9 @@ async def main(argv: list[str]) -> None:
                 print(
                     f"{cid} kb={kb:>3} n={n:>2}: {r['status']:<10} wall={r['wall']}"
                     f" history={r['history_mib']} MiB events={r['history_events']}"
-                    f" largest={r['largest_payload_bytes']:,}",
+                    f" largest={r['largest_payload_bytes']:,} wall={r['wall_clock_s']}s"
+                    f" write_p50={r.get('ledger_write_ms_p50')} p95={r.get('ledger_write_ms_p95')}"
+                    f" store={r.get('store_unique_chunk_bytes')}",
                     flush=True,
                 )
                 rows.append(r)

@@ -5,7 +5,7 @@
 The LangGraph plugin sends each node's whole input state as its Activity input
 (`ActivityInput(args=(state,), ...)`), and Temporal records every Activity input in history. For
 an agent whose state accumulates, history grows with the square of the run and eventually hits
-either the 2 MB single-payload limit or the 50 MB history limit.
+either the 2 MiB single-payload limit or the 50 MiB history limit.
 
 Temporal's External Storage moves large payloads out of history and leaves a small reference.
 The shipped S3 driver stores one object per distinct payload, keyed by SHA-256. Each node's
@@ -41,8 +41,13 @@ of history.
 | `sl_payloads(claim, chunks[], size, encoding, deduped, last_ref_at)` | manifests, shared across runs and workflows |
 | `sl_payload_refs(claim, namespace, workflow_id, run_id, target_kind)` | who may still need a claim; written on every store, dedupe hits included |
 
-Chunk rows are locked and inserted in hash order, so concurrent stores that share chunks do not
-deadlock, and only chunk bytes the database does not already have are sent.
+Before touching any row, a store takes transaction-scoped advisory locks on every chunk hash
+and on the claim, in one sorted pass, so two stores that share a chunk or a claim serialize before
+either holds a row lock: concurrent near-identical stores, the normal case for an accumulating
+agent, cannot deadlock. Only chunk bytes the database does not already have are sent. Replay
+re-runs `store()` for every externalized command payload (a dedupe hit each), which is how the
+SDK's External Storage works; budget for that write amplification, and note that a Postgres
+outage fails replay as well as new work.
 
 ### Encrypted payloads
 
@@ -65,12 +70,17 @@ Dedupe means one stored payload can belong to many runs and workflows, so GC nev
 claim's age. It is mark and sweep over references:
 
 1. **References.** A reference expires only when no run of its workflow id is open and the newest
-   closed run closed more than `retention_days + margin_days` ago (default 30 + 7), checked
-   through Temporal's visibility, not only the ledger (which knows tracked runs only). Gating on
-   the workflow id, not the run id, protects continue-as-new successors (their input was stored
-   under the previous run) and inputs a client stored before the run id existed. References
-   whose store context had no workflow id (heartbeat details, for example) expire by age
-   (`orphan_ref_days`, default 90).
+   closed run closed more than `retention_days + margin_days` ago (default 30 + 7). The question
+   goes to Temporal's history service (`describe` of the latest run; its NOT_FOUND is
+   authoritative), never to visibility alone, whose gaps would otherwise look like expiry. A
+   reference also never expires before it is that old itself. Gating on the workflow id, not the
+   run id, protects continue-as-new successors (their input was stored under the previous run)
+   and inputs a client stored before the run id existed. Ids that a **schedule** starts are kept
+   while the schedule exists (their input is stored under the action id, which never runs as
+   such), and afterwards while a firing (`<id>-<time>`) is open or within retention. References
+   whose store context had no workflow id (heartbeat details, asynchronous completions by task
+   token) expire by age only (`orphan_ref_days`, default 90): set it longer than your longest
+   workflow. References from other namespaces are never expired by this client's sweep.
 2. **Manifests** with no reference left and not touched by any store since
    `sweep_start - grace` (default 1 hour) are deleted.
 3. **Chunks** that no manifest lists and that no store touched since `sweep_start - grace` are
@@ -81,9 +91,12 @@ manifest and chunks it uses, and each delete re-checks the row under its lock, s
 lands first (the row is skipped) or finds the manifest gone and writes it again.
 
 ```bash
-stepledger gc                     # dry run: what would be deleted
-stepledger gc --execute           # delete, one transaction per batch
+stepledger gc                     # dry run: counts what would be deleted, takes no locks
+stepledger gc --execute           # delete, one transaction per batch, never waiting for a lock
 ```
+
+Each sweep asks the history service once per distinct workflow id in the reference table, so a
+sweep over a large deployment is many RPCs; `sweep(only_workflows=...)` scopes a pass.
 
 `stepledger gc` refuses to run when `retention_days` is shorter than the namespace's workflow
 retention (read from the server), because a closed workflow could still be read after its
