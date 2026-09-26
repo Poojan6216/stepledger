@@ -1,0 +1,19 @@
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: stepledger
+      POSTGRES_PASSWORD: stepledger
+      POSTGRES_DB: stepledger
+    ports:
+      - "5432:5432"
+    volumes:
+      - stepledger-pg:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U stepledger -d stepledger"]
+      interval: 2s
+      timeout: 5s
+      retries: 30
+
+volumes:
+  stepledger-pg:
