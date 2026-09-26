@@ -38,6 +38,7 @@ CREATE TABLE IF NOT EXISTS sl_node_attempts (
   attempt int, fence_scheduled_at timestamptz, output_hash text,
   outcome text CHECK (outcome IN ('WROTE','FENCED_OUT','DB_ERROR','DIVERGENCE_REPAIRED')),
   tokens_in int, tokens_out int, cost_usd numeric(14,6),
+  write_ms real,                                       -- ledger transaction time for this attempt
   worker text, note text, at timestamptz DEFAULT now());
 CREATE INDEX IF NOT EXISTS sl_node_attempts_run ON sl_node_attempts (namespace, workflow_id, run_id, seq);
 
