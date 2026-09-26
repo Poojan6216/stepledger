@@ -7,6 +7,7 @@ from collections.abc import AsyncIterator, Sequence
 from contextlib import asynccontextmanager
 from dataclasses import dataclass, field
 from datetime import timedelta
+from pathlib import Path
 from typing import Any
 
 from temporalio.client import Client, WorkflowHandle
@@ -60,7 +61,7 @@ class RunConfig:
     shape: Shape = field(default_factory=Shape)
     seed: int = 7
     kb_per_node: int = 1
-    llm_bytes: int = 64
+    llm_bytes: int = 1024
     llm_tokens: int = 100
     vary_per_attempt: bool = False
     persist_mode: str = "none"  # none | naive | naive_upsert
@@ -161,3 +162,45 @@ async def run_in_process(cfg: RunConfig) -> dict[str, Any]:
 
 def dsn() -> str:
     return resolve_dsn()
+
+
+RESULTS_DIR = Path(__file__).resolve().parent / "results"
+
+
+def environment() -> dict[str, str]:
+    import platform
+    import subprocess
+    from importlib.metadata import version
+
+    try:
+        server = subprocess.run(
+            ["temporal", "--version"], capture_output=True, text=True, check=False
+        ).stdout.strip()
+    except OSError:
+        server = "unknown"
+    return {
+        "python": platform.python_version(),
+        "platform": platform.platform(),
+        "temporalio": version("temporalio"),
+        "langgraph": version("langgraph"),
+        "fastcdc": version("fastcdc"),
+        "psycopg": version("psycopg"),
+        "temporal_cli": server,
+    }
+
+
+def write_results(name: str, command: str, data: dict[str, Any]) -> Any:
+    """Write bench/results/<name>.json with the command that produced it."""
+    import datetime
+    import json
+
+    RESULTS_DIR.mkdir(parents=True, exist_ok=True)
+    path = RESULTS_DIR / f"{name}.json"
+    doc = {
+        "command": command,
+        "generated_at": datetime.datetime.now(datetime.UTC).isoformat(timespec="seconds"),
+        "environment": environment(),
+        **data,
+    }
+    path.write_text(json.dumps(doc, indent=1, sort_keys=False) + "\n")
+    return path

@@ -7,6 +7,8 @@ History size is read two ways so they can be cross-checked: the server's own
 
 from __future__ import annotations
 
+import asyncio
+import time
 from collections.abc import Iterator
 from dataclasses import asdict, dataclass, field
 from typing import Any
@@ -19,6 +21,7 @@ from temporalio.client import WorkflowExecutionStatus, WorkflowHandle
 
 _PAYLOAD = Payload.DESCRIPTOR.full_name
 MB = 1024 * 1024
+BENCH_TERMINATE_REASON = "stepledger bench: run stuck; terminated by the bench"
 
 
 def iter_payloads(msg: Message) -> Iterator[Payload]:
@@ -65,6 +68,8 @@ class RunMetrics:
     largest_payload_event: str
     activities_scheduled: int
     activities_completed: int
+    # node count (activities scheduled so far) when cumulative history first passed each size
+    history_crossed_at_node: dict[str, int | None]
     last_event: str
     workflow_task_failed_cause: str | None
     wall_clock_s: float | None
@@ -86,7 +91,14 @@ async def collect(handle: WorkflowHandle[Any, Any]) -> RunMetrics:
     scheduled_at: dict[int, Any] = {}
     completed = 0
     task_failed_cause: str | None = None
+    thresholds = {"10MiB": 10 * MB, "50MiB": 50 * MB}
+    crossed: dict[str, int | None] = dict.fromkeys(thresholds)
+    running = 0
     for ev in events:
+        running += ev.ByteSize()
+        for label, limit in thresholds.items():
+            if crossed[label] is None and running > limit:
+                crossed[label] = len(scheduled)
         for p in iter_payloads(ev):
             size = p.ByteSize()
             total += size
@@ -135,6 +147,7 @@ async def collect(handle: WorkflowHandle[Any, Any]) -> RunMetrics:
         largest_payload_event=largest_where,
         activities_scheduled=len(scheduled),
         activities_completed=completed,
+        history_crossed_at_node=crossed,
         last_event=EventType.Name(events[-1].event_type) if events else "",
         workflow_task_failed_cause=task_failed_cause,
         wall_clock_s=wall,
@@ -158,3 +171,51 @@ async def store_bytes(dsn: str) -> dict[str, int]:
         "logical_payload_bytes": int(payload_bytes),
         "payloads": int(payloads),
     }
+
+
+@dataclass
+class Outcome:
+    status: str  # COMPLETED | FAILED | TERMINATED | CANCELLED | TIMED_OUT | STUCK | OPEN
+    workflow_task_failed_cause: str | None
+    terminated_by: str | None  # identity on the termination event ("history-service" = server)
+    terminated_reason: str | None
+
+
+async def _closing_facts(
+    handle: WorkflowHandle[Any, Any],
+) -> tuple[str | None, str | None, str | None]:
+    cause = by = reason = None
+    async for ev in handle.fetch_history_events():
+        if ev.event_type == EventType.EVENT_TYPE_WORKFLOW_TASK_FAILED:
+            cause = WorkflowTaskFailedCause.Name(ev.workflow_task_failed_event_attributes.cause)
+        elif ev.event_type == EventType.EVENT_TYPE_WORKFLOW_EXECUTION_TERMINATED:
+            t = ev.workflow_execution_terminated_event_attributes
+            by, reason = t.identity, t.reason
+    return cause, by, reason
+
+
+async def watch(
+    handle: WorkflowHandle[Any, Any], *, stuck_after: float, stop_on_payload_error: bool = False
+) -> Outcome:
+    """Wait for the run to close. A run still open after `stuck_after` seconds whose history has
+    a PAYLOADS_TOO_LARGE workflow task failure is STUCK; it is then terminated (by us, and the
+    termination identity says so). `stop_on_payload_error` declares STUCK as soon as that
+    failure appears instead of waiting out the clock."""
+    deadline = time.monotonic() + stuck_after
+    while True:
+        desc = await handle.describe()
+        if desc.status != WorkflowExecutionStatus.RUNNING:
+            cause, by, reason = await _closing_facts(handle)
+            status = desc.status.name if desc.status else "UNKNOWN"
+            return Outcome(status, cause, by, reason)
+        timed_out = time.monotonic() >= deadline
+        if timed_out or stop_on_payload_error:
+            cause, _, _ = await _closing_facts(handle)
+            payload_error = cause == "WORKFLOW_TASK_FAILED_CAUSE_PAYLOADS_TOO_LARGE"
+            if timed_out or payload_error:
+                await handle.terminate(
+                    reason="stepledger bench: run stuck; terminated by the bench"
+                )
+                _, by, reason = await _closing_facts(handle)
+                return Outcome("STUCK" if payload_error else "OPEN", cause, by, reason)
+        await asyncio.sleep(0.5)

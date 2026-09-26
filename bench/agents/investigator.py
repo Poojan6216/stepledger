@@ -54,7 +54,7 @@ def _ctx(runtime: Runtime[AgentContext]) -> AgentContext:
 def make_llm(ctx: AgentContext) -> Any:
     llm = FakeLLM(
         seed=ctx.get("seed", 0),
-        bytes_per_call=ctx.get("llm_bytes", 64),
+        bytes_per_call=ctx.get("llm_bytes", 1024),
         tokens_per_call=ctx.get("llm_tokens", 100),
         vary_per_attempt=ctx.get("vary_per_attempt", False),
     )
