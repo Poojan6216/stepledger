@@ -68,6 +68,7 @@ class RunConfig:
     persist: str = "none"  # none | bulk
     journal: bool = False
     effects_mode: str = "direct"  # direct | once
+    node_delay_ms: int = 0
     review_decision: str | None = "approve"
 
     def context(self) -> dict[str, Any]:
@@ -80,6 +81,7 @@ class RunConfig:
             "persist_mode": self.persist_mode,
             "journal": self.journal,
             "effects_mode": self.effects_mode,
+            "node_delay_ms": self.node_delay_ms,
         }
 
     def workflow_input(self) -> InvestigateInput:

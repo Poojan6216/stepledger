@@ -6,6 +6,7 @@ import asyncio
 import dataclasses
 from collections.abc import AsyncIterator, Mapping
 from contextlib import asynccontextmanager
+from datetime import timedelta
 from typing import Any, Literal
 
 import temporalio.worker
@@ -37,6 +38,7 @@ class StepledgerInterceptor(temporalio.worker.Interceptor):
         meter: CostMeter,
         options: WriteOptions,
         seal: bool,
+        seal_timeout: timedelta,
     ) -> None:
         self.tracked = tracked
         self._store = store
@@ -45,7 +47,7 @@ class StepledgerInterceptor(temporalio.worker.Interceptor):
         self._inbound = type(
             "StepledgerWorkflowInbound",
             (LedgerInbound,),
-            {"tracked": tracked, "seal_enabled": seal},
+            {"tracked": tracked, "seal_enabled": seal, "seal_timeout": seal_timeout},
         )
 
     def intercept_activity(self, next: ActivityInboundInterceptor) -> ActivityInboundInterceptor:
@@ -81,6 +83,7 @@ class StepledgerPlugin(SimplePlugin):
         on_ledger_error: Literal["fail", "warn"] = "fail",
         snapshot_first_input: bool = True,
         seal: bool = True,
+        seal_timeout: timedelta = timedelta(seconds=30),
         dedupe: bool = True,
         prices: Mapping[str, Any] | None = None,
     ) -> None:
@@ -99,6 +102,7 @@ class StepledgerPlugin(SimplePlugin):
                 snapshot_first_input=snapshot_first_input,
             ),
             seal=seal,
+            seal_timeout=seal_timeout,
         )
         self._workers = 0
         self._closing: asyncio.Future[None] | None = None

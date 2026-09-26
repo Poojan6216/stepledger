@@ -107,13 +107,16 @@ class LedgerActivityInbound(ActivityInboundInterceptor):
         ser = serialize(out, conv)
         write = self._node_write(info, meta, inp, ser, _kind(out), usage, started, finished, seq)
 
+        node_name = meta.get("langgraph_node")
+        # F6 (chaos only): a zombie hangs here past its timeout, then writes late.
+        await fault("F6", seq=seq, attempt=fence.attempt, node=node_name)
         try:
             t0 = time.perf_counter()
             async with self._store.tx() as tx:
                 r = await tx.fenced_upsert(key, fence, write)
                 await tx.commit(key.run, commits)
                 await tx.abandon(key.run, abandons)
-                await fault("F4", seq=seq, attempt=fence.attempt, node=meta.get("langgraph_node"))
+                await fault("F4", seq=seq, attempt=fence.attempt, node=node_name)
                 await tx.audit_attempt(
                     key,
                     fence,
@@ -138,7 +141,7 @@ class LedgerActivityInbound(ActivityInboundInterceptor):
             if r.row_status == "PROVISIONAL" and not r.run_sealed:
                 raise FencedOut(key, fence)
             raise FencedOutFinal(key, fence, "SEALED" if r.run_sealed else r.row_status)
-        await fault("F3", seq=seq, attempt=fence.attempt, node=meta.get("langgraph_node"))
+        await fault("F3", seq=seq, attempt=fence.attempt, node=node_name)
         return out
 
     def _node_write(

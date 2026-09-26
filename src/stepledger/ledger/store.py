@@ -368,9 +368,12 @@ class LedgerStore:
     The pool opens lazily on first use and can be closed and reopened (a fresh pool each time),
     so one store can serve workers that start and stop, as tests and benches do."""
 
-    def __init__(self, dsn: str, *, min_size: int = 1, max_size: int = 10) -> None:
+    def __init__(
+        self, dsn: str, *, min_size: int = 1, max_size: int = 10, timeout: float = 5.0
+    ) -> None:
         self.dsn = dsn
         self._min, self._max = min_size, max_size
+        self._timeout = timeout  # seconds to wait for a connection before a DB error surfaces
         self._pool: AsyncConnectionPool | None = None
         self._lock = asyncio.Lock()
 
@@ -382,9 +385,12 @@ class LedgerStore:
                     min_size=self._min,
                     max_size=self._max,
                     open=False,
-                    kwargs={"autocommit": False},
+                    timeout=self._timeout,
+                    # a connection that died in a database outage is replaced, not handed out
+                    check=AsyncConnectionPool.check_connection,
+                    kwargs={"autocommit": False, "connect_timeout": 3},
                 )
-                await pool.open()
+                await pool.open(wait=False)
                 self._pool = pool
             return self._pool
 

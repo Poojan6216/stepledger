@@ -41,6 +41,7 @@ class AgentContext(TypedDict, total=False):
     persist_mode: str  # "none" | "naive" (B1) | "naive_upsert" (B1u)
     journal: bool  # wrap the model in stepledger's JournaledChatModel
     effects_mode: str  # "direct" | "once"
+    node_delay_ms: int  # simulated work per tool-using node
 
 
 def initial_state(target: str = "acct-7f3a") -> InvestigationState:
@@ -93,6 +94,10 @@ async def step(
     if node == "score_risk":
         delta["risk_score"] = int(hashlib.sha256(reasoning.encode()).hexdigest()[:4], 16) % 100
     await _naive_persist(ctx, node, delta)
+    if delay := ctx.get("node_delay_ms", 0):
+        import asyncio
+
+        await asyncio.sleep(delay / 1000)
     return delta
 
 
@@ -145,20 +150,35 @@ async def _effect(ctx: AgentContext, name: str, request: dict[str, Any]) -> str:
     if ctx.get("effects_mode", "direct") == "once":
         from stepledger import once
 
-        return await once(name, lambda key: sinks.effect(name, request, key), request=request)
+        return await once(
+            name,
+            lambda key: sinks.effect(name, request, key),
+            request=request,
+            reconcile=lambda key: sinks.lookup(name, key),
+        )
     return await sinks.effect(name, request, None)
 
 
 async def open_ticket(state: InvestigationState, runtime: Runtime[AgentContext]) -> dict[str, Any]:
+    ctx = _ctx(runtime)
+    await _faults("F1", "open_ticket")
     request = {"target": state["target"], "risk": state["risk_score"]}
-    ticket = await _effect(_ctx(runtime), "open_ticket", request)
-    return {"ticket_id": ticket, "findings": [{"node": "open_ticket", "ticket": ticket}]}
+    ticket = await _effect(ctx, "open_ticket", request)
+    await _faults("F2", "open_ticket")  # dies after the external call, before returning
+    delta = {"ticket_id": ticket, "findings": [{"node": "open_ticket", "ticket": ticket}]}
+    await _naive_persist(ctx, "open_ticket", delta)
+    return delta
 
 
 async def notify_slack(state: InvestigationState, runtime: Runtime[AgentContext]) -> dict[str, Any]:
+    ctx = _ctx(runtime)
+    await _faults("F1", "notify_slack")
     request = {"channel": "#sec-alerts", "ticket": state["ticket_id"]}
-    msg = await _effect(_ctx(runtime), "notify_slack", request)
-    return {"findings": [{"node": "notify_slack", "message": msg}]}
+    msg = await _effect(ctx, "notify_slack", request)
+    await _faults("F2", "notify_slack")
+    delta = {"findings": [{"node": "notify_slack", "message": msg}]}
+    await _naive_persist(ctx, "notify_slack", delta)
+    return delta
 
 
 SCANS = [scan_iam, scan_network, scan_storage]

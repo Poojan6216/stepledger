@@ -1,0 +1,1009 @@
+{
+ "command": "uv run python -m bench.chaos --runs 20",
+ "generated_at": "2026-09-26T17:27:17+00:00",
+ "environment": {
+  "python": "3.11.9",
+  "platform": "macOS-15.7.9-x86_64-i386-64bit",
+  "temporalio": "1.33.0",
+  "langgraph": "1.2.12",
+  "fastcdc": "1.7.0",
+  "psycopg": "3.3.6",
+  "temporal_cli": "temporal version 1.9.1 (Server 1.32.0, UI 2.54.1)"
+ },
+ "seed": 1894,
+ "nodes": 30,
+ "start_to_close_s": 5,
+ "zombie_hang_s": 6.5,
+ "elapsed_s": 299.7,
+ "configs": [
+  {
+   "config": "B1",
+   "runs": 20,
+   "fault_injections": 20,
+   "faults_declared": 20,
+   "faults_fired_once": true,
+   "worker_restarts": 15,
+   "completed": 20,
+   "rows": 617,
+   "duplicate_rows": 17,
+   "divergent_rows": 13,
+   "lost_rows": 0,
+   "orphan_rows": 0,
+   "duplicate_side_effects": 7,
+   "wrongly_committed": 0,
+   "per_run": [
+    {
+     "workflow_id": "chaos-B1-092fef-00",
+     "status": "COMPLETED",
+     "faults": [
+      "F1:wf=chaos-B1-092fef-00:node=scan_iam"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1-092fef-01",
+     "status": "COMPLETED",
+     "faults": [
+      "F2:wf=chaos-B1-092fef-01:node=open_ticket"
+     ],
+     "rows": 31,
+     "duplicate_rows": 1,
+     "divergent_rows": 1,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 1,
+     "wrongly_committed": 0,
+     "details": [
+      "activity 4: row differs from history"
+     ]
+    },
+    {
+     "workflow_id": "chaos-B1-092fef-02",
+     "status": "COMPLETED",
+     "faults": [
+      "F3:wf=chaos-B1-092fef-02:node=notify_slack"
+     ],
+     "rows": 32,
+     "duplicate_rows": 2,
+     "divergent_rows": 1,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 1,
+     "wrongly_committed": 0,
+     "details": [
+      "activity 3: row differs from history"
+     ]
+    },
+    {
+     "workflow_id": "chaos-B1-092fef-03",
+     "status": "COMPLETED",
+     "faults": [
+      "F6:wf=chaos-B1-092fef-03:node=enrich_cve_17:hang=6.5"
+     ],
+     "rows": 31,
+     "duplicate_rows": 1,
+     "divergent_rows": 1,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": [
+      "activity 22: row differs from history"
+     ]
+    },
+    {
+     "workflow_id": "chaos-B1-092fef-04",
+     "status": "COMPLETED",
+     "faults": [
+      "F1:wf=chaos-B1-092fef-04:node=enrich_cve_11"
+     ],
+     "rows": 31,
+     "duplicate_rows": 1,
+     "divergent_rows": 1,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": [
+      "activity 5: row differs from history"
+     ]
+    },
+    {
+     "workflow_id": "chaos-B1-092fef-05",
+     "status": "COMPLETED",
+     "faults": [
+      "F2:wf=chaos-B1-092fef-05:node=open_ticket"
+     ],
+     "rows": 31,
+     "duplicate_rows": 1,
+     "divergent_rows": 1,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 1,
+     "wrongly_committed": 0,
+     "details": [
+      "activity 4: row differs from history"
+     ]
+    },
+    {
+     "workflow_id": "chaos-B1-092fef-06",
+     "status": "COMPLETED",
+     "faults": [
+      "F3:wf=chaos-B1-092fef-06:node=notify_slack"
+     ],
+     "rows": 31,
+     "duplicate_rows": 1,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 1,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1-092fef-07",
+     "status": "COMPLETED",
+     "faults": [
+      "F6:wf=chaos-B1-092fef-07:node=scan_iam:hang=6.5"
+     ],
+     "rows": 31,
+     "duplicate_rows": 1,
+     "divergent_rows": 1,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": [
+      "activity 2: row differs from history"
+     ]
+    },
+    {
+     "workflow_id": "chaos-B1-092fef-08",
+     "status": "COMPLETED",
+     "faults": [
+      "F1:wf=chaos-B1-092fef-08:node=list_assets"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1-092fef-09",
+     "status": "COMPLETED",
+     "faults": [
+      "F2:wf=chaos-B1-092fef-09:node=open_ticket"
+     ],
+     "rows": 32,
+     "duplicate_rows": 2,
+     "divergent_rows": 2,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 1,
+     "wrongly_committed": 0,
+     "details": [
+      "activity 2: row differs from history",
+      "activity 2: row differs from history"
+     ]
+    },
+    {
+     "workflow_id": "chaos-B1-092fef-10",
+     "status": "COMPLETED",
+     "faults": [
+      "F3:wf=chaos-B1-092fef-10:node=open_ticket"
+     ],
+     "rows": 31,
+     "duplicate_rows": 1,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 1,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1-092fef-11",
+     "status": "COMPLETED",
+     "faults": [
+      "F6:wf=chaos-B1-092fef-11:node=enrich_cve_11:hang=6.5"
+     ],
+     "rows": 31,
+     "duplicate_rows": 1,
+     "divergent_rows": 1,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": [
+      "activity 16: row differs from history"
+     ]
+    },
+    {
+     "workflow_id": "chaos-B1-092fef-12",
+     "status": "COMPLETED",
+     "faults": [
+      "F1:wf=chaos-B1-092fef-12:node=score_risk"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1-092fef-13",
+     "status": "COMPLETED",
+     "faults": [
+      "F2:wf=chaos-B1-092fef-13:node=scan_iam"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1-092fef-14",
+     "status": "COMPLETED",
+     "faults": [
+      "F3:wf=chaos-B1-092fef-14:node=enrich_cve_3"
+     ],
+     "rows": 31,
+     "duplicate_rows": 1,
+     "divergent_rows": 1,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": [
+      "activity 8: row differs from history"
+     ]
+    },
+    {
+     "workflow_id": "chaos-B1-092fef-15",
+     "status": "COMPLETED",
+     "faults": [
+      "F6:wf=chaos-B1-092fef-15:node=summarize:hang=6.5"
+     ],
+     "rows": 31,
+     "duplicate_rows": 1,
+     "divergent_rows": 1,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": [
+      "activity 30: row differs from history"
+     ]
+    },
+    {
+     "workflow_id": "chaos-B1-092fef-16",
+     "status": "COMPLETED",
+     "faults": [
+      "F1:wf=chaos-B1-092fef-16:node=enrich_cve_3"
+     ],
+     "rows": 31,
+     "duplicate_rows": 1,
+     "divergent_rows": 1,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": [
+      "activity 4: row differs from history"
+     ]
+    },
+    {
+     "workflow_id": "chaos-B1-092fef-17",
+     "status": "COMPLETED",
+     "faults": [
+      "F2:wf=chaos-B1-092fef-17:node=scan_network"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1-092fef-18",
+     "status": "COMPLETED",
+     "faults": [
+      "F3:wf=chaos-B1-092fef-18:node=notify_slack"
+     ],
+     "rows": 31,
+     "duplicate_rows": 1,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 1,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1-092fef-19",
+     "status": "COMPLETED",
+     "faults": [
+      "F6:wf=chaos-B1-092fef-19:node=list_assets:hang=6.5"
+     ],
+     "rows": 31,
+     "duplicate_rows": 1,
+     "divergent_rows": 1,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": [
+      "activity 1: row differs from history"
+     ]
+    }
+   ]
+  },
+  {
+   "config": "B1u",
+   "runs": 20,
+   "fault_injections": 20,
+   "faults_declared": 20,
+   "faults_fired_once": true,
+   "worker_restarts": 15,
+   "completed": 20,
+   "rows": 600,
+   "duplicate_rows": 0,
+   "divergent_rows": 5,
+   "lost_rows": 0,
+   "orphan_rows": 0,
+   "duplicate_side_effects": 4,
+   "wrongly_committed": 0,
+   "per_run": [
+    {
+     "workflow_id": "chaos-B1u-c61d29-00",
+     "status": "COMPLETED",
+     "faults": [
+      "F1:wf=chaos-B1u-c61d29-00:node=scan_network"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1u-c61d29-01",
+     "status": "COMPLETED",
+     "faults": [
+      "F2:wf=chaos-B1u-c61d29-01:node=scan_network"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1u-c61d29-02",
+     "status": "COMPLETED",
+     "faults": [
+      "F3:wf=chaos-B1u-c61d29-02:node=open_ticket"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 1,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1u-c61d29-03",
+     "status": "COMPLETED",
+     "faults": [
+      "F6:wf=chaos-B1u-c61d29-03:node=enrich_cve_17:hang=6.5"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 1,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": [
+      "activity 22: row differs from history"
+     ]
+    },
+    {
+     "workflow_id": "chaos-B1u-c61d29-04",
+     "status": "COMPLETED",
+     "faults": [
+      "F1:wf=chaos-B1u-c61d29-04:node=enrich_cve_17"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1u-c61d29-05",
+     "status": "COMPLETED",
+     "faults": [
+      "F2:wf=chaos-B1u-c61d29-05:node=enrich_cve_11"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1u-c61d29-06",
+     "status": "COMPLETED",
+     "faults": [
+      "F3:wf=chaos-B1u-c61d29-06:node=open_ticket"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 1,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1u-c61d29-07",
+     "status": "COMPLETED",
+     "faults": [
+      "F6:wf=chaos-B1u-c61d29-07:node=enrich_cve_11:hang=6.5"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 1,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": [
+      "activity 16: row differs from history"
+     ]
+    },
+    {
+     "workflow_id": "chaos-B1u-c61d29-08",
+     "status": "COMPLETED",
+     "faults": [
+      "F1:wf=chaos-B1u-c61d29-08:node=enrich_cve_3"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1u-c61d29-09",
+     "status": "COMPLETED",
+     "faults": [
+      "F2:wf=chaos-B1u-c61d29-09:node=notify_slack"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 1,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1u-c61d29-10",
+     "status": "COMPLETED",
+     "faults": [
+      "F3:wf=chaos-B1u-c61d29-10:node=scan_network"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1u-c61d29-11",
+     "status": "COMPLETED",
+     "faults": [
+      "F6:wf=chaos-B1u-c61d29-11:node=score_risk:hang=6.5"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 1,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": [
+      "activity 27: row differs from history"
+     ]
+    },
+    {
+     "workflow_id": "chaos-B1u-c61d29-12",
+     "status": "COMPLETED",
+     "faults": [
+      "F1:wf=chaos-B1u-c61d29-12:node=scan_iam"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1u-c61d29-13",
+     "status": "COMPLETED",
+     "faults": [
+      "F2:wf=chaos-B1u-c61d29-13:node=scan_iam"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1u-c61d29-14",
+     "status": "COMPLETED",
+     "faults": [
+      "F3:wf=chaos-B1u-c61d29-14:node=enrich_cve_11"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1u-c61d29-15",
+     "status": "COMPLETED",
+     "faults": [
+      "F6:wf=chaos-B1u-c61d29-15:node=enrich_cve_11:hang=6.5"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 1,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": [
+      "activity 16: row differs from history"
+     ]
+    },
+    {
+     "workflow_id": "chaos-B1u-c61d29-16",
+     "status": "COMPLETED",
+     "faults": [
+      "F1:wf=chaos-B1u-c61d29-16:node=summarize"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1u-c61d29-17",
+     "status": "COMPLETED",
+     "faults": [
+      "F2:wf=chaos-B1u-c61d29-17:node=score_risk"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1u-c61d29-18",
+     "status": "COMPLETED",
+     "faults": [
+      "F3:wf=chaos-B1u-c61d29-18:node=notify_slack"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 1,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1u-c61d29-19",
+     "status": "COMPLETED",
+     "faults": [
+      "F6:wf=chaos-B1u-c61d29-19:node=score_risk:hang=6.5"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 1,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": [
+      "activity 27: row differs from history"
+     ]
+    }
+   ]
+  },
+  {
+   "config": "SL",
+   "runs": 20,
+   "fault_injections": 20,
+   "faults_declared": 20,
+   "faults_fired_once": true,
+   "worker_restarts": 17,
+   "completed": 20,
+   "rows": 600,
+   "duplicate_rows": 0,
+   "divergent_rows": 0,
+   "lost_rows": 0,
+   "orphan_rows": 0,
+   "duplicate_side_effects": 0,
+   "wrongly_committed": 0,
+   "per_run": [
+    {
+     "workflow_id": "chaos-SL-a8688a-00",
+     "status": "COMPLETED",
+     "faults": [
+      "F1:wf=chaos-SL-a8688a-00:node=enrich_cve_17"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-SL-a8688a-01",
+     "status": "COMPLETED",
+     "faults": [
+      "F2:wf=chaos-SL-a8688a-01:node=notify_slack"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-SL-a8688a-02",
+     "status": "COMPLETED",
+     "faults": [
+      "F3:wf=chaos-SL-a8688a-02:node=scan_iam"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-SL-a8688a-03",
+     "status": "COMPLETED",
+     "faults": [
+      "F4:wf=chaos-SL-a8688a-03:node=summarize"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-SL-a8688a-04",
+     "status": "COMPLETED",
+     "faults": [
+      "F5:wf=chaos-SL-a8688a-04"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-SL-a8688a-05",
+     "status": "COMPLETED",
+     "faults": [
+      "F6:wf=chaos-SL-a8688a-05:node=list_assets:hang=6.5"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-SL-a8688a-06",
+     "status": "COMPLETED",
+     "faults": [
+      "F1:wf=chaos-SL-a8688a-06:node=scan_iam"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-SL-a8688a-07",
+     "status": "COMPLETED",
+     "faults": [
+      "F2:wf=chaos-SL-a8688a-07:node=list_assets"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-SL-a8688a-08",
+     "status": "COMPLETED",
+     "faults": [
+      "F3:wf=chaos-SL-a8688a-08:node=notify_slack"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-SL-a8688a-09",
+     "status": "COMPLETED",
+     "faults": [
+      "F4:wf=chaos-SL-a8688a-09:node=enrich_cve_11"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-SL-a8688a-10",
+     "status": "COMPLETED",
+     "faults": [
+      "F5:wf=chaos-SL-a8688a-10"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-SL-a8688a-11",
+     "status": "COMPLETED",
+     "faults": [
+      "F6:wf=chaos-SL-a8688a-11:node=enrich_cve_17:hang=6.5"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-SL-a8688a-12",
+     "status": "COMPLETED",
+     "faults": [
+      "F1:wf=chaos-SL-a8688a-12:node=scan_network"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-SL-a8688a-13",
+     "status": "COMPLETED",
+     "faults": [
+      "F2:wf=chaos-SL-a8688a-13:node=open_ticket"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-SL-a8688a-14",
+     "status": "COMPLETED",
+     "faults": [
+      "F3:wf=chaos-SL-a8688a-14:node=enrich_cve_11"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-SL-a8688a-15",
+     "status": "COMPLETED",
+     "faults": [
+      "F4:wf=chaos-SL-a8688a-15:node=list_assets"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-SL-a8688a-16",
+     "status": "COMPLETED",
+     "faults": [
+      "F5:wf=chaos-SL-a8688a-16"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-SL-a8688a-17",
+     "status": "COMPLETED",
+     "faults": [
+      "F6:wf=chaos-SL-a8688a-17:node=enrich_cve_3:hang=6.5"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-SL-a8688a-18",
+     "status": "COMPLETED",
+     "faults": [
+      "F1:wf=chaos-SL-a8688a-18:node=score_risk"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-SL-a8688a-19",
+     "status": "COMPLETED",
+     "faults": [
+      "F2:wf=chaos-SL-a8688a-19:node=open_ticket"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    }
+   ]
+  }
+ ]
+}

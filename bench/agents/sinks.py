@@ -108,3 +108,17 @@ async def effect(name: str, request: dict[str, Any], key: str | None) -> str:
             (name, key, _hash(request), wf, run, attempt),
         )
     return f"{name}-{_hash(request)[:8]}"
+
+
+async def lookup(name: str, key: str) -> Any:
+    """The fake target's own record, by idempotency key: once()'s reconcile callback."""
+    from stepledger.effects.once import NOT_DONE
+
+    p = await pool()
+    async with p.connection() as conn:
+        cur = await conn.execute(
+            "SELECT request_hash FROM bench_effects WHERE effect = %s AND key = %s LIMIT 1",
+            (name, key),
+        )
+        row = await cur.fetchone()
+    return f"{name}-{row[0][:8]}" if row else NOT_DONE

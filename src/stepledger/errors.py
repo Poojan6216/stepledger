@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from datetime import timedelta
+
 from temporalio.exceptions import ApplicationError
 
 from stepledger.keys import Fence, LedgerKey
@@ -43,15 +45,18 @@ class EffectDivergence(ApplicationError):
 
 
 class UnknownEffectOutcome(ApplicationError):
-    """once(): an earlier attempt started the effect and its outcome is unknown. Non-retryable;
-    resolve it with `stepledger resolve <key> --outcome done|not-done`."""
+    """once(): an earlier attempt started the effect and its outcome is unknown. The node waits
+    for a human: it retries slowly until `stepledger resolve <key> --outcome done|not-done`
+    records the verdict (effect keys include the run id, so failing the run would make the
+    resolution unreachable)."""
 
-    def __init__(self, key: str, name: str) -> None:
+    def __init__(self, key: str, name: str, *, next_retry_delay: timedelta) -> None:
         super().__init__(
             f"stepledger: effect {name!r} (key {key}) has an unknown outcome;"
             f" run `stepledger resolve {key} --outcome done|not-done`",
             type="StepledgerUnknownEffectOutcome",
-            non_retryable=True,
+            non_retryable=False,
+            next_retry_delay=next_retry_delay,
         )
 
 

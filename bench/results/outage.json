@@ -1,0 +1,94 @@
+{
+ "command": "uv run python -m bench.outage ",
+ "generated_at": "2026-09-26T17:41:26+00:00",
+ "environment": {
+  "python": "3.11.9",
+  "platform": "macOS-15.7.9-x86_64-i386-64bit",
+  "temporalio": "1.33.0",
+  "langgraph": "1.2.12",
+  "fastcdc": "1.7.0",
+  "psycopg": "3.3.6",
+  "temporal_cli": "temporal version 1.9.1 (Server 1.32.0, UI 2.54.1)"
+ },
+ "nodes": 20,
+ "node_delay_ms": 1500,
+ "outage_s": 20.0,
+ "scenarios": [
+  {
+   "mode": "fail",
+   "workflow_id": "outage-fail-1790444366",
+   "outage_window_s": [
+    5.2,
+    25.5
+   ],
+   "run_wall_clock_s": 62.5,
+   "workflow_status": "COMPLETED",
+   "node_activities": 20,
+   "seqs_retried_by_temporal": [
+    3
+   ],
+   "ledger_status": "COMPLETED",
+   "degraded": false,
+   "missing_seqs": [],
+   "committed_rows_before_reconcile": 20,
+   "counters_before_reconcile": {
+    "rows": 20,
+    "duplicate_rows": 0,
+    "divergent_rows": 0,
+    "lost_rows": 0,
+    "orphan_rows": 0,
+    "duplicate_side_effects": 0,
+    "wrongly_committed": 0
+   }
+  },
+  {
+   "mode": "warn",
+   "workflow_id": "outage-warn-1790444429",
+   "outage_window_s": [
+    5.2,
+    25.4
+   ],
+   "run_wall_clock_s": 57.4,
+   "workflow_status": "COMPLETED",
+   "node_activities": 20,
+   "seqs_retried_by_temporal": [],
+   "ledger_status": "COMPLETED",
+   "degraded": true,
+   "missing_seqs": [
+    3,
+    4,
+    5
+   ],
+   "committed_rows_before_reconcile": 16,
+   "counters_before_reconcile": {
+    "rows": 17,
+    "duplicate_rows": 0,
+    "divergent_rows": 0,
+    "lost_rows": 3,
+    "orphan_rows": 1,
+    "duplicate_side_effects": 0,
+    "wrongly_committed": 0
+   },
+   "reconcile": {
+    "inserted": [
+     3,
+     4,
+     5
+    ],
+    "committed": [
+     2
+    ],
+    "divergence_repaired": []
+   },
+   "counters_after_reconcile": {
+    "rows": 20,
+    "duplicate_rows": 0,
+    "divergent_rows": 0,
+    "lost_rows": 0,
+    "orphan_rows": 0,
+    "duplicate_side_effects": 0,
+    "wrongly_committed": 0
+   }
+  }
+ ]
+}

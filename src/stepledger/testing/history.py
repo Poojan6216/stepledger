@@ -8,82 +8,17 @@ against history, never against the ledger's opinion of itself.
 
 from __future__ import annotations
 
-import json
 from collections import Counter
 from dataclasses import asdict, dataclass, field
 from typing import Any
 
 import psycopg
-from temporalio.api.common.v1 import Payload
-from temporalio.api.enums.v1 import EventType
 from temporalio.client import Client
 
-from stepledger import headers
 from stepledger.canonical import chash
+from stepledger.ledger.history import HistoryNode, history_nodes
 
-
-@dataclass
-class HistoryNode:
-    scheduled_event_id: int
-    activity_id: str
-    activity_type: str
-    seq: int | None
-    header_commits: list[int]
-    header_abandons: list[int]
-    status: str = "SCHEDULED"  # SCHEDULED | COMPLETED | FAILED | TIMED_OUT | CANCELED
-    cancel_requested: bool = False  # a cancel request preceded the completion
-    result: Any = None  # the ActivityOutput Temporal recorded, as plain JSON
-    result_hash: str | None = None
-    attempt: int | None = None
-
-    @property
-    def accepted(self) -> bool:
-        """The workflow received this result (R6 vs R6a)."""
-        return self.status == "COMPLETED" and not self.cancel_requested
-
-
-async def _decode_header(client: Client, p: Payload) -> Payload:
-    if p.metadata.get("encoding") == b"json/plain" or client.data_converter.payload_codec is None:
-        return p
-    return (await client.data_converter.payload_codec.decode([p]))[0]
-
-
-async def history_nodes(client: Client, workflow_id: str, run_id: str) -> list[HistoryNode]:
-    handle = client.get_workflow_handle(workflow_id, run_id=run_id)
-    nodes: dict[int, HistoryNode] = {}
-    async for ev in handle.fetch_history_events():
-        et = ev.event_type
-        if et == EventType.EVENT_TYPE_ACTIVITY_TASK_SCHEDULED:
-            a = ev.activity_task_scheduled_event_attributes
-            fields = {k: await _decode_header(client, v) for k, v in a.header.fields.items()}
-            seq, commits, abandons = headers.decode(fields)
-            nodes[ev.event_id] = HistoryNode(
-                ev.event_id, a.activity_id, a.activity_type.name, seq, commits, abandons
-            )
-        elif et == EventType.EVENT_TYPE_ACTIVITY_TASK_CANCEL_REQUESTED:
-            sid = ev.activity_task_cancel_requested_event_attributes.scheduled_event_id
-            if sid in nodes and nodes[sid].status == "SCHEDULED":
-                nodes[sid].cancel_requested = True
-        elif et == EventType.EVENT_TYPE_ACTIVITY_TASK_STARTED:
-            st = ev.activity_task_started_event_attributes
-            if st.scheduled_event_id in nodes:
-                nodes[st.scheduled_event_id].attempt = st.attempt
-        elif et == EventType.EVENT_TYPE_ACTIVITY_TASK_COMPLETED:
-            c = ev.activity_task_completed_event_attributes
-            node = nodes[c.scheduled_event_id]
-            node.status = "COMPLETED"
-            if c.result.payloads:
-                (value,) = await client.data_converter.decode(list(c.result.payloads))
-                node.result = json.loads(json.dumps(value))
-                node.result_hash = chash(node.result)
-        elif et == EventType.EVENT_TYPE_ACTIVITY_TASK_FAILED:
-            nodes[ev.activity_task_failed_event_attributes.scheduled_event_id].status = "FAILED"
-        elif et == EventType.EVENT_TYPE_ACTIVITY_TASK_TIMED_OUT:
-            sid = ev.activity_task_timed_out_event_attributes.scheduled_event_id
-            nodes[sid].status = "TIMED_OUT"
-        elif et == EventType.EVENT_TYPE_ACTIVITY_TASK_CANCELED:
-            nodes[ev.activity_task_canceled_event_attributes.scheduled_event_id].status = "CANCELED"
-    return list(nodes.values())
+__all__ = ["Counters", "HistoryNode", "check_naive", "check_stepledger", "history_nodes"]
 
 
 @dataclass
@@ -93,7 +28,7 @@ class Counters:
     rows: int = 0
     duplicate_rows: int = 0  # more than one row for one node Activity execution
     divergent_rows: int = 0  # row output differs from the result Temporal recorded
-    lost_rows: int = 0  # accepted in history, no committed row
+    lost_rows: int = 0  # accepted in history, but no row or an ABANDONED row
     orphan_rows: int = 0  # PROVISIONAL after the run sealed / closed
     duplicate_side_effects: int = 0  # extra calls that reached a fake effect sink
     wrongly_committed: int = 0  # COMMITTED although history shows it was not accepted
@@ -161,14 +96,20 @@ async def check_stepledger(
     counts = Counter(r[0] for r in rows)
     out.duplicate_rows = sum(c - 1 for c in counts.values() if c > 1)
     out.duplicate_rows += sum(len(v) - 1 for v in by_seq.values() if len(v) > 1)  # seq reuse
+    spurious = sorted(r[0] for r in rows if r[0] not in by_seq)  # no scheduled Activity has it
+    out.duplicate_rows += len(spurious)
+    if spurious:
+        out.details.append(f"rows for seqs Temporal never scheduled: {spurious}")
     row_by_seq = {r[0]: r for r in rows}
     for seq, seq_nodes in by_seq.items():
         node = seq_nodes[0]
         row = row_by_seq.get(seq)
         if node.accepted:
-            if row is None or row[1] != "COMMITTED":
+            if row is None or row[1] == "ABANDONED":
                 out.lost_rows += 1
                 out.details.append(f"seq {seq}: accepted in history, row={row and row[1]}")
+            elif row[1] == "PROVISIONAL":
+                pass  # counted as an orphan once the run is sealed; still in flight otherwise
             elif row[2] != node.result_hash:
                 out.divergent_rows += 1
                 out.details.append(
