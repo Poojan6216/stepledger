@@ -38,4 +38,4 @@ common dependency for teams already running Temporal self-hosted, and the chunki
 `fastcdc`. I am happy to adapt the implementation to the contrib conventions, drop the parts that
 are out of scope (the GC CLI, for example), and add tests in the SDK's style.
 
-Implementation and measurements: [repository link]
+Implementation and measurements: https://github.com/Poojan6216/stepledger

@@ -47,4 +47,4 @@ encryption codec, it runs before External Storage, so the stored bytes can't be 
 
 I put this together as a small open-source plugin that does the fenced per-node ledger plus a
 deduplicating Postgres storage driver, with crash tests checked against Temporal's own history:
-[link]. Happy to answer questions or adapt anything useful into a sample here.
+https://github.com/Poojan6216/stepledger (`pip install stepledger`). Happy to answer questions or adapt anything useful into a sample here.
