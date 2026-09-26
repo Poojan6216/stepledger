@@ -1,0 +1,177 @@
+{
+ "command": "uv run python -m bench.adversarial.run_attacks --all",
+ "generated_at": "2026-09-26T18:43:57+00:00",
+ "environment": {
+  "python": "3.11.9",
+  "platform": "macOS-15.7.9-x86_64-i386-64bit",
+  "temporalio": "1.33.0",
+  "langgraph": "1.2.12",
+  "fastcdc": "1.7.0",
+  "psycopg": "3.3.6",
+  "temporal_cli": "temporal version 1.9.1 (Server 1.32.0, UI 2.54.1)"
+ },
+ "attacks": [
+  {
+   "id": "7.1",
+   "name": "Activity reset",
+   "expected": "0 divergent rows; the accepted attempt 1 replaces attempt 3",
+   "measured": {
+    "runs": 5,
+    "resets": 5,
+    "divergent": 0,
+    "lost": 0,
+    "orphan": 0,
+    "accepted_attempt_after_reset": [
+     1,
+     1,
+     1,
+     1,
+     1
+    ],
+    "rows_replaced_by_lower_attempt": 5,
+    "attempt_only_fence_would_reject_accepted": 5
+   },
+   "rate": "0 divergent rows in 5 reset runs",
+   "holds": true,
+   "error": null
+  },
+  {
+   "id": "7.2",
+   "name": "Worker clock skew (+/-5 min)",
+   "expected": "0 divergent rows",
+   "measured": {
+    "runs": 8,
+    "f3_crashes_planned": 16,
+    "worker_restarts": 16,
+    "retried_nodes": 18,
+    "retried_across_worker_processes": 18,
+    "divergent": 0,
+    "lost": 0,
+    "worker_clock_fence_would_keep_stale_write": 7
+   },
+   "rate": "0 divergent rows; a worker-clock fence would keep the stale write for 7 of 18 retried nodes",
+   "holds": true,
+   "error": null
+  },
+  {
+   "id": "7.3",
+   "name": "Workflow-side nodes",
+   "expected": "GAP every time; 0 wrong EXACT",
+   "measured": {
+    "runs": 10,
+    "gap": 10,
+    "exact": 0,
+    "wrong_exact": 0,
+    "open": 0,
+    "gap_positions_named": 10
+   },
+   "rate": "GAP 10/10, wrong EXACT 0",
+   "holds": true,
+   "error": null
+  },
+  {
+   "id": "7.4",
+   "name": "Encrypted payloads",
+   "expected": "dedupe is defeated (about 1x); the ledger stays correct; payloads counted as opaque",
+   "measured": {
+    "plaintext": {
+     "encrypted": false,
+     "externalized_payloads": 27,
+     "logical_bytes": 28464290,
+     "unique_chunk_bytes": 2588220,
+     "dedupe_ratio": 11.0,
+     "opaque_payloads_counted": 0,
+     "ledger_counters_zero": true
+    },
+    "encrypted": {
+     "encrypted": true,
+     "externalized_payloads": 27,
+     "logical_bytes": 28465644,
+     "unique_chunk_bytes": 28465644,
+     "dedupe_ratio": 1.0,
+     "opaque_payloads_counted": 27,
+     "ledger_counters_zero": true
+    }
+   },
+   "rate": "dedupe 11.0x plaintext vs 1.0x encrypted",
+   "holds": false,
+   "error": null
+  },
+  {
+   "id": "7.5",
+   "name": "Non-JSON outputs (pydantic converter, LangChain messages)",
+   "expected": "0 ledger divergence; materialize EXACT through the same converter",
+   "measured": {
+    "runs": 5,
+    "divergent": 0,
+    "lost": 0,
+    "rows": 15,
+    "exact": 5,
+    "gap": 0,
+    "materialize_errors": []
+   },
+   "rate": "0 divergent rows in 15; materialize EXACT 5/5, errors 0",
+   "holds": true,
+   "error": null
+  },
+  {
+   "id": "7.6",
+   "name": "Effect whose tool ignores the key; crash before its record",
+   "expected": "duplicates only without once(); blind once() stops for a person",
+   "measured": {
+    "direct": {
+     "mode": "direct",
+     "runs": 3,
+     "tickets_opened": 6,
+     "duplicate_tickets": 3,
+     "resolved_by_a_person": 0
+    },
+    "once_blind": {
+     "mode": "once_blind",
+     "runs": 3,
+     "tickets_opened": 3,
+     "duplicate_tickets": 0,
+     "resolved_by_a_person": 3
+    },
+    "once": {
+     "mode": "once",
+     "runs": 3,
+     "tickets_opened": 3,
+     "duplicate_tickets": 0,
+     "resolved_by_a_person": 0
+    }
+   },
+   "rate": "direct: 3 duplicate tickets / 0 needed a person, once_blind: 0 duplicate tickets / 3 needed a person, once: 0 duplicate tickets / 0 needed a person",
+   "holds": false,
+   "error": null
+  },
+  {
+   "id": "7.7",
+   "name": "GC retention shorter than the namespace's",
+   "expected": "gc refuses to run",
+   "measured": {
+    "retention_0_5_days_exit_code": 2,
+    "refused_message": "refusing to run: gc retention 12:00:00 is shorter than the namespace's workflow retention 1 day, 0:00:00; a closed workflow could still be read after its payloads are gone",
+    "retention_1_day_exit_code": 0
+   },
+   "rate": "refused 1/1; equal retention allowed 1/1",
+   "holds": true,
+   "error": null
+  },
+  {
+   "id": "7.8",
+   "name": "Workflow reset (new run ID)",
+   "expected": "effects repeat unless the tool's own key dedupes",
+   "measured": {
+    "workflows": 3,
+    "runs_after_reset": 6,
+    "effect_calls": 12,
+    "duplicate_effect_calls": 6,
+    "calls_a_business_key_dedupe_would_keep": 6
+   },
+   "rate": "6 duplicate effects across 3 resets",
+   "holds": false,
+   "error": null
+  }
+ ]
+}

@@ -238,11 +238,13 @@ class LedgerTx:
         cost_usd: Decimal | float | None = None,
         write_ms: float | None = None,
         note: str | None = None,
+        worker_time: datetime | None = None,
     ) -> None:
         await self.conn.execute(
             "INSERT INTO sl_node_attempts (namespace, workflow_id, run_id, seq, attempt,"
             " fence_scheduled_at, output_hash, outcome, tokens_in, tokens_out, cost_usd, write_ms,"
-            " worker, note) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
+            " worker, note, worker_time)"
+            " VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
             (
                 key.namespace,
                 key.workflow_id,
@@ -258,6 +260,7 @@ class LedgerTx:
                 write_ms,
                 WORKER,
                 note,
+                worker_time,
             ),
         )
 

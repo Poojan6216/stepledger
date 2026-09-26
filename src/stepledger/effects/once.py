@@ -30,6 +30,7 @@ from typing import Any, TypeVar
 
 from psycopg.types.json import Jsonb
 
+from stepledger._hooks import fault
 from stepledger.canonical import chash
 from stepledger.errors import EffectDivergence, NotInTrackedNode, UnknownEffectOutcome
 from stepledger.ledger.context import current_node
@@ -100,6 +101,7 @@ async def once(
 
     if claimed:
         result = await fn(key)
+        await fault("FE", effect=name)  # chaos only: a crash between the call and its record
         await _done(node.store, key, result)
         return result
 

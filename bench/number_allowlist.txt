@@ -1,2 +1,4 @@
 # Numbers in README.md that are not measurements. One per line; '#' starts a comment.
 1894   # temporalio/sdk-python issue number
+50     # Temporal's history size limit in MiB (limit.historySize.error, scripts/dev.sh)
+2016   # year of the FastCDC paper (Xia et al., USENIX ATC 2016)

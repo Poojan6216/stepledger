@@ -41,6 +41,8 @@ CREATE TABLE IF NOT EXISTS sl_node_attempts (
   write_ms real,                                       -- ledger transaction time for this attempt
   worker text, note text, at timestamptz DEFAULT now());
 CREATE INDEX IF NOT EXISTS sl_node_attempts_run ON sl_node_attempts (namespace, workflow_id, run_id, seq);
+-- the writing worker's own clock at write time (forensics: clock skew never affects the fence)
+ALTER TABLE sl_node_attempts ADD COLUMN IF NOT EXISTS worker_time timestamptz;
 
 -- Effect journal for once().
 CREATE TABLE IF NOT EXISTS sl_effects (

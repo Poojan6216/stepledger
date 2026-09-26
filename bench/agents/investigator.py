@@ -40,7 +40,7 @@ class AgentContext(TypedDict, total=False):
     vary_per_attempt: bool  # FakeLLM answers differently on each Activity attempt
     persist_mode: str  # "none" | "naive" (B1) | "naive_upsert" (B1u)
     journal: bool  # wrap the model in stepledger's JournaledChatModel
-    effects_mode: str  # "direct" | "once"
+    effects_mode: str  # "direct" | "once" (with reconcile) | "once_blind" (no reconcile)
     node_delay_ms: int  # simulated work per tool-using node
     llm_model: str  # model name the fake LLM reports (prices the cost meter)
     bill_llm: bool  # record every real model call in bench_llm_bill (the provider's bill)
@@ -154,7 +154,12 @@ async def human_review(state: InvestigationState) -> dict[str, Any]:
 async def _effect(ctx: AgentContext, name: str, request: dict[str, Any]) -> str:
     from bench.agents import sinks
 
-    if ctx.get("effects_mode", "direct") == "once":
+    mode = ctx.get("effects_mode", "direct")
+    if mode == "once_blind":  # the tool cannot be asked whether an effect happened (attack 7.6)
+        from stepledger import once
+
+        return await once(name, lambda key: sinks.effect(name, request, key), request=request)
+    if mode == "once":
         from stepledger import once
 
         return await once(

@@ -31,9 +31,10 @@ from typing import Any, Literal
 
 import psycopg
 from langgraph.errors import EmptyChannelError
+from temporalio.converter import DataConverter, PayloadConverter
 
 from stepledger._compat import MISSING
-from stepledger.canonical import chash
+from stepledger.canonical import serialize
 
 Completeness = Literal["EXACT", "GAP", "OPEN"]
 
@@ -128,7 +129,15 @@ async def materialize(
     *,
     include_provisional: bool = False,
     chain: bool = False,
+    payload_converter: PayloadConverter | None = None,
 ) -> MaterializeResult:
+    """`payload_converter` must be the workflow's (e.g. pydantic_data_converter's) when state
+    holds non-JSON values such as LangChain messages; hashes go through it, as at seal."""
+    conv = payload_converter or DataConverter.default.payload_converter
+
+    def state_hash(value: Any) -> str:
+        return serialize(value, conv).hash
+
     statuses = ["COMMITTED", "PROVISIONAL"] if include_provisional else ["COMMITTED"]
     async with await psycopg.AsyncConnection.connect(dsn) as conn:
         cur = await conn.execute(
@@ -183,14 +192,14 @@ async def materialize(
         candidates = [r for p, r in fill.get(step, {}).items() if p not in paths]
         applied: list[_Row] = []
         for r in present:
-            expected = chash(_values(channels, _input_keys(compiled_graph, r.node, keys)))
+            expected = state_hash(_values(channels, _input_keys(compiled_graph, r.node, keys)))
             if r.input_hash is not None and r.input_hash != expected:
                 result.positions.append(
                     f"before step {step}: input of {r.node} ({r.path}) does not match the fold"
                 )
             applied.append(r)
         for r in candidates:
-            expected = chash(_values(channels, _input_keys(compiled_graph, r.node, keys)))
+            expected = state_hash(_values(channels, _input_keys(compiled_graph, r.node, keys)))
             if r.input_hash == expected:
                 applied.append(r)
                 result.chain_rows_used += 1
@@ -209,7 +218,7 @@ async def materialize(
         result.rows_used += len([r for r in applied if r.run_id == target])
 
     result.state = _values(channels, keys)
-    result.state_hash = chash(result.state)
+    result.state_hash = state_hash(result.state)
     if not sealed:
         result.completeness, result.reason = "OPEN", "the run has not sealed"
     elif final_hash is not None and result.state_hash == final_hash:

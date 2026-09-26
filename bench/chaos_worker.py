@@ -29,7 +29,10 @@ async def main(argv: list[str]) -> None:
     ap.add_argument("--task-queue", required=True)
     ap.add_argument("--nodes", type=int, default=30)
     ap.add_argument("--on-ledger-error", default="fail")
+    ap.add_argument("--clock-skew-s", type=float, default=0.0, help="attack 7.2")
     args = ap.parse_args(argv)
+    if args.clock_skew_s:
+        _skew_worker_clock(args.clock_skew_s)
 
     faults.install()
     lg = langgraph_plugin(
@@ -65,6 +68,20 @@ async def main(argv: list[str]) -> None:
     ):
         print("READY", flush=True)
         await stop.wait()
+
+
+def _skew_worker_clock(seconds: float) -> None:
+    """Make every clock reading Stepledger takes on this worker wrong by `seconds`."""
+    from datetime import datetime
+
+    from stepledger.ledger import activity_interceptor
+
+    class Skewed(datetime):
+        @classmethod
+        def now(cls, tz=None):  # type: ignore[no-untyped-def,override]
+            return datetime.now(tz) + timedelta(seconds=seconds)
+
+    activity_interceptor.datetime = Skewed  # type: ignore[misc]
 
 
 if __name__ == "__main__":

@@ -8,13 +8,14 @@ repeats that matter and puts a number on the rest.
 ```python
 from stepledger import once
 
+
 async def open_ticket(state, runtime):
     request = {"target": state["target"], "risk": state["risk_score"]}
     ticket = await once(
         "open_ticket",
-        lambda key: jira.create(request, idempotency_key=key),   # pass the key upstream
+        lambda key: jira.create(request, idempotency_key=key),  # pass the key upstream
         request=request,
-        reconcile=lambda key: jira.find_by_key(key),             # optional, see below
+        reconcile=lambda key: jira.find_by_key(key),  # optional, see below
     )
     return {"ticket_id": ticket}
 ```
@@ -53,6 +54,7 @@ Results are stored as JSON, so the function must return a JSON-serializable valu
 
 ```python
 from stepledger import JournaledChatModel
+
 llm = JournaledChatModel(inner=ChatAnthropic(model="claude-haiku-4-5"))
 ```
 

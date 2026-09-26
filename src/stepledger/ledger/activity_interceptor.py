@@ -127,6 +127,7 @@ class LedgerActivityInbound(ActivityInboundInterceptor):
                     cost_usd=write.cost_usd,
                     write_ms=(time.perf_counter() - t0) * 1000,
                     note="run sealed" if r.run_sealed else None,
+                    worker_time=finished,
                 )
         except DB_ERRORS as e:
             if self._opts.on_ledger_error == "fail":

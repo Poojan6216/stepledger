@@ -13,8 +13,10 @@ It changes no graph code and never touches `LangGraphPlugin`. It adds four thing
 ## Wiring
 
 ```python
-lg = LangGraphPlugin(graphs={"investigate": build_graph()},
-                     default_activity_options={"start_to_close_timeout": timedelta(minutes=2)})
+lg = LangGraphPlugin(
+    graphs={"investigate": build_graph()},
+    default_activity_options={"start_to_close_timeout": timedelta(minutes=2)},
+)
 sl = StepledgerPlugin(dsn=os.environ["STEPLEDGER_DSN"], langgraph=lg)
 client = await Client.connect("localhost:7233", plugins=[sl])
 worker = Worker(client, task_queue="agents", workflows=[InvestigateWorkflow], plugins=[lg])
@@ -103,9 +105,10 @@ history recorded, because Temporal's own nondeterminism check does not compare h
 
 ```python
 from stepledger import materialize
+
 result = await materialize(dsn, build_graph().compile(), "investigate-7f3a")
-result.completeness   # "EXACT" | "GAP" | "OPEN"
-result.state          # the rebuilt graph state
+result.completeness  # "EXACT" | "GAP" | "OPEN"
+result.state  # the rebuilt graph state
 ```
 
 It takes fresh copies of the compiled graph's own channels, seeds them from the first node's

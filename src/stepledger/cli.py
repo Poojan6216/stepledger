@@ -255,3 +255,7 @@ def bench_cmd(
         typer.echo("run this from a stepledger repository checkout (bench/ is not installed)")
         raise typer.Exit(2)
     raise typer.Exit(subprocess.call([sys.executable, "bench/demo.py", "--demo", demo]))
+
+
+if __name__ == "__main__":
+    app()

@@ -7,6 +7,10 @@
     F5  inside the seal Activity
     F6  zombie: the attempt hangs past its start-to-close timeout, ignoring the SDK's local
         timeout cancel, then carries on and writes
+    FE  inside once(), after the external call and before its DONE record (attack 7.6)
+
+Actions: `exit` (default; F6 defaults to `hang`) or `raise`, a retryable error at that point
+(a lost completion report without killing the worker), e.g. `F3:wf=..:node=..:action=raise`.
 
 A plan is a list of specs, `F3:wf=<workflow id>:node=<name>:seq=<n>:attempt=<k>[:hang=<s>]`,
 separated by commas or newlines, from $STEPLEDGER_FAULTS (or `@path` to read a file). Every
@@ -29,7 +33,7 @@ from typing import Any
 
 from stepledger import _hooks
 
-POINTS = ("F1", "F2", "F3", "F4", "F5", "F6")
+POINTS = ("F1", "F2", "F3", "F4", "F5", "F6", "FE")
 DEFAULT_HANG_S = 12.0
 EXIT_CODE = 137
 
@@ -42,6 +46,7 @@ class FaultSpec:
     seq: int | None = None
     attempt: int | None = None
     hang: float | None = None
+    action: str | None = None  # exit | raise | hang
 
     @property
     def id(self) -> str:
@@ -73,7 +78,7 @@ def parse(text: str) -> list[FaultSpec]:
                 kw[k] = int(v)
             elif k == "hang":
                 kw[k] = float(v)
-            elif k in ("wf", "node"):
+            elif k in ("wf", "node", "action"):
                 kw[k] = v
             else:
                 raise ValueError(f"unknown fault selector {k!r} in {raw!r}")
@@ -83,7 +88,7 @@ def parse(text: str) -> list[FaultSpec]:
 
 def format_spec(s: FaultSpec) -> str:
     parts = [s.point]
-    for name in ("wf", "node", "seq", "attempt", "hang"):
+    for name in ("wf", "node", "seq", "attempt", "hang", "action"):
         v = getattr(s, name)
         if v is not None:
             parts.append(f"{name}={v}")
@@ -146,10 +151,19 @@ class Injector:
         for spec in self.plan:
             if spec.id in self.fired or not spec.matches(point, ctx):
                 continue
+            # Another worker process sharing this log may have fired it since we started.
+            self.fired |= {entry["spec"] for entry in read_log(self.log_path)}
+            if spec.id in self.fired:
+                continue
             self._log(spec, ctx)
-            if point == "F6":
+            action = spec.action or ("hang" if point == "F6" else "exit")
+            if action == "hang":
                 await _zombie_hang(spec.hang if spec.hang is not None else DEFAULT_HANG_S)
                 return
+            if action == "raise":
+                from temporalio.exceptions import ApplicationError
+
+                raise ApplicationError(f"injected {spec.id}", type="InjectedFault")
             os._exit(EXIT_CODE)
 
 
