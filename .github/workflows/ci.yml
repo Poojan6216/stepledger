@@ -1,0 +1,72 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          python-version: "3.11"
+      - run: uv sync --all-groups
+      - run: uv run ruff check .
+      - run: uv run ruff format --check .
+      - run: uv run mypy
+
+  unit:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - run: uv sync --all-groups
+      - run: uv run pytest -m "not integration and not chaos" -q
+      - name: wheel installs and runs
+        run: |
+          uv build
+          uv venv /tmp/wheelcheck --python ${{ matrix.python-version }}
+          uv pip install --python /tmp/wheelcheck dist/*.whl
+          /tmp/wheelcheck/bin/stepledger --version
+
+  integration:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: stepledger
+          POSTGRES_PASSWORD: stepledger
+          POSTGRES_DB: stepledger
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U stepledger"
+          --health-interval 2s --health-timeout 5s --health-retries 30
+    env:
+      STEPLEDGER_DSN: postgresql://stepledger:stepledger@localhost:5432/stepledger
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+      - uses: astral-sh/setup-uv@v5
+        with:
+          python-version: "3.11"
+      - name: install Temporal CLI
+        run: |
+          curl -sSf https://temporal.download/cli.sh | sh
+          echo "$HOME/.temporalio/bin" >> "$GITHUB_PATH"
+      - run: uv sync --all-groups
+      - name: start Temporal dev server
+        run: scripts/dev.sh temporal-bg
+      - run: uv run stepledger init-db
+      - name: integration, chaos and never-skip suites
+        run: uv run pytest -m "integration or chaos or never_skip" -q -rs

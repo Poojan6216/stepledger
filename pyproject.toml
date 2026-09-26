@@ -1,0 +1,96 @@
+[project]
+name = "stepledger"
+version = "0.1.0"
+description = "A Temporal plugin that records every LangGraph node exactly once per Activity execution in Postgres, fenced and committed against Temporal's history, with a deduplicating External Storage driver for large state."
+readme = "README.md"
+license = "Apache-2.0"
+license-files = ["LICENSE"]
+authors = [{ name = "Poojan Patel" }]
+requires-python = ">=3.11"
+keywords = ["temporal", "langgraph", "postgres", "ledger", "external-storage", "agents"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Database",
+    "Topic :: System :: Distributed Computing",
+    "Typing :: Typed",
+]
+dependencies = [
+    "temporalio[langgraph]>=1.33,<2",
+    "langgraph>=1.2,<1.3",
+    "psycopg[binary,pool]>=3.2",
+    "fastcdc>=1.7",
+    "typer>=0.12",
+    "pydantic>=2.7,<3",
+    "pydantic-settings>=2.3",
+    "pyyaml>=6",
+]
+
+[project.urls]
+Homepage = "https://github.com/Poojan6216/stepledger"
+Issues = "https://github.com/Poojan6216/stepledger/issues"
+
+[project.scripts]
+stepledger = "stepledger.cli:app"
+
+[dependency-groups]
+dev = [
+    "pytest>=8",
+    "pytest-asyncio>=0.24",
+    "pytest-timeout>=2.3",
+    "hypothesis>=6.100",
+    "mypy>=1.11",
+    "ruff>=0.6",
+    "types-pyyaml",
+]
+bench = [
+    "matplotlib>=3.9",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/stepledger"]
+
+[tool.hatch.build.targets.sdist]
+exclude = ["third_party", ".temporal", ".pgdata", "bench/results/raw"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+extend-exclude = ["third_party", "bench/spike"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "SIM", "RUF", "ASYNC"]
+ignore = ["RUF012"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["B011"]
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+files = ["src/stepledger"]
+exclude = ["third_party/"]
+
+[[tool.mypy.overrides]]
+module = ["fastcdc.*", "psycopg_pool.*"]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "session"
+asyncio_default_test_loop_scope = "session"
+markers = [
+    "integration: needs a live Temporal dev server and Postgres",
+    "chaos: kills worker processes; slow",
+    "never_skip: must run in CI; a skip is treated as a failure",
+]
+timeout = 600

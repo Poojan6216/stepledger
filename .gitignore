@@ -1,0 +1,28 @@
+# Private planning docs: never commit or push
+build_solution.md
+Stepledger_Design_Document.pdf
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+dist/
+build/
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+.hypothesis/
+.coverage
+htmlcov/
+
+# Local runtime state
+.temporal/
+.pgdata/
+.env
+stepledger.yaml
+
+# OS / editor
+.DS_Store
+.vscode/
+.idea/
