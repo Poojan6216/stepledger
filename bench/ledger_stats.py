@@ -30,12 +30,18 @@ async def run_stats(dsn: str, workflow_id: str, run_id: str) -> dict[str, Any]:
             (workflow_id, run_id),
         )
         writes = [float(r[0]) for r in await cur.fetchall()]
+        # Storage this run needs: its manifests (refs carry its run id, or '' for the client's
+        # start input), the whole-blob bytes of those payloads, and the distinct chunk bytes.
+        runs = [run_id, ""]
         cur = await conn.execute(
-            "SELECT coalesce(sum(p.size), 0), count(*) FROM sl_payloads p WHERE p.claim IN"
-            " (SELECT claim FROM sl_payload_refs WHERE workflow_id = %s AND run_id = %s)",
-            (workflow_id, run_id),
+            "WITH m AS (SELECT DISTINCT p.claim, p.size, p.chunks FROM sl_payloads p"
+            " JOIN sl_payload_refs r USING (claim) WHERE r.workflow_id = %s AND r.run_id = ANY(%s))"
+            " SELECT count(*), coalesce(sum(size), 0),"
+            " (SELECT coalesce(sum(c.size), 0) FROM sl_chunks c"
+            "  WHERE c.hash IN (SELECT unnest(chunks) FROM m)) FROM m",
+            (workflow_id, runs),
         )
-        logical, payloads = await cur.fetchone() or (0, 0)
+        payloads, logical, unique = await cur.fetchone() or (0, 0, 0)
     return {
         "ledger_rows": int(rows),
         "ledger_committed": int(committed),
@@ -43,7 +49,8 @@ async def run_stats(dsn: str, workflow_id: str, run_id: str) -> dict[str, Any]:
         "ledger_write_ms_p50": _pct(writes, 50),
         "ledger_write_ms_p95": _pct(writes, 95),
         "externalized_payloads": int(payloads),
-        "externalized_logical_bytes": int(logical),
+        "store_whole_blob_bytes": int(logical),
+        "store_unique_chunk_bytes": int(unique),
     }
 
 

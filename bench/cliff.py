@@ -102,7 +102,7 @@ async def run_one(
         stopped_at = (
             "persist_all" if len(node_activities) == nodes else f"node {len(node_activities) + 1}"
         )
-    return {
+    row: dict[str, Any] = {
         "config": baseline.id,
         "label": baseline.label,
         "nodes": nodes,
@@ -121,6 +121,14 @@ async def run_one(
         "elapsed_s": round(time.monotonic() - t0, 2),
         "workflow_id": m.workflow_id,
     }
+    if baseline.stepledger is not None:
+        from bench.ledger_stats import run_stats
+
+        stats = await run_stats(dsn(), m.workflow_id, m.run_id)
+        row["store_whole_blob_bytes"] = stats["store_whole_blob_bytes"]
+        row["store_unique_chunk_bytes"] = stats["store_unique_chunk_bytes"]
+        row["ledger_committed"] = stats["ledger_committed"]
+    return row
 
 
 def fmt(rows: list[dict[str, Any]]) -> str:
@@ -156,7 +164,7 @@ def fmt(rows: list[dict[str, Any]]) -> str:
 
 async def main(argv: list[str]) -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawTextHelpFormatter)
-    ap.add_argument("--configs", nargs="+", default=["B0", "B1"])
+    ap.add_argument("--configs", nargs="+", default=["B0", "B1", "B2", "B3", "B4"])
     ap.add_argument("--kb", type=int, default=60)
     ap.add_argument("--llm-bytes", type=int, default=1024)
     ap.add_argument("--nodes", type=int, default=40, help="node count for every config but B0")

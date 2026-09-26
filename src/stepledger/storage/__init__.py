@@ -1,11 +1,29 @@
-"""Deduplicating External Storage (Phase 4)."""
+"""Deduplicating External Storage: DedupStorageDriver over a ChunkBackend."""
 
 from __future__ import annotations
 
-from typing import Any
+from temporalio.converter import ExternalStorage
+
+from stepledger.storage.backends import (
+    ChunkBackend,
+    FilesystemChunkBackend,
+    IntegrityError,
+    PostgresChunkBackend,
+)
+from stepledger.storage.driver import DedupStorageDriver
+
+__all__ = [
+    "ChunkBackend",
+    "DedupStorageDriver",
+    "FilesystemChunkBackend",
+    "IntegrityError",
+    "PostgresChunkBackend",
+    "make_external_storage",
+]
 
 
 def make_external_storage(
     dsn: str, *, dedupe: bool, payload_size_threshold: int
-) -> tuple[Any, Any]:
-    raise NotImplementedError("dedup storage lands in Phase 4; pass external_storage=False")
+) -> tuple[DedupStorageDriver, ExternalStorage]:
+    driver = DedupStorageDriver(PostgresChunkBackend(dsn), dedupe=dedupe)
+    return driver, ExternalStorage(drivers=[driver], payload_size_threshold=payload_size_threshold)
