@@ -15,6 +15,14 @@ The LangGraph plugin sends each node's whole input state as its Activity input, 
 - **Per-node writes are at-least-once.** Under injected crashes, a plain insert produced 17 duplicate and 13 divergent rows in 20 runs; an upsert still produced 5 divergent rows (a zombie attempt overwriting the accepted answer) and 4 duplicate side effects.
 - **External Storage fixes history, but storage then grows with the square of the run:** one object per payload, and every node input is a slightly longer copy of the last.
 
+## Install
+
+```bash
+pip install stepledger
+```
+
+Requires Python 3.11 or later, `temporalio[langgraph]` 1.33 or later, `langgraph` 1.2, and Postgres 16. For the local environment the tests and benches use (Postgres plus a Temporal dev server with explicit payload and history limits): `scripts/dev.sh up`.
+
 ## Integration
 
 ```python
@@ -25,10 +33,8 @@ from temporalio.contrib.langgraph import LangGraphPlugin
 from temporalio.worker import Worker
 from stepledger import StepledgerPlugin
 
-lg = LangGraphPlugin(
-    graphs={"investigate": build_graph()},
-    default_activity_options={"start_to_close_timeout": timedelta(minutes=2)},
-)
+lg = LangGraphPlugin(graphs={"investigate": build_graph()},
+                     default_activity_options={"start_to_close_timeout": timedelta(minutes=2)})
 sl = StepledgerPlugin(dsn=os.environ["STEPLEDGER_DSN"], langgraph=lg)
 client = await Client.connect("localhost:7233", plugins=[sl])
 worker = Worker(client, task_queue="agents", workflows=[InvestigateWorkflow], plugins=[lg])

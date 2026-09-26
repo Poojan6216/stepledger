@@ -2,3 +2,7 @@
 1894   # temporalio/sdk-python issue number
 50     # Temporal's history size limit in MiB (limit.historySize.error, scripts/dev.sh)
 2016   # year of the FastCDC paper (Xia et al., USENIX ATC 2016)
+3.11   # minimum Python version
+1.33   # minimum temporalio version
+1.2    # supported langgraph minor version
+16     # Postgres major version

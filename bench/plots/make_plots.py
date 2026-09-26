@@ -264,11 +264,12 @@ def storage_figure(theme: str) -> Path:
     )
     fig.text(
         0.01,
-        0.905,
+        0.91,
         "Whole-payload objects grow with the square of the run; content-defined "
         "chunks stored once grow linearly. Each panel has its own scale.",
         fontsize=9,
         color=t["ink2"],
+        va="top",
     )
     handles, labels = axes[0].get_legend_handles_labels()
     leg = fig.legend(
@@ -282,7 +283,7 @@ def storage_figure(theme: str) -> Path:
     )
     for text in leg.get_texts():
         text.set_color(t["ink"])
-    fig.tight_layout(rect=(0, 0.06, 1, 0.88))
+    fig.tight_layout(rect=(0, 0.06, 1, 0.86))
     out = HERE / f"storage-{theme}.png"
     fig.savefig(out, dpi=160, facecolor=t["surface"])
     plt.close(fig)
