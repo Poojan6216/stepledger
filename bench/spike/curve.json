@@ -1,0 +1,50 @@
+[
+ {
+  "nodes": 10,
+  "largest_input_mb": 0.53,
+  "history_inline_mb": 3.2,
+  "history_with_extstore_mb": 1.18,
+  "store_whole_blob_mb": 2.1,
+  "store_dedup_mb": 0.65
+ },
+ {
+  "nodes": 20,
+  "largest_input_mb": 1.11,
+  "history_inline_mb": 12.3,
+  "history_with_extstore_mb": 1.77,
+  "store_whole_blob_mb": 10.6,
+  "store_dedup_mb": 1.56
+ },
+ {
+  "nodes": 30,
+  "largest_input_mb": 1.7,
+  "history_inline_mb": 27.3,
+  "history_with_extstore_mb": 2.35,
+  "store_whole_blob_mb": 24.9,
+  "store_dedup_mb": 2.43
+ },
+ {
+  "nodes": 40,
+  "largest_input_mb": 2.29,
+  "history_inline_mb": 48.1,
+  "history_with_extstore_mb": 2.94,
+  "store_whole_blob_mb": 45.2,
+  "store_dedup_mb": 3.33
+ },
+ {
+  "nodes": 50,
+  "largest_input_mb": 2.87,
+  "history_inline_mb": 74.8,
+  "history_with_extstore_mb": 3.53,
+  "store_whole_blob_mb": 71.3,
+  "store_dedup_mb": 4.25
+ },
+ {
+  "nodes": 60,
+  "largest_input_mb": 3.46,
+  "history_inline_mb": 107.3,
+  "history_with_extstore_mb": 4.12,
+  "store_whole_blob_mb": 103.2,
+  "store_dedup_mb": 5.18
+ }
+]

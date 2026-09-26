@@ -69,7 +69,9 @@ class DedupStorageDriver(StorageDriver):
         ref = PayloadRef.from_context(context.target)
         claims = []
         for p in payloads:
-            data = p.SerializeToString()
+            # deterministic=True: map fields (metadata) serialize in a fixed order, so equal
+            # payloads built with different insertion orders still share one claim
+            data = p.SerializeToString(deterministic=True)
             if len(data) > self.max_payload_size:
                 raise ValueError(f"payload of {len(data)} bytes exceeds max_payload_size")
             claim = hashlib.sha256(data).hexdigest()

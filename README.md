@@ -4,7 +4,7 @@
 
 **Every LangGraph node running on Temporal, recorded once per Activity execution in your own Postgres, at any state size.**
 
-Stepledger is one Temporal plugin that sits next to Temporal's `LangGraphPlugin`. It writes one fenced Postgres row per node Activity execution, commits it only once the workflow has accepted that result, and checks itself against Temporal's own history. Its deduplicating External Storage driver keeps accumulating agent state under Temporal's payload and history limits. It changes no graph code and does not modify the LangGraph plugin. It was built in response to [temporalio/sdk-python#1894](https://github.com/temporalio/sdk-python/issues/1894).
+Stepledger is one Temporal plugin that sits next to Temporal's `LangGraphPlugin`. It writes one fenced Postgres row per node Activity execution, commits it only once the workflow has accepted that result; `reconcile` and the test suite check every row against Temporal's own history. Its deduplicating External Storage driver keeps accumulating agent state under Temporal's payload and history limits. It changes no graph code and does not modify the LangGraph plugin. It was built in response to [temporalio/sdk-python#1894](https://github.com/temporalio/sdk-python/issues/1894).
 
 ## The problem, measured
 
@@ -56,7 +56,7 @@ Then `stepledger init-db` once. Workers built from the client inherit the plugin
 - With `on_ledger_error="warn"`, a database outage leaves rows missing until `stepledger reconcile` repairs them from history.
 - History still grows, linearly; unbounded runs still need continue-as-new.
 
-See [docs/limitations.md](docs/limitations.md) and [RESULTS.md](RESULTS.md).
+See [docs/limitations.md](https://github.com/Poojan6216/stepledger/blob/main/docs/limitations.md) and [RESULTS.md](https://github.com/Poojan6216/stepledger/blob/main/RESULTS.md).
 
 ## What it does, measured
 
@@ -67,7 +67,7 @@ See [docs/limitations.md](docs/limitations.md) and [RESULTS.md](RESULTS.md).
 - **The retry bill.** With the LLM journal, money wasted on attempts Temporal did not accept fell from USD 1.452 to USD 0.204 (86% less) under the same seeded crash plan.
 - **Small overhead.** Ledger write p95 6.109 ms; 1.387 ms of wall clock per node; about 101 bytes of history per node, constant as runs grow.
 
-All numbers come from `bench/results/*.json` via the commands in [RESULTS.md](RESULTS.md).
+All numbers come from `bench/results/*.json` via the commands in [RESULTS.md](https://github.com/Poojan6216/stepledger/blob/main/RESULTS.md).
 
 ## The five demos
 
@@ -102,13 +102,13 @@ uv run python bench/demo.py --demo cost         # the retry bill
 ### Demo 3: the quiet quadratic
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="bench/plots/history-dark.png">
-  <img alt="Workflow history size against node count with and without External Storage" src="bench/plots/history-light.png">
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/Poojan6216/stepledger/main/bench/plots/history-dark.png">
+  <img alt="Workflow history size against node count with and without External Storage" src="https://raw.githubusercontent.com/Poojan6216/stepledger/main/bench/plots/history-light.png">
 </picture>
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="bench/plots/storage-dark.png">
-  <img alt="External store bytes per run: one object per payload against dedup chunks" src="bench/plots/storage-light.png">
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/Poojan6216/stepledger/main/bench/plots/storage-dark.png">
+  <img alt="External store bytes per run: one object per payload against dedup chunks" src="https://raw.githubusercontent.com/Poojan6216/stepledger/main/bench/plots/storage-light.png">
 </picture>
 
 ## What this is not
@@ -119,12 +119,12 @@ uv run python bench/demo.py --demo cost         # the retry bill
 
 ## Docs
 
-- [How it works](docs/how-it-works.md): one step's life, commits, seal, reconcile, the read side
-- [Keys and fencing](docs/keys-and-fencing.md)
-- [Storage and GC](docs/storage-and-gc.md)
-- [Effects, the LLM journal and the retry bill](docs/effects.md)
-- [Limitations](docs/limitations.md)
-- [SDK facts](docs/sdk-facts.md): every SDK behavior relied on, with file and line
+- [How it works](https://github.com/Poojan6216/stepledger/blob/main/docs/how-it-works.md): one step's life, commits, seal, reconcile, the read side
+- [Keys and fencing](https://github.com/Poojan6216/stepledger/blob/main/docs/keys-and-fencing.md)
+- [Storage and GC](https://github.com/Poojan6216/stepledger/blob/main/docs/storage-and-gc.md)
+- [Effects, the LLM journal and the retry bill](https://github.com/Poojan6216/stepledger/blob/main/docs/effects.md)
+- [Limitations](https://github.com/Poojan6216/stepledger/blob/main/docs/limitations.md)
+- [SDK facts](https://github.com/Poojan6216/stepledger/blob/main/docs/sdk-facts.md): every SDK behavior relied on, with file and line
 
 ## Prior art, and where each stops
 

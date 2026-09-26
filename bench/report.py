@@ -444,10 +444,11 @@ worker = Worker(client, task_queue="agents", workflows=[InvestigateWorkflow], pl
 
 
 def picture(name: str, alt: str) -> str:
+    raw = "https://raw.githubusercontent.com/Poojan6216/stepledger/main/bench/plots"
     return (
         f'<picture>\n  <source media="(prefers-color-scheme: dark)" '
-        f'srcset="bench/plots/{name}-dark.png">\n  <img alt="{alt}" '
-        f'src="bench/plots/{name}-light.png">\n</picture>'
+        f'srcset="{raw}/{name}-dark.png">\n  <img alt="{alt}" '
+        f'src="{raw}/{name}-light.png">\n</picture>'
     )
 
 
@@ -468,7 +469,8 @@ def build_readme(d: dict[str, Any]) -> str:
         "",
         "Stepledger is one Temporal plugin that sits next to Temporal's `LangGraphPlugin`. It writes "
         "one fenced Postgres row per node Activity execution, commits it only once the workflow "
-        "has accepted that result, and checks itself against Temporal's own history. Its "
+        "has accepted that result; `reconcile` and the test suite check every row against "
+        "Temporal's own history. Its "
         "deduplicating External Storage driver keeps accumulating agent state under Temporal's "
         "payload and history limits. It changes no graph code and does not modify the LangGraph "
         "plugin. It was built in response to "
@@ -520,7 +522,7 @@ def build_readme(d: dict[str, Any]) -> str:
         "`stepledger reconcile` repairs them from history.",
         "- History still grows, linearly; unbounded runs still need continue-as-new.",
         "",
-        "See [docs/limitations.md](docs/limitations.md) and [RESULTS.md](RESULTS.md).",
+        "See [docs/limitations.md](https://github.com/Poojan6216/stepledger/blob/main/docs/limitations.md) and [RESULTS.md](https://github.com/Poojan6216/stepledger/blob/main/RESULTS.md).",
         "",
         "## What it does, measured",
         "",
@@ -551,7 +553,7 @@ def build_readme(d: dict[str, Any]) -> str:
         f"{round(ho['marginal_plugin_bytes_per_node'][-1])} bytes of history per node, constant "
         "as runs grow.",
         "",
-        "All numbers come from `bench/results/*.json` via the commands in [RESULTS.md](RESULTS.md).",
+        "All numbers come from `bench/results/*.json` via the commands in [RESULTS.md](https://github.com/Poojan6216/stepledger/blob/main/RESULTS.md).",
         "",
         "## The five demos",
         "",
@@ -594,12 +596,12 @@ def build_readme(d: dict[str, Any]) -> str:
         "",
         "## Docs",
         "",
-        "- [How it works](docs/how-it-works.md): one step's life, commits, seal, reconcile, the read side",
-        "- [Keys and fencing](docs/keys-and-fencing.md)",
-        "- [Storage and GC](docs/storage-and-gc.md)",
-        "- [Effects, the LLM journal and the retry bill](docs/effects.md)",
-        "- [Limitations](docs/limitations.md)",
-        "- [SDK facts](docs/sdk-facts.md): every SDK behavior relied on, with file and line",
+        "- [How it works](https://github.com/Poojan6216/stepledger/blob/main/docs/how-it-works.md): one step's life, commits, seal, reconcile, the read side",
+        "- [Keys and fencing](https://github.com/Poojan6216/stepledger/blob/main/docs/keys-and-fencing.md)",
+        "- [Storage and GC](https://github.com/Poojan6216/stepledger/blob/main/docs/storage-and-gc.md)",
+        "- [Effects, the LLM journal and the retry bill](https://github.com/Poojan6216/stepledger/blob/main/docs/effects.md)",
+        "- [Limitations](https://github.com/Poojan6216/stepledger/blob/main/docs/limitations.md)",
+        "- [SDK facts](https://github.com/Poojan6216/stepledger/blob/main/docs/sdk-facts.md): every SDK behavior relied on, with file and line",
         "",
         "## Prior art, and where each stops",
         "",

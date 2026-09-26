@@ -135,7 +135,7 @@ class LedgerActivityInbound(ActivityInboundInterceptor):
             log.warning(
                 "stepledger: ledger write failed for %s; continuing (warn mode): %s", key, e
             )
-            await self._degrade_later(key)
+            await self._degrade_later(key, fence, ser.hash, str(e))
             return out
 
         if not r.wrote:
@@ -192,10 +192,16 @@ class LedgerActivityInbound(ActivityInboundInterceptor):
             finished_at=finished,
         )
 
-    async def _degrade_later(self, key: LedgerKey) -> None:
-        """Warn mode: best effort to flag the run DEGRADED once the database answers again."""
+    async def _degrade_later(
+        self, key: LedgerKey, fence: Fence, output_hash: str, why: str
+    ) -> None:
+        """Warn mode: best effort to flag the run degraded and audit the lost write as DB_ERROR.
+        During an outage this fails too; the seal then notices the missing rows."""
         try:
             async with self._store.tx() as tx:
                 await tx.mark_degraded(key.run)
+                await tx.audit_attempt(
+                    key, fence, "DB_ERROR", output_hash=output_hash, note=why[:200]
+                )
         except DB_ERRORS:
             pass

@@ -132,3 +132,18 @@ async def test_reconcile_repairs_divergent_and_missing_rows(env: Env) -> None:
             (h.id,),
         ).fetchall()
     assert audits == [(0, "DIVERGENCE_REPAIRED"), (1, "DIVERGENCE_REPAIRED")]
+
+
+async def test_reconcile_reports_a_run_that_left_temporal(env: Env) -> None:
+    """Past retention the history is gone; reconcile says so and changes nothing."""
+    wid, run_id = f"gone-{uuid.uuid4().hex[:8]}", str(uuid.uuid4())  # a real-shaped run id
+    with psycopg.connect(env.dsn) as conn:
+        conn.execute(
+            "INSERT INTO sl_runs (namespace, workflow_id, run_id) VALUES ('default', %s, %s)",
+            (wid, run_id),
+        )
+    store = LedgerStore(env.dsn)
+    (report,) = await reconcile(env.client, store, wid)
+    await store.close()
+    assert report.action == "history-gone" and not report.changed
+    assert ledger(env.dsn, wid)[0] == ("RUNNING", False, None)

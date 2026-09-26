@@ -1,0 +1,55 @@
+{
+ "walls": [
+  {
+   "kb_per_node": 5,
+   "first_node_input_over_2mib": null,
+   "history_over_10mb_at_node": 64,
+   "history_over_50mb_at_node": 142,
+   "first_wall": "history 50 MB"
+  },
+  {
+   "kb_per_node": 10,
+   "first_node_input_over_2mib": 205,
+   "history_over_10mb_at_node": 45,
+   "history_over_50mb_at_node": 101,
+   "first_wall": "history 50 MB"
+  },
+  {
+   "kb_per_node": 20,
+   "first_node_input_over_2mib": 104,
+   "history_over_10mb_at_node": 32,
+   "history_over_50mb_at_node": 71,
+   "first_wall": "history 50 MB"
+  },
+  {
+   "kb_per_node": 40,
+   "first_node_input_over_2mib": 53,
+   "history_over_10mb_at_node": 23,
+   "history_over_50mb_at_node": 51,
+   "first_wall": "history 50 MB"
+  },
+  {
+   "kb_per_node": 60,
+   "first_node_input_over_2mib": 36,
+   "history_over_10mb_at_node": 18,
+   "history_over_50mb_at_node": 41,
+   "first_wall": "single payload 2 MB"
+  },
+  {
+   "kb_per_node": 100,
+   "first_node_input_over_2mib": 22,
+   "history_over_10mb_at_node": 14,
+   "history_over_50mb_at_node": 32,
+   "first_wall": "single payload 2 MB"
+  }
+ ],
+ "history_inline_mb_at_35_nodes_60kib": 36.96,
+ "history_ext64k_mb_60kib": {
+  "10": 0.65,
+  "20": 1.24,
+  "30": 1.83,
+  "40": 2.42,
+  "50": 3.01,
+  "60": 3.6
+ }
+}

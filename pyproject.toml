@@ -60,7 +60,7 @@ build-backend = "hatchling.build"
 packages = ["src/stepledger"]
 
 [tool.hatch.build.targets.sdist]
-exclude = ["third_party", ".temporal", ".pgdata", "bench/results/raw"]
+exclude = ["third_party", ".temporal", ".pgdata", "bench/results/raw", "tests/histories"]
 
 [tool.ruff]
 line-length = 100

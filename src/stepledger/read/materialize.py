@@ -111,12 +111,15 @@ def _values(channels: dict[str, Any], keys: list[str]) -> dict[str, Any]:
     return out
 
 
-async def _load(conn: Any, workflow_id: str, run_ids: list[str], statuses: list[str]) -> list[_Row]:
+async def _load(
+    conn: Any, workflow_id: str, run_ids: list[str], statuses: list[str], graph: str | None
+) -> list[_Row]:
     cur = await conn.execute(
         "SELECT run_id, seq, node, lg_step, lg_path, kind, output_json, input_hash, input_snapshot"
         " FROM sl_nodes WHERE workflow_id = %s AND run_id = ANY(%s) AND status = ANY(%s)"
-        " AND lg_step IS NOT NULL ORDER BY lg_step, lg_path, seq",
-        (workflow_id, run_ids, statuses),
+        " AND lg_step IS NOT NULL AND (%s::text IS NULL OR graph = %s)"
+        " ORDER BY lg_step, lg_path, seq",
+        (workflow_id, run_ids, statuses, graph, graph),
     )
     return [_Row(*r) for r in await cur.fetchall()]
 
@@ -130,9 +133,16 @@ async def materialize(
     include_provisional: bool = False,
     chain: bool = False,
     payload_converter: PayloadConverter | None = None,
+    graph_name: str | None = None,
 ) -> MaterializeResult:
     """`payload_converter` must be the workflow's (e.g. pydantic_data_converter's) when state
-    holds non-JSON values such as LangChain messages; hashes go through it, as at seal."""
+    holds non-JSON values such as LangChain messages; hashes go through it, as at seal.
+    `graph_name` (the name the graph was registered under in LangGraphPlugin) restricts the fold
+    to that graph's rows when one workflow invokes several graphs.
+
+    EXACT compares the rebuilt state with the hash of the *workflow's return value* recorded at
+    seal, so it is reachable only when the workflow returns the graph's final state (as the
+    examples and bench do). A workflow that returns something else always gets GAP."""
     conv = payload_converter or DataConverter.default.payload_converter
 
     def state_hash(value: Any) -> str:
@@ -154,8 +164,10 @@ async def materialize(
             raise LookupError(f"run {target} of {workflow_id} is not in the ledger")
         idx = ids.index(target)
         _, sealed, final_hash, node_count = runs[idx]
-        rows = await _load(conn, workflow_id, [target], statuses)
-        earlier = await _load(conn, workflow_id, ids[:idx], ["COMMITTED"]) if chain else []
+        rows = await _load(conn, workflow_id, [target], statuses, graph_name)
+        earlier = (
+            await _load(conn, workflow_id, ids[:idx], ["COMMITTED"], graph_name) if chain else []
+        )
         cur = await conn.execute(
             "SELECT count(*) FROM sl_nodes WHERE workflow_id = %s AND run_id = %s",
             (workflow_id, target),

@@ -23,6 +23,16 @@ is in `RESULTS.md` under "What beats it".
   it, and if they finish after it their seal lists those seqs as missing.
 - **Outputs are stored in plaintext by default.** Use `store_outputs="hash_only"` and database
   encryption for sensitive data.
+- **`EXACT` needs the workflow to return the graph's final state.** The seal records the hash of
+  the workflow's return value; `materialize()` can only say `EXACT` when the rebuilt state hashes
+  to it. A workflow that returns a projection of the state, or runs several graphs, gets `GAP`
+  (pass `graph_name=` to fold one graph's rows). The first node's input snapshot seeds the fold,
+  so a first node with a narrow `input_schema` leaves the other channels unseeded: `GAP` again,
+  never a wrong `EXACT`.
+- **Not exercised by the tests or bench:** LangGraph's Functional API (`@entrypoint`/`@task`),
+  subgraphs, and `Send` fan-out. The ledger tracks any Activity the LangGraph plugin registers,
+  so rows are written for those too, but their `materialize()` behavior and step/path metadata
+  have not been checked.
 
 ## Storage
 
@@ -37,6 +47,13 @@ is in `RESULTS.md` under "What beats it".
 - **One driver configuration per database.** A payload first stored whole (by `dedupe=False` or as
   opaque) stays whole when a deduplicating driver later stores the same bytes.
 - **Postgres only.** The `ChunkBackend` protocol is the extension point for S3 and similar stores.
+- **Private SDK surface.** Stepledger reads four private symbols, all isolated in
+  `stepledger/_compat.py` and pinned by `tests/unit/test_compat.py`: the LangGraph plugin's
+  `ActivityInput`/`ActivityOutput` and its task-cache context variable, and LangGraph's
+  `task_path_str` and `MISSING`. An SDK release that moves one of them fails that test before it
+  fails at runtime; the dependency ranges in `pyproject.toml` are the tested ones.
+- **Interceptor modules run inside the workflow sandbox.** They are pure (no I/O, no clock), so
+  this is a small per-workflow import cost, not a correctness issue.
 
 ## Effects
 

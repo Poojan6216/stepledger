@@ -23,6 +23,7 @@ from typing import Any
 
 from psycopg.types.json import Jsonb
 from temporalio.client import Client, WorkflowExecutionStatus
+from temporalio.service import RPCError, RPCStatusCode
 
 from stepledger.canonical import chash, serialize
 from stepledger.keys import Fence, LedgerKey, RunKey
@@ -44,7 +45,7 @@ class ReconcileReport:
     workflow_id: str
     run_id: str
     run_status: str
-    action: str = "none"  # none | repaired | sealed | skipped-sealed | open
+    action: str = "none"  # none | repaired | sealed | skipped-sealed | open | history-gone
     committed: list[int] = field(default_factory=list)
     abandoned: list[int] = field(default_factory=list)
     inserted: list[int] = field(default_factory=list)
@@ -69,7 +70,14 @@ async def reconcile_run(
     client: Client, store: LedgerStore, workflow_id: str, run_id: str
 ) -> ReconcileReport:
     handle = client.get_workflow_handle(workflow_id, run_id=run_id)
-    desc = await handle.describe()
+    try:
+        desc = await handle.describe()
+    except RPCError as e:
+        if e.status != RPCStatusCode.NOT_FOUND:
+            raise
+        # Past the namespace's retention there is no history to decide from; leave the rows as
+        # they are and say so, rather than guess.
+        return ReconcileReport(workflow_id, run_id, "UNKNOWN", action="history-gone")
     closed = desc.status not in (None, WorkflowExecutionStatus.RUNNING)
     status = _STATUS.get(desc.status, "RUNNING") if desc.status else "RUNNING"
     report = ReconcileReport(workflow_id, run_id, status)

@@ -11,7 +11,7 @@ import contextlib
 import operator
 from dataclasses import dataclass
 from datetime import timedelta
-from typing import Annotated, Any, TypedDict
+from typing import Annotated, Any, Literal, TypedDict
 
 from temporalio import activity, workflow
 from temporalio.exceptions import ApplicationError
@@ -20,6 +20,7 @@ from bench.agents.variants import CacheHitWorkflow, cache_hit_graph
 
 with workflow.unsafe.imports_passed_through():
     from langgraph.graph import END, START, StateGraph
+    from langgraph.types import Command
     from temporalio.contrib.langgraph import graph as lg_graph
 
 
@@ -56,6 +57,23 @@ async def slow(state: S) -> dict[str, Any]:
     return {"log": ["slow"]}
 
 
+def cmd_a(state: S) -> Command[Literal["cmd_b"]]:
+    return Command(update={"log": ["a"]}, goto="cmd_b")
+
+
+def cmd_b(state: S) -> Command[Literal["__end__"]]:
+    return Command(update={"log": ["b"]}, goto="__end__")
+
+
+def command_graph() -> StateGraph[Any, Any, Any, Any]:
+    """Nodes that return Command(update=..., goto=...): COMMAND rows in the ledger."""
+    g: StateGraph[Any, Any, Any, Any] = StateGraph(S)
+    g.add_node("cmd_a", cmd_a, metadata={"execute_in": "activity"})
+    g.add_node("cmd_b", cmd_b, metadata={"execute_in": "activity"})
+    g.add_edge(START, "cmd_a")
+    return g
+
+
 def chain(*fns: Any) -> StateGraph[Any, Any, Any, Any]:
     g: StateGraph[Any, Any, Any, Any] = StateGraph(S)
     prev = START
@@ -76,6 +94,7 @@ def graphs() -> dict[str, StateGraph[Any, Any, Any, Any]]:
         "slow_graph": chain(a, slow),
         "ab": chain(a, b),
         "cachehit": cache_hit_graph(),
+        "commands": command_graph(),
     }
 
 
