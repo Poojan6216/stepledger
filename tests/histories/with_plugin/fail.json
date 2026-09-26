@@ -1,0 +1,537 @@
+{
+  "events": [
+    {
+      "eventId": "1",
+      "eventTime": "2026-09-26T17:01:57.689444Z",
+      "eventType": "EVENT_TYPE_WORKFLOW_EXECUTION_STARTED",
+      "taskId": "2125374",
+      "workflowExecutionStartedEventAttributes": {
+        "workflowType": {
+          "name": "Fail"
+        },
+        "taskQueue": {
+          "name": "hist-e5bc5b7f",
+          "kind": "TASK_QUEUE_KIND_NORMAL"
+        },
+        "workflowTaskTimeout": "10s",
+        "originalExecutionRunId": "01a0deaa-9a39-76c2-a891-3aa509067cf7",
+        "identity": "48874@MacBook-Pro.local",
+        "firstExecutionRunId": "01a0deaa-9a39-76c2-a891-3aa509067cf7",
+        "attempt": 1,
+        "firstWorkflowTaskBackoff": "0s",
+        "workflowId": "hist-fail-8d980e",
+        "priority": {}
+      }
+    },
+    {
+      "eventId": "2",
+      "eventTime": "2026-09-26T17:01:57.689500Z",
+      "eventType": "EVENT_TYPE_WORKFLOW_TASK_SCHEDULED",
+      "taskId": "2125375",
+      "workflowTaskScheduledEventAttributes": {
+        "taskQueue": {
+          "name": "hist-e5bc5b7f",
+          "kind": "TASK_QUEUE_KIND_NORMAL"
+        },
+        "startToCloseTimeout": "10s",
+        "attempt": 1
+      }
+    },
+    {
+      "eventId": "3",
+      "eventTime": "2026-09-26T17:01:57.816660Z",
+      "eventType": "EVENT_TYPE_WORKFLOW_TASK_STARTED",
+      "taskId": "2125380",
+      "workflowTaskStartedEventAttributes": {
+        "scheduledEventId": "2",
+        "identity": "48874@MacBook-Pro.local",
+        "requestId": "4755f0d0-1e96-49d9-a4dc-4f4e2c5a36a1",
+        "historySizeBytes": "242",
+        "workerVersion": {
+          "buildId": "1f5bfd44799717817b8a89d53f3a0d97"
+        }
+      }
+    },
+    {
+      "eventId": "4",
+      "eventTime": "2026-09-26T17:01:57.842666Z",
+      "eventType": "EVENT_TYPE_WORKFLOW_TASK_COMPLETED",
+      "taskId": "2125385",
+      "workflowTaskCompletedEventAttributes": {
+        "scheduledEventId": "2",
+        "startedEventId": "3",
+        "identity": "48874@MacBook-Pro.local",
+        "workerVersion": {
+          "buildId": "1f5bfd44799717817b8a89d53f3a0d97"
+        },
+        "sdkMetadata": {
+          "coreUsedFlags": [
+            3,
+            1,
+            2
+          ],
+          "sdkName": "temporal-python",
+          "sdkVersion": "1.33.0"
+        },
+        "meteringMetadata": {}
+      }
+    },
+    {
+      "eventId": "5",
+      "eventTime": "2026-09-26T17:01:57.842733Z",
+      "eventType": "EVENT_TYPE_ACTIVITY_TASK_SCHEDULED",
+      "taskId": "2125386",
+      "activityTaskScheduledEventAttributes": {
+        "activityId": "1",
+        "activityType": {
+          "name": "fail_graph.a"
+        },
+        "taskQueue": {
+          "name": "hist-e5bc5b7f",
+          "kind": "TASK_QUEUE_KIND_NORMAL"
+        },
+        "header": {
+          "fields": {
+            "stepledger-seq": {
+              "metadata": {
+                "encoding": "anNvbi9wbGFpbg=="
+              },
+              "data": "MA=="
+            }
+          }
+        },
+        "input": {
+          "payloads": [
+            {
+              "metadata": {
+                "encoding": "anNvbi9wbGFpbg=="
+              },
+              "data": "eyJhcmdzIjpbeyJsb2ciOltdfV0sImt3YXJncyI6e30sImxhbmdncmFwaF9jb25maWciOnsiY29uZmlndXJhYmxlIjp7Il9fcHJlZ2VsX3NjcmF0Y2hwYWQiOnsibnVsbF9yZXN1bWUiOm51bGwsInJlc3VtZSI6W10sInN0ZXAiOjEsInN0b3AiOjEwMDA3fSwiX19wcmVnZWxfdGFza19pZCI6ImU0NmUxNzQ1LWNiZGUtMjJjZS02ODMzLWJmMTQ0MzYzNzRiMCIsImNoZWNrcG9pbnRfaWQiOm51bGwsImNoZWNrcG9pbnRfbWFwIjp7IiI6IjFmMWI5Y2JmLWJjMDktNjc3ZS04MDAwLTY0MGE4MDg3MDg3MiJ9LCJjaGVja3BvaW50X25zIjoiYTplNDZlMTc0NS1jYmRlLTIyY2UtNjgzMy1iZjE0NDM2Mzc0YjAifSwiY29udGV4dCI6bnVsbCwiZXhlY3V0aW9uX2luZm8iOnsiY2hlY2twb2ludF9pZCI6IjFmMWI5Y2JmLWJjMDktNjc3ZS04MDAwLTY0MGE4MDg3MDg3MiIsImNoZWNrcG9pbnRfbnMiOiJhOmU0NmUxNzQ1LWNiZGUtMjJjZS02ODMzLWJmMTQ0MzYzNzRiMCIsIm5vZGVfYXR0ZW1wdCI6MSwibm9kZV9maXJzdF9hdHRlbXB0X3RpbWUiOjE3OTA0NDIxMTcuODQwMDU4LCJydW5faWQiOm51bGwsInRhc2tfaWQiOiJlNDZlMTc0NS1jYmRlLTIyY2UtNjgzMy1iZjE0NDM2Mzc0YjAiLCJ0aHJlYWRfaWQiOm51bGx9LCJtZXRhZGF0YSI6eyJsYW5nZ3JhcGhfY2hlY2twb2ludF9ucyI6ImE6ZTQ2ZTE3NDUtY2JkZS0yMmNlLTY4MzMtYmYxNDQzNjM3NGIwIiwibGFuZ2dyYXBoX25vZGUiOiJhIiwibGFuZ2dyYXBoX3BhdGgiOlsiX19wcmVnZWxfcHVsbCIsImEiXSwibGFuZ2dyYXBoX3N0ZXAiOjEsImxhbmdncmFwaF90cmlnZ2VycyI6WyJicmFuY2g6dG86YSJdfSwicHJldmlvdXMiOm51bGwsInRhZ3MiOltdfX0="
+            }
+          ]
+        },
+        "scheduleToCloseTimeout": "0s",
+        "scheduleToStartTimeout": "0s",
+        "startToCloseTimeout": "30s",
+        "heartbeatTimeout": "0s",
+        "workflowTaskCompletedEventId": "4",
+        "retryPolicy": {
+          "initialInterval": "1s",
+          "backoffCoefficient": 2.0,
+          "maximumInterval": "100s"
+        },
+        "useWorkflowBuildId": true,
+        "priority": {}
+      }
+    },
+    {
+      "eventId": "6",
+      "eventTime": "2026-09-26T17:01:57.842767Z",
+      "eventType": "EVENT_TYPE_ACTIVITY_TASK_STARTED",
+      "taskId": "2125390",
+      "activityTaskStartedEventAttributes": {
+        "scheduledEventId": "5",
+        "identity": "48874@MacBook-Pro.local",
+        "requestId": "c19d2f06-9e0c-45a1-8d53-5f3bbecc3e5f",
+        "attempt": 1,
+        "workerVersion": {
+          "buildId": "1f5bfd44799717817b8a89d53f3a0d97"
+        }
+      }
+    },
+    {
+      "eventId": "7",
+      "eventTime": "2026-09-26T17:01:57.850193Z",
+      "eventType": "EVENT_TYPE_ACTIVITY_TASK_COMPLETED",
+      "taskId": "2125391",
+      "activityTaskCompletedEventAttributes": {
+        "result": {
+          "payloads": [
+            {
+              "metadata": {
+                "encoding": "anNvbi9wbGFpbg=="
+              },
+              "data": "eyJsYW5nZ3JhcGhfY29tbWFuZCI6bnVsbCwibGFuZ2dyYXBoX2ludGVycnVwdHMiOm51bGwsInJlc3VsdCI6eyJsb2ciOlsiYSJdfX0="
+            }
+          ]
+        },
+        "scheduledEventId": "5",
+        "startedEventId": "6",
+        "identity": "48874@MacBook-Pro.local"
+      }
+    },
+    {
+      "eventId": "8",
+      "eventTime": "2026-09-26T17:01:57.850209Z",
+      "eventType": "EVENT_TYPE_WORKFLOW_TASK_SCHEDULED",
+      "taskId": "2125392",
+      "workflowTaskScheduledEventAttributes": {
+        "taskQueue": {
+          "name": "48874@MacBook-Pro.local-616cd662f72e41b3805b0700dd233898",
+          "kind": "TASK_QUEUE_KIND_STICKY",
+          "normalName": "hist-e5bc5b7f"
+        },
+        "startToCloseTimeout": "10s",
+        "attempt": 1
+      }
+    },
+    {
+      "eventId": "9",
+      "eventTime": "2026-09-26T17:01:57.854405Z",
+      "eventType": "EVENT_TYPE_WORKFLOW_TASK_STARTED",
+      "taskId": "2125396",
+      "workflowTaskStartedEventAttributes": {
+        "scheduledEventId": "8",
+        "identity": "48874@MacBook-Pro.local",
+        "requestId": "28154708-4d2b-45d7-9a13-428becdea376",
+        "historySizeBytes": "1946",
+        "workerVersion": {
+          "buildId": "1f5bfd44799717817b8a89d53f3a0d97"
+        }
+      }
+    },
+    {
+      "eventId": "10",
+      "eventTime": "2026-09-26T17:01:57.861072Z",
+      "eventType": "EVENT_TYPE_WORKFLOW_TASK_COMPLETED",
+      "taskId": "2125401",
+      "workflowTaskCompletedEventAttributes": {
+        "scheduledEventId": "8",
+        "startedEventId": "9",
+        "identity": "48874@MacBook-Pro.local",
+        "workerVersion": {
+          "buildId": "1f5bfd44799717817b8a89d53f3a0d97"
+        },
+        "sdkMetadata": {},
+        "meteringMetadata": {}
+      }
+    },
+    {
+      "eventId": "11",
+      "eventTime": "2026-09-26T17:01:57.861117Z",
+      "eventType": "EVENT_TYPE_ACTIVITY_TASK_SCHEDULED",
+      "taskId": "2125402",
+      "activityTaskScheduledEventAttributes": {
+        "activityId": "2",
+        "activityType": {
+          "name": "fail_graph.fail_hard"
+        },
+        "taskQueue": {
+          "name": "hist-e5bc5b7f",
+          "kind": "TASK_QUEUE_KIND_NORMAL"
+        },
+        "header": {
+          "fields": {
+            "stepledger-commits": {
+              "metadata": {
+                "encoding": "anNvbi9wbGFpbg=="
+              },
+              "data": "WzBd"
+            },
+            "stepledger-seq": {
+              "metadata": {
+                "encoding": "anNvbi9wbGFpbg=="
+              },
+              "data": "MQ=="
+            }
+          }
+        },
+        "input": {
+          "payloads": [
+            {
+              "metadata": {
+                "encoding": "anNvbi9wbGFpbg=="
+              },
+              "data": "eyJhcmdzIjpbeyJsb2ciOlsiYSJdfV0sImt3YXJncyI6e30sImxhbmdncmFwaF9jb25maWciOnsiY29uZmlndXJhYmxlIjp7Il9fcHJlZ2VsX3NjcmF0Y2hwYWQiOnsibnVsbF9yZXN1bWUiOm51bGwsInJlc3VtZSI6W10sInN0ZXAiOjIsInN0b3AiOjEwMDA3fSwiX19wcmVnZWxfdGFza19pZCI6ImNkZDZlMzA4LTAxOGEtNTlmNi0zOTE1LTlmYjk3OGU3ZGQwOCIsImNoZWNrcG9pbnRfaWQiOm51bGwsImNoZWNrcG9pbnRfbWFwIjp7IiI6IjFmMWI5Y2JmLWJjMzgtNjM0NC04MDAxLTFmN2Y1ODU1MTRlMiJ9LCJjaGVja3BvaW50X25zIjoiZmFpbF9oYXJkOmNkZDZlMzA4LTAxOGEtNTlmNi0zOTE1LTlmYjk3OGU3ZGQwOCJ9LCJjb250ZXh0IjpudWxsLCJleGVjdXRpb25faW5mbyI6eyJjaGVja3BvaW50X2lkIjoiMWYxYjljYmYtYmMzOC02MzQ0LTgwMDEtMWY3ZjU4NTUxNGUyIiwiY2hlY2twb2ludF9ucyI6ImZhaWxfaGFyZDpjZGQ2ZTMwOC0wMThhLTU5ZjYtMzkxNS05ZmI5NzhlN2RkMDgiLCJub2RlX2F0dGVtcHQiOjEsIm5vZGVfZmlyc3RfYXR0ZW1wdF90aW1lIjoxNzkwNDQyMTE3Ljg1OTE3NiwicnVuX2lkIjpudWxsLCJ0YXNrX2lkIjoiY2RkNmUzMDgtMDE4YS01OWY2LTM5MTUtOWZiOTc4ZTdkZDA4IiwidGhyZWFkX2lkIjpudWxsfSwibWV0YWRhdGEiOnsibGFuZ2dyYXBoX2NoZWNrcG9pbnRfbnMiOiJmYWlsX2hhcmQ6Y2RkNmUzMDgtMDE4YS01OWY2LTM5MTUtOWZiOTc4ZTdkZDA4IiwibGFuZ2dyYXBoX25vZGUiOiJmYWlsX2hhcmQiLCJsYW5nZ3JhcGhfcGF0aCI6WyJfX3ByZWdlbF9wdWxsIiwiZmFpbF9oYXJkIl0sImxhbmdncmFwaF9zdGVwIjoyLCJsYW5nZ3JhcGhfdHJpZ2dlcnMiOlsiYnJhbmNoOnRvOmZhaWxfaGFyZCJdfSwicHJldmlvdXMiOm51bGwsInRhZ3MiOltdfX0="
+            }
+          ]
+        },
+        "scheduleToCloseTimeout": "0s",
+        "scheduleToStartTimeout": "0s",
+        "startToCloseTimeout": "30s",
+        "heartbeatTimeout": "0s",
+        "workflowTaskCompletedEventId": "10",
+        "retryPolicy": {
+          "initialInterval": "1s",
+          "backoffCoefficient": 2.0,
+          "maximumInterval": "100s"
+        },
+        "useWorkflowBuildId": true,
+        "priority": {}
+      }
+    },
+    {
+      "eventId": "12",
+      "eventTime": "2026-09-26T17:01:57.861146Z",
+      "eventType": "EVENT_TYPE_ACTIVITY_TASK_STARTED",
+      "taskId": "2125405",
+      "activityTaskStartedEventAttributes": {
+        "scheduledEventId": "11",
+        "identity": "48874@MacBook-Pro.local",
+        "requestId": "8a2dff93-165d-484e-be6a-564e0f10c384",
+        "attempt": 1,
+        "workerVersion": {
+          "buildId": "1f5bfd44799717817b8a89d53f3a0d97"
+        }
+      }
+    },
+    {
+      "eventId": "13",
+      "eventTime": "2026-09-26T17:01:57.866446Z",
+      "eventType": "EVENT_TYPE_ACTIVITY_TASK_FAILED",
+      "taskId": "2125406",
+      "activityTaskFailedEventAttributes": {
+        "failure": {
+          "message": "node failed for good",
+          "stackTrace": "  File \"/Users/poojanpatel/Documents/Projects/Stepledger/.venv/lib/python3.11/site-packages/temporalio/worker/_activity.py\", line 351, in _handle_start_activity_task\n    result = await self._execute_activity(\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\n  File \"/Users/poojanpatel/Documents/Projects/Stepledger/.venv/lib/python3.11/site-packages/temporalio/worker/_activity.py\", line 681, in _execute_activity\n    return await impl.execute_activity(input)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\n  File \"/Users/poojanpatel/Documents/Projects/Stepledger/src/stepledger/ledger/activity_interceptor.py\", line 101, in execute_activity\n    out = await self.next.execute_activity(input)\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\n  File \"/Users/poojanpatel/Documents/Projects/Stepledger/.venv/lib/python3.11/site-packages/temporalio/worker/_activity.py\", line 889, in execute_activity\n    return await input.fn(*input.args)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\n  File \"/Users/poojanpatel/Documents/Projects/Stepledger/.venv/lib/python3.11/site-packages/temporalio/contrib/langgraph/_activity.py\", line 99, in wrapper\n    return await run(stream_writer=None)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\n  File \"/Users/poojanpatel/Documents/Projects/Stepledger/.venv/lib/python3.11/site-packages/temporalio/contrib/langgraph/_activity.py\", line 89, in run\n    result = await func(*input.args, **kwargs)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\n  File \"/Users/poojanpatel/Documents/Projects/Stepledger/tests/integration/workflows.py\", line 49, in fail_hard\n    raise ApplicationError(\"node failed for good\", non_retryable=True)\n",
+          "applicationFailureInfo": {
+            "nonRetryable": true
+          }
+        },
+        "scheduledEventId": "11",
+        "startedEventId": "12",
+        "identity": "48874@MacBook-Pro.local",
+        "retryState": "RETRY_STATE_NON_RETRYABLE_FAILURE"
+      }
+    },
+    {
+      "eventId": "14",
+      "eventTime": "2026-09-26T17:01:57.866458Z",
+      "eventType": "EVENT_TYPE_WORKFLOW_TASK_SCHEDULED",
+      "taskId": "2125407",
+      "workflowTaskScheduledEventAttributes": {
+        "taskQueue": {
+          "name": "48874@MacBook-Pro.local-616cd662f72e41b3805b0700dd233898",
+          "kind": "TASK_QUEUE_KIND_STICKY",
+          "normalName": "hist-e5bc5b7f"
+        },
+        "startToCloseTimeout": "10s",
+        "attempt": 1
+      }
+    },
+    {
+      "eventId": "15",
+      "eventTime": "2026-09-26T17:01:57.869577Z",
+      "eventType": "EVENT_TYPE_WORKFLOW_TASK_STARTED",
+      "taskId": "2125411",
+      "workflowTaskStartedEventAttributes": {
+        "scheduledEventId": "14",
+        "identity": "48874@MacBook-Pro.local",
+        "requestId": "a7bf485d-d385-4aaa-ac53-1841ab06745c",
+        "historySizeBytes": "5300",
+        "workerVersion": {
+          "buildId": "1f5bfd44799717817b8a89d53f3a0d97"
+        }
+      }
+    },
+    {
+      "eventId": "16",
+      "eventTime": "2026-09-26T17:01:57.875130Z",
+      "eventType": "EVENT_TYPE_WORKFLOW_TASK_COMPLETED",
+      "taskId": "2125416",
+      "workflowTaskCompletedEventAttributes": {
+        "scheduledEventId": "14",
+        "startedEventId": "15",
+        "identity": "48874@MacBook-Pro.local",
+        "workerVersion": {
+          "buildId": "1f5bfd44799717817b8a89d53f3a0d97"
+        },
+        "sdkMetadata": {},
+        "meteringMetadata": {}
+      }
+    },
+    {
+      "eventId": "17",
+      "eventTime": "2026-09-26T17:01:57.875167Z",
+      "eventType": "EVENT_TYPE_MARKER_RECORDED",
+      "taskId": "2125417",
+      "markerRecordedEventAttributes": {
+        "markerName": "core_patch",
+        "details": {
+          "patch-data": {
+            "payloads": [
+              {
+                "metadata": {
+                  "encoding": "anNvbi9wbGFpbg=="
+                },
+                "data": "eyJpZCI6InN0ZXBsZWRnZXItc2VhbC12MSIsImRlcHJlY2F0ZWQiOmZhbHNlfQ=="
+              }
+            ]
+          }
+        },
+        "workflowTaskCompletedEventId": "16"
+      }
+    },
+    {
+      "eventId": "18",
+      "eventTime": "2026-09-26T17:01:57.875656Z",
+      "eventType": "EVENT_TYPE_UPSERT_WORKFLOW_SEARCH_ATTRIBUTES",
+      "taskId": "2125418",
+      "upsertWorkflowSearchAttributesEventAttributes": {
+        "workflowTaskCompletedEventId": "16",
+        "searchAttributes": {
+          "indexedFields": {
+            "TemporalChangeVersion": {
+              "metadata": {
+                "encoding": "anNvbi9wbGFpbg==",
+                "type": "S2V5d29yZExpc3Q="
+              },
+              "data": "WyJzdGVwbGVkZ2VyLXNlYWwtdjEiXQ=="
+            }
+          }
+        }
+      }
+    },
+    {
+      "eventId": "19",
+      "eventTime": "2026-09-26T17:01:57.875687Z",
+      "eventType": "EVENT_TYPE_ACTIVITY_TASK_SCHEDULED",
+      "taskId": "2125419",
+      "activityTaskScheduledEventAttributes": {
+        "activityId": "3",
+        "activityType": {
+          "name": "stepledger.seal"
+        },
+        "taskQueue": {
+          "name": "hist-e5bc5b7f",
+          "kind": "TASK_QUEUE_KIND_NORMAL"
+        },
+        "header": {},
+        "input": {
+          "payloads": [
+            {
+              "metadata": {
+                "encoding": "anNvbi9wbGFpbg=="
+              },
+              "data": "eyJhYmFuZG9ucyI6WzFdLCJhY2NlcHRlZF9jb3VudCI6MSwiY29tbWl0cyI6WzBdLCJmaW5hbF9zdGF0ZV9oYXNoIjpudWxsLCJub2RlX2NvdW50IjoyLCJzdGF0dXMiOiJGQUlMRUQiLCJ3b3JrZmxvd190eXBlIjoiRmFpbCJ9"
+            }
+          ]
+        },
+        "scheduleToCloseTimeout": "0s",
+        "scheduleToStartTimeout": "0s",
+        "startToCloseTimeout": "30s",
+        "heartbeatTimeout": "0s",
+        "workflowTaskCompletedEventId": "16",
+        "retryPolicy": {
+          "initialInterval": "1s",
+          "backoffCoefficient": 2.0,
+          "maximumInterval": "100s"
+        },
+        "useWorkflowBuildId": true,
+        "priority": {}
+      }
+    },
+    {
+      "eventId": "20",
+      "eventTime": "2026-09-26T17:01:57.875714Z",
+      "eventType": "EVENT_TYPE_ACTIVITY_TASK_STARTED",
+      "taskId": "2125423",
+      "activityTaskStartedEventAttributes": {
+        "scheduledEventId": "19",
+        "identity": "48874@MacBook-Pro.local",
+        "requestId": "10f7fe9d-b56d-45c5-a0e2-84b0c2456c7a",
+        "attempt": 1,
+        "workerVersion": {
+          "buildId": "1f5bfd44799717817b8a89d53f3a0d97"
+        }
+      }
+    },
+    {
+      "eventId": "21",
+      "eventTime": "2026-09-26T17:01:57.883138Z",
+      "eventType": "EVENT_TYPE_ACTIVITY_TASK_COMPLETED",
+      "taskId": "2125424",
+      "activityTaskCompletedEventAttributes": {
+        "result": {
+          "payloads": [
+            {
+              "metadata": {
+                "encoding": "anNvbi9wbGFpbg=="
+              },
+              "data": "eyJhYmFuZG9uZWQiOjAsImFscmVhZHlfc2VhbGVkIjpmYWxzZSwiY29tbWl0dGVkIjoxLCJkZWdyYWRlZCI6ZmFsc2UsIm1pc3Npbmdfc2VxcyI6W10sIm5vZGVfY291bnQiOjIsInN0YXR1cyI6IkZBSUxFRCJ9"
+            }
+          ]
+        },
+        "scheduledEventId": "19",
+        "startedEventId": "20",
+        "identity": "48874@MacBook-Pro.local"
+      }
+    },
+    {
+      "eventId": "22",
+      "eventTime": "2026-09-26T17:01:57.883151Z",
+      "eventType": "EVENT_TYPE_WORKFLOW_TASK_SCHEDULED",
+      "taskId": "2125425",
+      "workflowTaskScheduledEventAttributes": {
+        "taskQueue": {
+          "name": "48874@MacBook-Pro.local-616cd662f72e41b3805b0700dd233898",
+          "kind": "TASK_QUEUE_KIND_STICKY",
+          "normalName": "hist-e5bc5b7f"
+        },
+        "startToCloseTimeout": "10s",
+        "attempt": 1
+      }
+    },
+    {
+      "eventId": "23",
+      "eventTime": "2026-09-26T17:01:57.886746Z",
+      "eventType": "EVENT_TYPE_WORKFLOW_TASK_STARTED",
+      "taskId": "2125429",
+      "workflowTaskStartedEventAttributes": {
+        "scheduledEventId": "22",
+        "identity": "48874@MacBook-Pro.local",
+        "requestId": "8e416614-60b7-41fc-b37f-f534539ea978",
+        "historySizeBytes": "6511",
+        "workerVersion": {
+          "buildId": "1f5bfd44799717817b8a89d53f3a0d97"
+        }
+      }
+    },
+    {
+      "eventId": "24",
+      "eventTime": "2026-09-26T17:01:57.892873Z",
+      "eventType": "EVENT_TYPE_WORKFLOW_TASK_COMPLETED",
+      "taskId": "2125433",
+      "workflowTaskCompletedEventAttributes": {
+        "scheduledEventId": "22",
+        "startedEventId": "23",
+        "identity": "48874@MacBook-Pro.local",
+        "workerVersion": {
+          "buildId": "1f5bfd44799717817b8a89d53f3a0d97"
+        },
+        "sdkMetadata": {},
+        "meteringMetadata": {}
+      }
+    },
+    {
+      "eventId": "25",
+      "eventTime": "2026-09-26T17:01:57.892908Z",
+      "eventType": "EVENT_TYPE_WORKFLOW_EXECUTION_FAILED",
+      "taskId": "2125434",
+      "workflowExecutionFailedEventAttributes": {
+        "failure": {
+          "message": "Activity task failed",
+          "cause": {
+            "message": "node failed for good",
+            "stackTrace": "  File \"/Users/poojanpatel/Documents/Projects/Stepledger/.venv/lib/python3.11/site-packages/temporalio/worker/_activity.py\", line 351, in _handle_start_activity_task\n    result = await self._execute_activity(\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\n  File \"/Users/poojanpatel/Documents/Projects/Stepledger/.venv/lib/python3.11/site-packages/temporalio/worker/_activity.py\", line 681, in _execute_activity\n    return await impl.execute_activity(input)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\n  File \"/Users/poojanpatel/Documents/Projects/Stepledger/src/stepledger/ledger/activity_interceptor.py\", line 101, in execute_activity\n    out = await self.next.execute_activity(input)\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\n  File \"/Users/poojanpatel/Documents/Projects/Stepledger/.venv/lib/python3.11/site-packages/temporalio/worker/_activity.py\", line 889, in execute_activity\n    return await input.fn(*input.args)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\n  File \"/Users/poojanpatel/Documents/Projects/Stepledger/.venv/lib/python3.11/site-packages/temporalio/contrib/langgraph/_activity.py\", line 99, in wrapper\n    return await run(stream_writer=None)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\n  File \"/Users/poojanpatel/Documents/Projects/Stepledger/.venv/lib/python3.11/site-packages/temporalio/contrib/langgraph/_activity.py\", line 89, in run\n    result = await func(*input.args, **kwargs)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\n  File \"/Users/poojanpatel/Documents/Projects/Stepledger/tests/integration/workflows.py\", line 49, in fail_hard\n    raise ApplicationError(\"node failed for good\", non_retryable=True)\n",
+            "applicationFailureInfo": {
+              "nonRetryable": true
+            }
+          },
+          "activityFailureInfo": {
+            "scheduledEventId": "11",
+            "startedEventId": "12",
+            "identity": "48874@MacBook-Pro.local",
+            "activityType": {
+              "name": "fail_graph.fail_hard"
+            },
+            "activityId": "2",
+            "retryState": "RETRY_STATE_NON_RETRYABLE_FAILURE"
+          }
+        },
+        "retryState": "RETRY_STATE_RETRY_POLICY_NOT_SET",
+        "workflowTaskCompletedEventId": "24"
+      }
+    }
+  ]
+}
