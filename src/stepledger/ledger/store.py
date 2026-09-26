@@ -6,6 +6,7 @@ the commits and abandons it carries, and its audit row land together or not at a
 
 from __future__ import annotations
 
+import asyncio
 import os
 import socket
 from collections.abc import AsyncIterator, Sequence
@@ -97,8 +98,9 @@ class SealResult:
     node_count: int
     committed: int
     abandoned: int
-    missing_seqs: list[int]
+    missing_seqs: list[int]  # seqs with no row, listed when the run is degraded
     already_sealed: bool
+    degraded: bool = False
 
 
 _UPSERT = """
@@ -265,15 +267,21 @@ class LedgerTx:
         *,
         status: str,
         node_count: int,
+        accepted_count: int,
         commits: Sequence[int],
         abandons: Sequence[int],
         final_state_hash: str | None,
         workflow_type: str | None = None,
         sealed_by: Literal["seal", "reconcile"] = "seal",
     ) -> SealResult:
-        """Close a run. Commits `commits`, then abandons every other PROVISIONAL row: at a real
-        workflow exit, a result the workflow did not accept is by definition not accepted.
-        Idempotent: sealing a sealed run changes nothing and reports the stored decision."""
+        """Close a run. Idempotent: sealing a sealed run changes nothing.
+
+        After applying `commits` and `abandons`, COMMITTED rows are exactly the accepted results
+        that reached the ledger (a row is committed only on an observed success). So when their
+        count equals `accepted_count` (how many results the workflow accepted), every remaining
+        PROVISIONAL row is provably unaccepted and is ABANDONED. When it is lower, some accepted
+        result never got its row or its commit (possible only with on_ledger_error="warn"): the
+        run is marked degraded and undecided rows are left for `stepledger reconcile`."""
         if status not in TERMINAL:
             raise ValueError(f"cannot seal with status {status!r}")
         await self.conn.execute(
@@ -289,22 +297,25 @@ class LedgerTx:
         row = await cur.fetchone()
         assert row is not None
         if row[0] is not None:
-            counts = await self._counts(run)
-            return SealResult(row[1], node_count, counts[0], counts[1], [], True)
+            committed, abandoned = await self._counts(run)
+            return SealResult(row[1], node_count, committed, abandoned, [], True)
         await self.commit(run, commits)
         await self.abandon(run, abandons)
-        await self.conn.execute(
-            "UPDATE sl_nodes SET status = 'ABANDONED'"
-            " WHERE namespace = %s AND workflow_id = %s AND run_id = %s AND status = 'PROVISIONAL'",
-            (run.namespace, run.workflow_id, run.run_id),
-        )
+        committed, _ = await self._counts(run)
+        degraded = committed < accepted_count
+        if not degraded:
+            await self.conn.execute(
+                "UPDATE sl_nodes SET status = 'ABANDONED' WHERE namespace = %s"
+                " AND workflow_id = %s AND run_id = %s AND status = 'PROVISIONAL'",
+                (run.namespace, run.workflow_id, run.run_id),
+            )
         cur = await self.conn.execute(
             "SELECT s FROM generate_series(0, %s - 1) AS s WHERE NOT EXISTS ("
             " SELECT 1 FROM sl_nodes WHERE namespace = %s AND workflow_id = %s AND run_id = %s"
             " AND seq = s) ORDER BY s",
             (node_count, run.namespace, run.workflow_id, run.run_id),
         )
-        missing = [r[0] for r in await cur.fetchall()]
+        no_row = [r[0] for r in await cur.fetchall()]
         committed, abandoned = await self._counts(run)
         await self.conn.execute(
             "UPDATE sl_runs SET status = %s, node_count = %s, committed_count = %s,"
@@ -319,15 +330,17 @@ class LedgerTx:
                 abandoned,
                 final_state_hash,
                 sealed_by,
-                bool(missing),
-                missing or None,
+                degraded,
+                no_row if degraded else None,
                 workflow_type,
                 run.namespace,
                 run.workflow_id,
                 run.run_id,
             ),
         )
-        return SealResult(status, node_count, committed, abandoned, missing, False)
+        return SealResult(
+            status, node_count, committed, abandoned, no_row if degraded else [], False, degraded
+        )
 
     async def _counts(self, run: RunKey) -> tuple[int, int]:
         cur = await self.conn.execute(
@@ -350,34 +363,46 @@ class LedgerTx:
 
 
 class LedgerStore:
-    """An async connection pool plus the ledger's transactions. One per worker process."""
+    """An async connection pool plus the ledger's transactions. One per worker process.
+
+    The pool opens lazily on first use and can be closed and reopened (a fresh pool each time),
+    so one store can serve workers that start and stop, as tests and benches do."""
 
     def __init__(self, dsn: str, *, min_size: int = 1, max_size: int = 10) -> None:
         self.dsn = dsn
-        self._pool = AsyncConnectionPool(
-            dsn, min_size=min_size, max_size=max_size, open=False, kwargs={"autocommit": False}
-        )
-        self._opened = False
+        self._min, self._max = min_size, max_size
+        self._pool: AsyncConnectionPool | None = None
+        self._lock = asyncio.Lock()
 
-    async def open(self) -> None:
-        if not self._opened:
-            await self._pool.open()
-            self._opened = True
+    async def open(self) -> AsyncConnectionPool:
+        async with self._lock:
+            if self._pool is None:
+                pool = AsyncConnectionPool(
+                    self.dsn,
+                    min_size=self._min,
+                    max_size=self._max,
+                    open=False,
+                    kwargs={"autocommit": False},
+                )
+                await pool.open()
+                self._pool = pool
+            return self._pool
 
     async def close(self) -> None:
-        if self._opened:
-            await self._pool.close()
-            self._opened = False
+        async with self._lock:
+            if self._pool is not None:
+                await self._pool.close()
+                self._pool = None
 
     @asynccontextmanager
     async def tx(self) -> AsyncIterator[LedgerTx]:
-        await self.open()
-        async with self._pool.connection() as conn, conn.transaction():
+        pool = await self.open()
+        async with pool.connection() as conn, conn.transaction():
             yield LedgerTx(conn)
 
     @asynccontextmanager
     async def read(self) -> AsyncIterator[psycopg.AsyncConnection[Any]]:
         """A pooled connection for queries; use `conn.cursor(row_factory=dict_row)` for dicts."""
-        await self.open()
-        async with self._pool.connection() as conn:
+        pool = await self.open()
+        async with pool.connection() as conn:
             yield conn
