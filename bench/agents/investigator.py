@@ -42,6 +42,8 @@ class AgentContext(TypedDict, total=False):
     journal: bool  # wrap the model in stepledger's JournaledChatModel
     effects_mode: str  # "direct" | "once"
     node_delay_ms: int  # simulated work per tool-using node
+    llm_model: str  # model name the fake LLM reports (prices the cost meter)
+    bill_llm: bool  # record every real model call in bench_llm_bill (the provider's bill)
 
 
 def initial_state(target: str = "acct-7f3a") -> InvestigationState:
@@ -58,7 +60,12 @@ def make_llm(ctx: AgentContext) -> Any:
         bytes_per_call=ctx.get("llm_bytes", 1024),
         tokens_per_call=ctx.get("llm_tokens", 100),
         vary_per_attempt=ctx.get("vary_per_attempt", False),
+        model_name=ctx.get("llm_model", "fake-llm"),
     )
+    if ctx.get("bill_llm"):
+        from bench.agents import sinks
+
+        llm.bill = sinks.bill
     if ctx.get("journal"):
         from stepledger.llm.journal import JournaledChatModel
 

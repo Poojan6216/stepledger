@@ -24,6 +24,7 @@ from bench.common import (
     connect,
     dsn,
     langgraph_plugin,
+    reset_store,
     running_worker,
     start,
     write_results,
@@ -69,6 +70,7 @@ async def one(threshold_kib: int, nodes: int, kb: int) -> dict[str, Any]:
 
 async def main(argv: list[str]) -> None:
     nodes, kb, repeats = 30, 60, 3
+    await reset_store()
     rows = []
     for _ in range(repeats):
         for t in THRESHOLDS_KIB:

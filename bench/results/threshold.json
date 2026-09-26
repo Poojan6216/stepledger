@@ -1,0 +1,149 @@
+{
+ "command": "uv run python -m bench.threshold_sweep ",
+ "generated_at": "2026-09-26T18:12:42+00:00",
+ "environment": {
+  "python": "3.11.9",
+  "platform": "macOS-15.7.9-x86_64-i386-64bit",
+  "temporalio": "1.33.0",
+  "langgraph": "1.2.12",
+  "fastcdc": "1.7.0",
+  "psycopg": "3.3.6",
+  "temporal_cli": "temporal version 1.9.1 (Server 1.32.0, UI 2.54.1)"
+ },
+ "nodes": 30,
+ "kb_per_node": 60,
+ "repeats": 3,
+ "median_by_threshold_kib": {
+  "16": {
+   "history_size_bytes": 45635,
+   "largest_payload_bytes": 1246,
+   "wall_clock_s": 2.881,
+   "externalized_payloads": 58,
+   "store_unique_chunk_bytes": 3571599,
+   "store_whole_blob_bytes": 30412762,
+   "ledger_write_ms_p50": 4.586,
+   "ledger_write_ms_p95": 14.645
+  },
+  "64": {
+   "history_size_bytes": 1984104,
+   "largest_payload_bytes": 63873,
+   "wall_clock_s": 3.183,
+   "externalized_payloads": 27,
+   "store_unique_chunk_bytes": 2588273,
+   "store_whole_blob_bytes": 28464343,
+   "ledger_write_ms_p50": 5.035,
+   "ledger_write_ms_p95": 17.555
+  },
+  "256": {
+   "history_size_bytes": 2235589,
+   "largest_payload_bytes": 251787,
+   "wall_clock_s": 2.804,
+   "externalized_payloads": 26,
+   "store_unique_chunk_bytes": 2563921,
+   "store_whole_blob_bytes": 28212557,
+   "ledger_write_ms_p50": 4.751,
+   "ledger_write_ms_p95": 14.772
+  }
+ },
+ "runs": [
+  {
+   "threshold_kib": 16,
+   "history_size_bytes": 45636,
+   "largest_payload_bytes": 1246,
+   "wall_clock_s": 3.052,
+   "externalized_payloads": 58,
+   "store_unique_chunk_bytes": 3571599,
+   "store_whole_blob_bytes": 30412762,
+   "ledger_write_ms_p50": 4.631,
+   "ledger_write_ms_p95": 15.725
+  },
+  {
+   "threshold_kib": 64,
+   "history_size_bytes": 1983785,
+   "largest_payload_bytes": 63872,
+   "wall_clock_s": 2.666,
+   "externalized_payloads": 27,
+   "store_unique_chunk_bytes": 2588272,
+   "store_whole_blob_bytes": 28464342,
+   "ledger_write_ms_p50": 4.284,
+   "ledger_write_ms_p95": 11.193
+  },
+  {
+   "threshold_kib": 256,
+   "history_size_bytes": 2235586,
+   "largest_payload_bytes": 251787,
+   "wall_clock_s": 2.91,
+   "externalized_payloads": 26,
+   "store_unique_chunk_bytes": 2563916,
+   "store_whole_blob_bytes": 28212552,
+   "ledger_write_ms_p50": 4.531,
+   "ledger_write_ms_p95": 13.083
+  },
+  {
+   "threshold_kib": 16,
+   "history_size_bytes": 45635,
+   "largest_payload_bytes": 1246,
+   "wall_clock_s": 2.881,
+   "externalized_payloads": 58,
+   "store_unique_chunk_bytes": 3571603,
+   "store_whole_blob_bytes": 30412766,
+   "ledger_write_ms_p50": 4.586,
+   "ledger_write_ms_p95": 14.645
+  },
+  {
+   "threshold_kib": 64,
+   "history_size_bytes": 1984104,
+   "largest_payload_bytes": 63873,
+   "wall_clock_s": 3.183,
+   "externalized_payloads": 27,
+   "store_unique_chunk_bytes": 2588278,
+   "store_whole_blob_bytes": 28464348,
+   "ledger_write_ms_p50": 5.035,
+   "ledger_write_ms_p95": 17.555
+  },
+  {
+   "threshold_kib": 256,
+   "history_size_bytes": 2235607,
+   "largest_payload_bytes": 251788,
+   "wall_clock_s": 2.757,
+   "externalized_payloads": 26,
+   "store_unique_chunk_bytes": 2563921,
+   "store_whole_blob_bytes": 28212557,
+   "ledger_write_ms_p50": 4.809,
+   "ledger_write_ms_p95": 15.98
+  },
+  {
+   "threshold_kib": 16,
+   "history_size_bytes": 45632,
+   "largest_payload_bytes": 1247,
+   "wall_clock_s": 2.729,
+   "externalized_payloads": 58,
+   "store_unique_chunk_bytes": 3571594,
+   "store_whole_blob_bytes": 30412757,
+   "ledger_write_ms_p50": 4.372,
+   "ledger_write_ms_p95": 13.152
+  },
+  {
+   "threshold_kib": 64,
+   "history_size_bytes": 1984116,
+   "largest_payload_bytes": 63873,
+   "wall_clock_s": 3.821,
+   "externalized_payloads": 27,
+   "store_unique_chunk_bytes": 2588273,
+   "store_whole_blob_bytes": 28464343,
+   "ledger_write_ms_p50": 5.11,
+   "ledger_write_ms_p95": 18.749
+  },
+  {
+   "threshold_kib": 256,
+   "history_size_bytes": 2235589,
+   "largest_payload_bytes": 251787,
+   "wall_clock_s": 2.804,
+   "externalized_payloads": 26,
+   "store_unique_chunk_bytes": 2563921,
+   "store_whole_blob_bytes": 28212557,
+   "ledger_write_ms_p50": 4.751,
+   "ledger_write_ms_p95": 14.772
+  }
+ ]
+}

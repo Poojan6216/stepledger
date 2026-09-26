@@ -29,6 +29,7 @@ from temporalio.worker import (
 from temporalio.workflow import ActivityCancellationType, ActivityHandle, ContinueAsNewError
 
 from stepledger import headers
+from stepledger._compat import langgraph_used_in_this_run
 from stepledger.canonical import serialize
 
 SEAL_ACTIVITY = "stepledger.seal"
@@ -140,8 +141,10 @@ class LedgerInbound(WorkflowInboundInterceptor):
         return result
 
     async def _seal(self, status: str, final_hash: str | None, *, cancelled: bool) -> None:
-        if not self.seal_enabled or self._state.next_seq == 0:
+        if not self.seal_enabled:
             return
+        if self._state.next_seq == 0 and not langgraph_used_in_this_run():
+            return  # not a LangGraph run (a fully cached LangGraph run still seals)
         if not workflow.patched(SEAL_PATCH):
             return  # a run that started before the plugin: replay it unchanged
         commits, abandons = self._state.unconfirmed()

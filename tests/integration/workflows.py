@@ -16,6 +16,8 @@ from typing import Annotated, Any, TypedDict
 from temporalio import activity, workflow
 from temporalio.exceptions import ApplicationError
 
+from bench.agents.variants import CacheHitWorkflow, cache_hit_graph
+
 with workflow.unsafe.imports_passed_through():
     from langgraph.graph import END, START, StateGraph
     from temporalio.contrib.langgraph import graph as lg_graph
@@ -73,6 +75,7 @@ def graphs() -> dict[str, StateGraph[Any, Any, Any, Any]]:
         "fail_graph": chain(a, fail_hard),
         "slow_graph": chain(a, slow),
         "ab": chain(a, b),
+        "cachehit": cache_hit_graph(),
     }
 
 
@@ -174,6 +177,7 @@ class TaskBugWorkflow:
 
 ALL_WORKFLOWS = [
     LinearWorkflow,
+    CacheHitWorkflow,
     CarrierFailWorkflow,
     FailWorkflow,
     InnerCancelWorkflow,

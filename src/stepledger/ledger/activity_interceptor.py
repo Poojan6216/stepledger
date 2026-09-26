@@ -159,14 +159,13 @@ class LedgerActivityInbound(ActivityInboundInterceptor):
         full = self._opts.store_outputs == "full"
         conv = activity.payload_converter()
         input_hash = input_bytes = snapshot = None
-        if isinstance(inp, ActivityInput):
-            ident = serialize(
-                [list(inp.args), inp.kwargs, inp.langgraph_config.get("context")], conv
-            )
-            input_hash, input_bytes = ident.hash, len(ident.data)
-            if self._opts.snapshot_first_input and seq == 0 and full and inp.args:
-                first = serialize(inp.args[0], conv)
-                snapshot = first.plain if first.is_json else None
+        if isinstance(inp, ActivityInput) and inp.args:
+            # input_hash covers exactly what the node received (its state, or the subset its
+            # input schema selects), so materialize can check its fold against every row.
+            node_input = serialize(inp.args[0] if len(inp.args) == 1 else list(inp.args), conv)
+            input_hash, input_bytes = node_input.hash, len(node_input.data)
+            if self._opts.snapshot_first_input and seq == 0 and full and node_input.is_json:
+                snapshot = node_input.plain
         activity_type = info.activity_type
         return NodeWrite(
             activity_id=info.activity_id,

@@ -16,12 +16,14 @@ from temporalio.contrib.langgraph._activity import (  # the plugin's node Activi
     ActivityInput,
     ActivityOutput,
 )
+from temporalio.contrib.langgraph._task_cache import get_task_cache as _get_task_cache
 
 __all__ = [
     "MISSING",
     "ActivityInput",
     "ActivityOutput",
     "activity_name",
+    "langgraph_used_in_this_run",
     "plugin_activity_names",
     "task_path_str",
 ]
@@ -38,3 +40,10 @@ def activity_name(fn: Callable[..., Any]) -> str:
 def plugin_activity_names(langgraph_plugin: Any) -> frozenset[str]:
     """Names of every Activity a LangGraphPlugin registered (its node and task Activities)."""
     return frozenset(activity_name(a) for a in langgraph_plugin.activities)
+
+
+def langgraph_used_in_this_run() -> bool:
+    """True inside workflow code once graph() / entrypoint() ran: both install the plugin's task
+    cache (a context variable), even when every node is then served from it and no Activity is
+    scheduled. Pure in-memory state, so safe to read from the deterministic workflow side."""
+    return _get_task_cache() is not None

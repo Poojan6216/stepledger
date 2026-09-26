@@ -11,7 +11,7 @@ from __future__ import annotations
 import base64
 import hashlib
 import random
-from collections.abc import Sequence
+from collections.abc import Awaitable, Callable, Sequence
 from typing import Any
 
 from langchain_core.callbacks import (
@@ -21,6 +21,7 @@ from langchain_core.callbacks import (
 from langchain_core.language_models.chat_models import BaseChatModel
 from langchain_core.messages import AIMessage, BaseMessage
 from langchain_core.outputs import ChatGeneration, ChatResult
+from pydantic import Field
 
 
 def current_attempt() -> int:
@@ -43,6 +44,8 @@ class FakeLLM(BaseChatModel):
     tokens_per_call: int = 100
     vary_per_attempt: bool = False
     model_name: str = "fake-llm"
+    # Called once per real (not journal-replayed) async call, like a provider's usage bill.
+    bill: Callable[[str, int, int], Awaitable[None]] | None = Field(default=None, exclude=True)
 
     @property
     def _llm_type(self) -> str:
@@ -83,4 +86,7 @@ class FakeLLM(BaseChatModel):
         run_manager: AsyncCallbackManagerForLLMRun | None = None,
         **kwargs: Any,
     ) -> ChatResult:
-        return self._reply(messages)
+        result = self._reply(messages)
+        if self.bill is not None:
+            await self.bill(self.model_name, self.tokens_per_call, self.tokens_per_call)
+        return result

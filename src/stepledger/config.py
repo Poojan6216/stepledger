@@ -49,11 +49,12 @@ class Price(BaseModel):
 
 
 def _default_prices() -> dict[str, Price]:
-    # Placeholders for the fake-LLM bench (USD per 1M tokens). Replace with verified published
-    # prices before any real-model bench; see docs/effects.md.
+    # USD per 1M tokens, Anthropic first-party API rates as published at
+    # https://platform.claude.com/docs/en/about-claude/pricing (checked 2026-09-26).
+    # Prices change: set `prices:` in stepledger.yaml for the models you actually use.
     return {
         "claude-haiku-4-5": Price(input=1.0, output=5.0),
-        "claude-sonnet-5": Price(input=3.0, output=15.0),
+        "claude-sonnet-5": Price(input=2.0, output=10.0),
     }
 
 

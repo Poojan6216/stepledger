@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import dataclasses
 from dataclasses import dataclass, field
 from datetime import timedelta
 from typing import Any
@@ -11,7 +12,7 @@ from temporalio import activity, workflow
 with workflow.unsafe.imports_passed_through():
     from langgraph.checkpoint.memory import InMemorySaver
     from langgraph.types import Command
-    from temporalio.contrib.langgraph import graph
+    from temporalio.contrib.langgraph import cache, graph
 
     from bench.agents.investigator import initial_state
 
@@ -23,6 +24,10 @@ class InvestigateInput:
     target: str = "acct-7f3a"
     persist: str = "none"  # "none" | "bulk" (B0: one persist_all activity at the end)
     review_decision: str | None = None  # resume value for an interrupt; None waits for a signal
+    # Continue as new once after the graph, passing the plugin's task cache: the second run
+    # re-invokes the graph with the same input and every node is served from the cache.
+    continue_as_new_cached: bool = False
+    task_cache: dict[str, Any] | None = None
 
 
 @activity.defn(name="bench.persist_all")
@@ -43,7 +48,7 @@ class InvestigateWorkflow:
 
     @workflow.run
     async def run(self, inp: InvestigateInput) -> dict[str, Any]:
-        app = graph(inp.graph).compile(checkpointer=InMemorySaver())
+        app = graph(inp.graph, cache=inp.task_cache).compile(checkpointer=InMemorySaver())
         config: Any = {"configurable": {"thread_id": "1"}}
         result: dict[str, Any] = await app.ainvoke(
             initial_state(inp.target), config, context=inp.context
@@ -58,5 +63,9 @@ class InvestigateWorkflow:
         if inp.persist == "bulk":
             await workflow.execute_activity(
                 persist_all, result, start_to_close_timeout=timedelta(minutes=1)
+            )
+        if inp.continue_as_new_cached:
+            workflow.continue_as_new(
+                dataclasses.replace(inp, continue_as_new_cached=False, task_cache=cache())
             )
         return result

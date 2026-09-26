@@ -29,6 +29,9 @@ CREATE TABLE IF NOT EXISTS bench_naive_upsert (
 CREATE TABLE IF NOT EXISTS bench_persist (
   id bigserial PRIMARY KEY, workflow_id text, run_id text, state jsonb,
   at timestamptz DEFAULT now());
+CREATE TABLE IF NOT EXISTS bench_llm_bill (
+  id bigserial PRIMARY KEY, workflow_id text, run_id text, activity_id text, attempt int,
+  model text, tokens_in int, tokens_out int, at timestamptz DEFAULT now());
 CREATE TABLE IF NOT EXISTS bench_effects (
   id bigserial PRIMARY KEY, effect text, key text, request_hash text, workflow_id text,
   run_id text, attempt int, at timestamptz DEFAULT now());
@@ -122,3 +125,15 @@ async def lookup(name: str, key: str) -> Any:
         )
         row = await cur.fetchone()
     return f"{name}-{row[0][:8]}" if row else NOT_DONE
+
+
+async def bill(model: str, tokens_in: int, tokens_out: int) -> None:
+    """The fake provider's usage bill: one row per real model call."""
+    wf, run, act, attempt = _where()
+    p = await pool()
+    async with p.connection() as conn:
+        await conn.execute(
+            "INSERT INTO bench_llm_bill (workflow_id, run_id, activity_id, attempt, model,"
+            " tokens_in, tokens_out) VALUES (%s, %s, %s, %s, %s, %s, %s)",
+            (wf, run, act, attempt, model, tokens_in, tokens_out),
+        )

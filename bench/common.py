@@ -69,6 +69,8 @@ class RunConfig:
     journal: bool = False
     effects_mode: str = "direct"  # direct | once
     node_delay_ms: int = 0
+    llm_model: str = "fake-llm"
+    bill_llm: bool = False
     review_decision: str | None = "approve"
 
     def context(self) -> dict[str, Any]:
@@ -82,6 +84,8 @@ class RunConfig:
             "journal": self.journal,
             "effects_mode": self.effects_mode,
             "node_delay_ms": self.node_delay_ms,
+            "llm_model": self.llm_model,
+            "bill_llm": self.bill_llm,
         }
 
     def workflow_input(self) -> InvestigateInput:
@@ -206,3 +210,17 @@ def write_results(name: str, command: str, data: dict[str, Any]) -> Any:
     }
     path.write_text(json.dumps(doc, indent=1, sort_keys=False) + "\n")
     return path
+
+
+async def reset_store() -> None:
+    """Empty the dedup store before a storage config is measured.
+
+    Payloads are shared by claim across every run in one database, so a B4 run that repeats a
+    payload a B3 run stored whole-blob gets a dedupe hit on that whole-blob manifest. Emptying
+    the store between configs keeps each config's storage numbers its own. Bench only: nothing
+    else may be using the store while this runs.
+    """
+    import psycopg
+
+    async with await psycopg.AsyncConnection.connect(dsn(), autocommit=True) as conn:
+        await conn.execute("TRUNCATE sl_payload_refs, sl_payloads, sl_chunks")

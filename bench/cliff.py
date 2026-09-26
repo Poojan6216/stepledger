@@ -26,6 +26,7 @@ from bench.common import (
     connect,
     dsn,
     langgraph_plugin,
+    reset_store,
     running_worker,
     start,
     write_results,
@@ -177,6 +178,8 @@ async def main(argv: list[str]) -> None:
     rows = []
     for cid in args.configs:
         b = BASELINES[cid]
+        if b.stepledger is not None:
+            await reset_store()  # this config's storage numbers are its own
         nodes = b0_nodes if cid == "B0" else args.nodes
         for disable in (False, True):
             r = await run_one(

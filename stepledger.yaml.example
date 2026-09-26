@@ -1,0 +1,22 @@
+# Copy to stepledger.yaml. Environment variables (STEPLEDGER_DSN, ...) override this file.
+schema_version: 1
+dsn: ${STEPLEDGER_DSN}
+ledger:
+  store_outputs: full        # full | hash_only
+  on_ledger_error: fail      # fail | warn  (warn trades correctness for availability)
+  snapshot_first_input: true
+storage:
+  enabled: true
+  payload_size_threshold: 65536
+  dedupe: true
+  chunk: {min: 4096, avg: 16384, max: 65536}
+gc:
+  retention_days: 30         # must be >= the namespace's workflow retention
+  margin_days: 7
+  grace_hours: 1             # nothing touched this recently is swept (store/sweep race)
+  orphan_ref_days: 90        # refs whose store context had no workflow id expire by age only
+prices:                      # USD per 1M tokens; used only by the cost meter
+  # Anthropic first-party rates from https://platform.claude.com/docs/en/about-claude/pricing
+  # (checked 2026-09-26). Verify before relying on a dollar figure.
+  claude-haiku-4-5: {input: 1.0, output: 5.0}
+  claude-sonnet-5: {input: 2.0, output: 10.0}
