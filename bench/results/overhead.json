@@ -1,0 +1,220 @@
+{
+ "command": "uv run python -m bench.overhead --runs 10",
+ "generated_at": "2026-09-26T17:03:37+00:00",
+ "environment": {
+  "python": "3.11.9",
+  "platform": "macOS-15.7.9-x86_64-i386-64bit",
+  "temporalio": "1.33.0",
+  "langgraph": "1.2.12",
+  "fastcdc": "1.7.0",
+  "psycopg": "3.3.6",
+  "temporal_cli": "temporal version 1.9.1 (Server 1.32.0, UI 2.54.1)"
+ },
+ "nodes": 30,
+ "kb_per_node": 1,
+ "runs_per_config": 10,
+ "ledger_writes": 300,
+ "ledger_write_ms_p50": 1.842,
+ "ledger_write_ms_p95": 6.109,
+ "ledger_write_ms_max": 10.553,
+ "wall_s_without_plugin": {
+  "median": 1.4465,
+  "mean": 1.4503
+ },
+ "wall_s_with_plugin": {
+  "median": 1.4881,
+  "mean": 1.4841
+ },
+ "wall_overhead_median_s": 0.0416,
+ "wall_overhead_per_node_ms": 1.387,
+ "history_bytes_without_plugin": {
+  "median": 1131353.5,
+  "mean": 1131349.1
+ },
+ "history_bytes_with_plugin": {
+  "median": 1135630.5,
+  "mean": 1135633.1
+ },
+ "runs": [
+  {
+   "with_plugin": false,
+   "workflow_id": "investigate-411fb2281d",
+   "run_id": "01a0deab-aa85-7d98-bc99-6d3ff817b3e2",
+   "client_wall_s": 1.5063,
+   "server_wall_s": 1.497857,
+   "history_size_bytes": 1131352,
+   "history_events": 179
+  },
+  {
+   "with_plugin": true,
+   "workflow_id": "investigate-10b9f7b35d",
+   "run_id": "01a0deab-b0c7-7971-a83d-b52ea048de6c",
+   "client_wall_s": 1.4524,
+   "server_wall_s": 1.43881,
+   "history_size_bytes": 1135612,
+   "history_events": 187
+  },
+  {
+   "with_plugin": true,
+   "workflow_id": "investigate-0ea2da9f93",
+   "run_id": "01a0deab-b6a6-71c1-8ba9-b97b3a79f2e3",
+   "client_wall_s": 1.4912,
+   "server_wall_s": 1.483985,
+   "history_size_bytes": 1135656,
+   "history_events": 187
+  },
+  {
+   "with_plugin": false,
+   "workflow_id": "investigate-029adb1f23",
+   "run_id": "01a0deab-bcaa-79f2-bfbf-77152c759ee9",
+   "client_wall_s": 1.4641,
+   "server_wall_s": 1.449615,
+   "history_size_bytes": 1131352,
+   "history_events": 179
+  },
+  {
+   "with_plugin": false,
+   "workflow_id": "investigate-3196f2311c",
+   "run_id": "01a0deab-c28f-70b3-bd00-ed8afd03588e",
+   "client_wall_s": 1.4483,
+   "server_wall_s": 1.441202,
+   "history_size_bytes": 1131356,
+   "history_events": 179
+  },
+  {
+   "with_plugin": true,
+   "workflow_id": "investigate-a4319359c0",
+   "run_id": "01a0deab-c868-72de-855f-9833942bfd32",
+   "client_wall_s": 1.5091,
+   "server_wall_s": 1.495312,
+   "history_size_bytes": 1135626,
+   "history_events": 187
+  },
+  {
+   "with_plugin": true,
+   "workflow_id": "investigate-3d48f2955b",
+   "run_id": "01a0deab-ce7d-723a-8230-1f8ff211e6a9",
+   "client_wall_s": 1.492,
+   "server_wall_s": 1.483568,
+   "history_size_bytes": 1135635,
+   "history_events": 187
+  },
+  {
+   "with_plugin": false,
+   "workflow_id": "investigate-9d9297bd4c",
+   "run_id": "01a0deab-d482-7b5e-b44a-eeaff1dbd8aa",
+   "client_wall_s": 1.4525,
+   "server_wall_s": 1.445498,
+   "history_size_bytes": 1131355,
+   "history_events": 179
+  },
+  {
+   "with_plugin": false,
+   "workflow_id": "investigate-96f10a1931",
+   "run_id": "01a0deab-da5c-708c-8a63-6cd78dc9c9ac",
+   "client_wall_s": 1.4546,
+   "server_wall_s": 1.447494,
+   "history_size_bytes": 1131341,
+   "history_events": 179
+  },
+  {
+   "with_plugin": true,
+   "workflow_id": "investigate-263687f889",
+   "run_id": "01a0deab-e03d-78aa-9b21-0a2f8f975b68",
+   "client_wall_s": 1.4952,
+   "server_wall_s": 1.486993,
+   "history_size_bytes": 1135637,
+   "history_events": 187
+  },
+  {
+   "with_plugin": true,
+   "workflow_id": "investigate-8f687daa3b",
+   "run_id": "01a0deab-e64f-705d-8680-ce866d3ce304",
+   "client_wall_s": 1.4974,
+   "server_wall_s": 1.4893,
+   "history_size_bytes": 1135623,
+   "history_events": 187
+  },
+  {
+   "with_plugin": false,
+   "workflow_id": "investigate-f5d4dbde1a",
+   "run_id": "01a0deab-ec5b-75d8-ba70-390404aa37f1",
+   "client_wall_s": 1.4465,
+   "server_wall_s": 1.439714,
+   "history_size_bytes": 1131355,
+   "history_events": 179
+  },
+  {
+   "with_plugin": false,
+   "workflow_id": "investigate-ab28819c62",
+   "run_id": "01a0deab-f230-74d6-ba28-0735b5cfd84c",
+   "client_wall_s": 1.451,
+   "server_wall_s": 1.444268,
+   "history_size_bytes": 1131334,
+   "history_events": 179
+  },
+  {
+   "with_plugin": true,
+   "workflow_id": "investigate-028a8eb92e",
+   "run_id": "01a0deab-f80b-7a9a-995c-d7bc8ca91959",
+   "client_wall_s": 1.5058,
+   "server_wall_s": 1.498369,
+   "history_size_bytes": 1135644,
+   "history_events": 187
+  },
+  {
+   "with_plugin": true,
+   "workflow_id": "investigate-37abcba98b",
+   "run_id": "01a0deab-fe21-7a6b-9c08-e6b92cf802bc",
+   "client_wall_s": 1.5041,
+   "server_wall_s": 1.489394,
+   "history_size_bytes": 1135623,
+   "history_events": 187
+  },
+  {
+   "with_plugin": false,
+   "workflow_id": "investigate-bd4967f794",
+   "run_id": "01a0deac-042f-7f1f-80a0-9b15f8891266",
+   "client_wall_s": 1.4433,
+   "server_wall_s": 1.436573,
+   "history_size_bytes": 1131359,
+   "history_events": 179
+  },
+  {
+   "with_plugin": false,
+   "workflow_id": "investigate-f0f30906ac",
+   "run_id": "01a0deac-0a00-7845-a05f-37afef0a338c",
+   "client_wall_s": 1.4588,
+   "server_wall_s": 1.450879,
+   "history_size_bytes": 1131328,
+   "history_events": 179
+  },
+  {
+   "with_plugin": true,
+   "workflow_id": "investigate-f1ad9bc365",
+   "run_id": "01a0deac-0fe5-7dd6-9dcd-f188eb1a94f7",
+   "client_wall_s": 1.4968,
+   "server_wall_s": 1.489315,
+   "history_size_bytes": 1135654,
+   "history_events": 187
+  },
+  {
+   "with_plugin": true,
+   "workflow_id": "investigate-341ae6a613",
+   "run_id": "01a0deac-15f2-75d0-9b8c-31914e876bd3",
+   "client_wall_s": 1.5004,
+   "server_wall_s": 1.485894,
+   "history_size_bytes": 1135621,
+   "history_events": 187
+  },
+  {
+   "with_plugin": false,
+   "workflow_id": "investigate-2f43656381",
+   "run_id": "01a0deac-1bfa-7382-8e43-485522bdf1b1",
+   "client_wall_s": 1.4563,
+   "server_wall_s": 1.449452,
+   "history_size_bytes": 1131359,
+   "history_events": 179
+  }
+ ]
+}
