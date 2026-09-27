@@ -61,9 +61,10 @@ is in `RESULTS.md` under "What beats it".
 - **One driver configuration per database.** A payload first stored whole (by `dedupe=False` or as
   opaque) stays whole when a deduplicating driver later stores the same bytes.
 - **Postgres only.** The `ChunkBackend` protocol is the extension point for S3 and similar stores.
-- **Private SDK surface.** Stepledger reads four private symbols, all isolated in
-  `stepledger/_compat.py` and pinned by `tests/unit/test_compat.py`: the LangGraph plugin's
-  `ActivityInput`/`ActivityOutput` and its task-cache context variable, and LangGraph's
+- **Private SDK surface.** Stepledger reads five private symbols, all isolated in
+  `stepledger/_compat.py` and pinned by `tests/unit/test_compat.py`: the SDK's activity
+  definition lookup, the LangGraph plugin's `ActivityInput`/`ActivityOutput` and its task-cache
+  context variable, and LangGraph's
   `task_path_str` and `MISSING`. An SDK release that moves one of them fails that test before it
   fails at runtime; the dependency ranges in `pyproject.toml` are the tested ones.
 - **Interceptor classes are handed to the sandbox by reference.** The SDK re-imports only the

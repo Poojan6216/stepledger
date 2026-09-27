@@ -1,6 +1,8 @@
-# Private planning docs: never commit or push
+# Private planning docs and audit output: never commit or push
 build_solution.md
 Stepledger_Design_Document.pdf
+VERIFY_REPORT.md
+private/
 
 # Python
 __pycache__/

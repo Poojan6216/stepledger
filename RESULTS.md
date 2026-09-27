@@ -35,13 +35,13 @@ Stored bytes at 40 nodes: B3 whole-blob 50.71 MB, B4 dedup 3.53 MB (14.4x less).
 
 ## Demo 2: pull the plug
 
-20 runs per config of the 30-node agent; the fake LLM answers differently on every attempt. Each run gets one seeded fault: Stepledger F1 to F6, the baselines F1, F2, F3, F6. Every row is checked against Temporal's history. `uv run python -m bench.chaos --runs 20`
+100 runs per config of the 30-node agent; the fake LLM answers differently on every attempt. Each run gets one seeded fault: Stepledger F1 to F6, the baselines F1, F2, F3, F6. Every row is checked against Temporal's history. `uv run python -m bench.chaos --runs 100`
 
 | config | runs | faults injected | duplicate rows | divergent rows | lost rows | orphan rows | duplicate side effects |
 |---|---|---|---|---|---|---|---|
-| B1 naive per-node write | 20 | 20 | 17 | 13 | 0 | 0 | 7 |
-| B1u naive upsert | 20 | 20 | 0 | 5 | 0 | 0 | 4 |
-| Stepledger | 20 | 20 | 0 | 0 | 0 | 0 | 0 |
+| B1 naive per-node write | 100 | 100 | 99 | 85 | 0 | 0 | 35 |
+| B1u naive upsert | 100 | 100 | 0 | 25 | 0 | 0 | 34 |
+| Stepledger | 100 | 100 | 0 | 0 | 0 | 0 | 0 |
 
 ## Demo 3: the quiet quadratic
 
@@ -82,11 +82,13 @@ The B4 history column is not monotonic in output size: at 60 KiB per node each n
 
 With the journal, 53 of 53 replayed nodes committed the first attempt's model response.
 
+The wasted-call numbers come from the fake model's billing hook in the bench, not from the ledger. Stepledger's own `sl_retry_waste` view counts only attempts that reached the ledger (4,000 tokens in this run), because a worker that dies right after the model call never writes a row; with the journal on, that call is in `sl_llm_calls`.
+
 ## Overhead
 
 30-node agent, 1 KiB per node, storage driver off, 10 runs each on the local dev server: ledger write p50 1.842 ms, p95 6.109 ms; median wall clock 1.4465 s without the plugin, 1.4881 s with it (1.387 ms per node). With the storage driver on (threshold sweep, 60 KiB nodes) the ledger write p95 is 14.645 ms at 16 KiB, 17.555 ms at 64 KiB, 14.772 ms at 256 KiB; that sweep has no without-plugin baseline. `uv run python -m bench.overhead --runs 10`
 
-History bytes the plugin adds (one run per size, storage driver off): 2,224 at 10 nodes, 3,268 at 20 nodes, 5,323 at 40 nodes, 9,375 at 80 nodes; marginal bytes per node [104.4, 102.75, 101.3]. `uv run python -m bench.history_overhead`
+History the plugin adds (storage driver off), measured on the with-plugin history itself: `stepledger-*` header bytes 837 at 10 nodes, 1,736 at 20 nodes, 3,536 at 40 nodes, 7,136 at 80 nodes, a marginal [89.9, 90.0, 90.0] bytes per node between sizes (the first node carries no commits header, and the seal Activity's events add 677 bytes, both once per run). As context, total history with the plugin minus without it, each the minimum of 3 runs: 2,290 at 10 nodes, 3,245 at 20 nodes, 5,646 at 40 nodes, 9,441 at 80 nodes; marginal bytes per node [95.5, 120.05, 94.88]. `uv run python -m bench.history_overhead`
 
 ## External Storage threshold
 

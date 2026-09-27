@@ -1,6 +1,6 @@
 [project]
 name = "stepledger"
-version = "0.1.1"
+version = "0.1.2"
 description = "A Temporal plugin for LangGraph agents: one fenced Postgres row per node Activity execution, committed when the workflow accepts the result, plus a deduplicating External Storage driver for large state."
 readme = "README.md"
 license = "Apache-2.0"

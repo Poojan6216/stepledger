@@ -1,6 +1,6 @@
 {
  "command": "uv run python -m bench.history_overhead",
- "generated_at": "2026-09-26T17:55:40+00:00",
+ "generated_at": "2026-09-27T17:46:06+00:00",
  "environment": {
   "python": "3.11.9",
   "platform": "macOS-15.7.9-x86_64-i386-64bit",
@@ -10,35 +10,105 @@
   "psycopg": "3.3.6",
   "temporal_cli": "temporal version 1.9.1 (Server 1.32.0, UI 2.54.1)"
  },
+ "samples_per_series": 3,
  "rows": [
   {
    "nodes": 10,
-   "history_without": 142033,
-   "history_with": 144257,
-   "plugin_bytes": 2224
+   "header_bytes": 837,
+   "header_bytes_per_node": 83.7,
+   "seal_event_bytes": 677,
+   "history_without": 142395,
+   "history_with": 144685,
+   "plugin_bytes": 2290,
+   "samples_without": [
+    142395,
+    142459,
+    142426
+   ],
+   "samples_with": [
+    145037,
+    145020,
+    144685
+   ]
   },
   {
    "nodes": 20,
-   "history_without": 526296,
-   "history_with": 529564,
-   "plugin_bytes": 3268
+   "header_bytes": 1736,
+   "header_bytes_per_node": 86.8,
+   "seal_event_bytes": 678,
+   "history_without": 527067,
+   "history_with": 530312,
+   "plugin_bytes": 3245,
+   "samples_without": [
+    527067,
+    527080,
+    527073
+   ],
+   "samples_with": [
+    530312,
+    530324,
+    530670
+   ]
   },
   {
    "nodes": 40,
-   "history_without": 1958604,
-   "history_with": 1963927,
-   "plugin_bytes": 5323
+   "header_bytes": 3536,
+   "header_bytes_per_node": 88.4,
+   "seal_event_bytes": 685,
+   "history_without": 1960055,
+   "history_with": 1965701,
+   "plugin_bytes": 5646,
+   "samples_without": [
+    1960055,
+    1960057,
+    1960056
+   ],
+   "samples_with": [
+    1965701,
+    1965713,
+    1965713
+   ]
   },
   {
    "nodes": 80,
-   "history_without": 7476585,
-   "history_with": 7485960,
-   "plugin_bytes": 9375
+   "header_bytes": 7136,
+   "header_bytes_per_node": 89.2,
+   "seal_event_bytes": 688,
+   "history_without": 7479362,
+   "history_with": 7488803,
+   "plugin_bytes": 9441,
+   "samples_without": [
+    7479389,
+    7479376,
+    7479362
+   ],
+   "samples_with": [
+    7489155,
+    7488803,
+    7489145
+   ]
   }
  ],
+ "header_bytes_per_node": [
+  83.7,
+  86.8,
+  88.4,
+  89.2
+ ],
+ "marginal_header_bytes_per_node": [
+  89.9,
+  90.0,
+  90.0
+ ],
+ "seal_event_bytes": [
+  677,
+  678,
+  685,
+  688
+ ],
  "marginal_plugin_bytes_per_node": [
-  104.4,
-  102.75,
-  101.3
+  95.5,
+  120.05,
+  94.88
  ]
 }

@@ -14,7 +14,7 @@ The LangGraph plugin sends each node's whole input state as its Activity input, 
 
 - **Persisting once at the end fails.** The final state is the first payload over the 2 MiB limit: the run gets stuck (SDK default) or the server terminates it (the #1894 error).
 - **Writing each node's delta from its Activity moves the failure, it does not remove it.** At 60 KiB of new output per node the run still stops at node 35, because that node's own input crosses 2 MiB; history is already 35.42 MiB. With smaller outputs the 50 MiB history limit comes first.
-- **Per-node writes are at-least-once.** Under injected crashes, a plain insert produced 17 duplicate and 13 divergent rows in 20 runs; an upsert still produced 5 divergent rows (a stale attempt overwriting the accepted answer). Retried nodes also repeated their external calls: 7 and 4 duplicate side effects reached the fake ticket and Slack targets in those runs.
+- **Per-node writes are at-least-once.** Under injected crashes, a plain insert produced 99 duplicate and 85 divergent rows in 100 runs; an upsert still produced 25 divergent rows (a stale attempt overwriting the accepted answer). Retried nodes also repeated their external calls: 35 and 34 duplicate side effects reached the fake ticket and Slack targets in those runs.
 - **External Storage fixes history, but storage then grows with the square of the run:** one object per payload, and every node input is a slightly longer copy of the last (history itself still grows, linearly, with references and sub-threshold payloads).
 
 ## Install
@@ -23,7 +23,7 @@ The LangGraph plugin sends each node's whole input state as its Activity input, 
 pip install stepledger
 ```
 
-Requires Python 3.11 or later, `temporalio[langgraph]` 1.33.x and `langgraph` 1.2.x (the tested ranges: both upstream features are experimental in the SDK and Stepledger reads four private symbols, see the section on private APIs), and Postgres (tested on 16). For the local environment the tests and benches use (Postgres plus a Temporal dev server with explicit payload and history limits): `scripts/dev.sh up`.
+Requires Python 3.11 or later, `temporalio[langgraph]` 1.33.x and `langgraph` 1.2.x (the tested ranges: both upstream features are experimental in the SDK and Stepledger reads five private symbols, see the section on private APIs), and Postgres (tested on 16). For the local environment the tests and benches use (Postgres plus a Temporal dev server with explicit payload and history limits): `scripts/dev.sh up`.
 
 ## Integration
 
@@ -63,12 +63,12 @@ See [docs/limitations.md](https://github.com/Poojan6216/stepledger/blob/main/doc
 
 ## What it does, measured
 
-- **One row per node Activity execution, fenced and committed against history.** Across 20 crash-injected runs (the worker killed at fault points F1 to F5, and zombie attempts writing late at F6), Stepledger had 0 duplicate, 0 divergent, 0 lost and 0 orphan rows, each checked against the result Temporal recorded; with `once()` on the two effect nodes, 0 duplicate side effects reached the targets.
+- **One row per node Activity execution, fenced and committed against history.** Across 100 crash-injected runs (the worker killed at fault points F1 to F5, and zombie attempts writing late at F6), Stepledger had 0 duplicate, 0 divergent, 0 lost and 0 orphan rows, each checked against the result Temporal recorded; with `once()` on the two effect nodes, 0 duplicate side effects reached the targets.
 - **Past the wall.** With the dedup driver the 40-node run that stops B1 completes; the largest payload left in history is 62.4 KiB (nothing above the 64 KiB threshold) and history is 2.5 MiB.
 - **Linear storage.** At 80 nodes x 100 KiB per node: 342.97 MB as one object per payload, 12.15 MB as dedup chunks (28.2x less).
 - **The view equals the truth.** Over 100 seeded runs, `materialize()` rebuilt 80 runs EXACT and equal to the workflow's result, declared 20 gaps (workflow-side nodes, task-cache hits), and gave 0 wrong answers.
 - **The retry bill.** With the LLM journal, simulated spend wasted on attempts Temporal did not accept (a fake model at a fixed token count, priced at claude-haiku-4-5 list rates) fell from USD 1.452 to USD 0.204 (86% less) under the same seeded crash plan.
-- **Small overhead.** For the ledger write alone (storage driver off, 1 KiB nodes, 10 runs on a local dev server): p95 6.109 ms and about 1.4 ms of wall clock per node; about 101 bytes of history per node (one run per size; the commit header grows with pending ids after failed carriers).
+- **Small overhead.** For the ledger write alone (storage driver off, 1 KiB nodes, 10 runs on a local dev server): p95 6.109 ms and about 1.4 ms of wall clock per node; about 90 bytes of headers per node in history, the same from 10 to 80 nodes (the commit header grows only with pending ids after failed carriers).
 
 All numbers come from `bench/results/*.json` via the commands in [RESULTS.md](https://github.com/Poojan6216/stepledger/blob/main/RESULTS.md).
 
@@ -98,9 +98,9 @@ uv run python bench/demo.py --demo cost         # the retry bill
 
 | config | runs | faults injected | duplicate rows | divergent rows | lost rows | orphan rows | duplicate side effects |
 |---|---|---|---|---|---|---|---|
-| B1 naive per-node write | 20 | 20 | 17 | 13 | 0 | 0 | 7 |
-| B1u naive upsert | 20 | 20 | 0 | 5 | 0 | 0 | 4 |
-| Stepledger | 20 | 20 | 0 | 0 | 0 | 0 | 0 |
+| B1 naive per-node write | 100 | 100 | 99 | 85 | 0 | 0 | 35 |
+| B1u naive upsert | 100 | 100 | 0 | 25 | 0 | 0 | 34 |
+| Stepledger | 100 | 100 | 0 | 0 | 0 | 0 | 0 |
 
 ### Demo 3: the quiet quadratic
 
@@ -124,6 +124,8 @@ uv run python bench/demo.py --demo cost         # the retry bill
 |---|---|---|---|---|---|
 | no-journal | 401 | 4.812 | 121 | 1.452 | 0 |
 | journal | 297 | 3.564 | 17 | 0.204 | 79 |
+
+The wasted-call numbers come from the fake model's billing hook in the bench, not from the ledger. Stepledger's own `sl_retry_waste` view counts only attempts that reached the ledger (4,000 tokens in this run), because a worker that dies right after the model call never writes a row; with the journal on, that call is in `sl_llm_calls`.
 
 ### The run ledger
 

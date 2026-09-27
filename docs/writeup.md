@@ -10,9 +10,9 @@ A run of the demo agent that adds 60 KiB of tool output per node reached 35.42 M
 
 ## At-least-once is not once
 
-The natural per-node write runs under Temporal's retry model. In 20 crash-injected runs with a model that answers differently on every retry, a plain insert left 17 duplicate rows and 13 rows whose content differed from the result Temporal accepted. An upsert removed the duplicates but left 5 divergent rows: attempts that had timed out kept running and wrote after the accepted attempt. Nothing raised an error.
+The natural per-node write runs under Temporal's retry model. In 100 crash-injected runs with a model that answers differently on every retry, a plain insert left 99 duplicate rows and 85 rows whose content differed from the result Temporal accepted. An upsert removed the duplicates but left 25 divergent rows: attempts that had timed out kept running and wrote after the accepted attempt. Nothing raised an error.
 
-Stepledger keys each row on a sequence number carried in an Activity header, fences each write on the attempt's server-assigned schedule time, and marks a row committed only once the workflow has received the result. Across the same 20 runs it had 0 duplicate and 0 divergent rows. An Activity reset, which sends the attempt counter back to 1, did not break it: 0 divergent rows in 5 reset runs.
+Stepledger keys each row on a sequence number carried in an Activity header, fences each write on the attempt's server-assigned schedule time, and marks a row committed only once the workflow has received the result. Across the same 100 runs it had 0 duplicate and 0 divergent rows. An Activity reset, which sends the attempt counter back to 1, did not break it: 0 divergent rows in 5 reset runs.
 
 ## Moving the state out of history, without paying for it quadratically
 

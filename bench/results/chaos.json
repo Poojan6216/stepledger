@@ -1,6 +1,6 @@
 {
- "command": "uv run python -m bench.chaos --runs 20",
- "generated_at": "2026-09-26T17:27:17+00:00",
+ "command": "uv run python -m bench.chaos --runs 100",
+ "generated_at": "2026-09-27T16:35:09+00:00",
  "environment": {
   "python": "3.11.9",
   "platform": "macOS-15.7.9-x86_64-i386-64bit",
@@ -14,29 +14,29 @@
  "nodes": 30,
  "start_to_close_s": 5,
  "zombie_hang_s": 6.5,
- "elapsed_s": 299.7,
+ "elapsed_s": 1243.2,
  "configs": [
   {
    "config": "B1",
-   "runs": 20,
-   "fault_injections": 20,
-   "faults_declared": 20,
+   "runs": 100,
+   "fault_injections": 100,
+   "faults_declared": 100,
    "faults_fired_once": true,
-   "worker_restarts": 15,
-   "completed": 20,
-   "rows": 617,
-   "duplicate_rows": 17,
-   "divergent_rows": 13,
+   "worker_restarts": 75,
+   "completed": 100,
+   "rows": 3099,
+   "duplicate_rows": 99,
+   "divergent_rows": 85,
    "lost_rows": 0,
    "orphan_rows": 0,
-   "duplicate_side_effects": 7,
+   "duplicate_side_effects": 35,
    "wrongly_committed": 0,
    "per_run": [
     {
-     "workflow_id": "chaos-B1-092fef-00",
+     "workflow_id": "chaos-B1-c2e68c-00",
      "status": "COMPLETED",
      "faults": [
-      "F1:wf=chaos-B1-092fef-00:node=scan_iam"
+      "F1:wf=chaos-B1-c2e68c-00:node=scan_iam"
      ],
      "rows": 30,
      "duplicate_rows": 0,
@@ -48,44 +48,44 @@
      "details": []
     },
     {
-     "workflow_id": "chaos-B1-092fef-01",
+     "workflow_id": "chaos-B1-c2e68c-01",
      "status": "COMPLETED",
      "faults": [
-      "F2:wf=chaos-B1-092fef-01:node=open_ticket"
+      "F2:wf=chaos-B1-c2e68c-01:node=open_ticket"
      ],
-     "rows": 31,
-     "duplicate_rows": 1,
-     "divergent_rows": 1,
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 1,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1-c2e68c-02",
+     "status": "COMPLETED",
+     "faults": [
+      "F3:wf=chaos-B1-c2e68c-02:node=notify_slack"
+     ],
+     "rows": 34,
+     "duplicate_rows": 4,
+     "divergent_rows": 3,
      "lost_rows": 0,
      "orphan_rows": 0,
      "duplicate_side_effects": 1,
      "wrongly_committed": 0,
      "details": [
-      "activity 4: row differs from history"
+      "activity 3: row differs from history",
+      "activity 4: row differs from history",
+      "activity 7: row differs from history"
      ]
     },
     {
-     "workflow_id": "chaos-B1-092fef-02",
+     "workflow_id": "chaos-B1-c2e68c-03",
      "status": "COMPLETED",
      "faults": [
-      "F3:wf=chaos-B1-092fef-02:node=notify_slack"
-     ],
-     "rows": 32,
-     "duplicate_rows": 2,
-     "divergent_rows": 1,
-     "lost_rows": 0,
-     "orphan_rows": 0,
-     "duplicate_side_effects": 1,
-     "wrongly_committed": 0,
-     "details": [
-      "activity 3: row differs from history"
-     ]
-    },
-    {
-     "workflow_id": "chaos-B1-092fef-03",
-     "status": "COMPLETED",
-     "faults": [
-      "F6:wf=chaos-B1-092fef-03:node=enrich_cve_17:hang=6.5"
+      "F6:wf=chaos-B1-c2e68c-03:node=enrich_cve_17:hang=6.5"
      ],
      "rows": 31,
      "duplicate_rows": 1,
@@ -99,76 +99,10 @@
      ]
     },
     {
-     "workflow_id": "chaos-B1-092fef-04",
+     "workflow_id": "chaos-B1-c2e68c-04",
      "status": "COMPLETED",
      "faults": [
-      "F1:wf=chaos-B1-092fef-04:node=enrich_cve_11"
-     ],
-     "rows": 31,
-     "duplicate_rows": 1,
-     "divergent_rows": 1,
-     "lost_rows": 0,
-     "orphan_rows": 0,
-     "duplicate_side_effects": 0,
-     "wrongly_committed": 0,
-     "details": [
-      "activity 5: row differs from history"
-     ]
-    },
-    {
-     "workflow_id": "chaos-B1-092fef-05",
-     "status": "COMPLETED",
-     "faults": [
-      "F2:wf=chaos-B1-092fef-05:node=open_ticket"
-     ],
-     "rows": 31,
-     "duplicate_rows": 1,
-     "divergent_rows": 1,
-     "lost_rows": 0,
-     "orphan_rows": 0,
-     "duplicate_side_effects": 1,
-     "wrongly_committed": 0,
-     "details": [
-      "activity 4: row differs from history"
-     ]
-    },
-    {
-     "workflow_id": "chaos-B1-092fef-06",
-     "status": "COMPLETED",
-     "faults": [
-      "F3:wf=chaos-B1-092fef-06:node=notify_slack"
-     ],
-     "rows": 31,
-     "duplicate_rows": 1,
-     "divergent_rows": 0,
-     "lost_rows": 0,
-     "orphan_rows": 0,
-     "duplicate_side_effects": 1,
-     "wrongly_committed": 0,
-     "details": []
-    },
-    {
-     "workflow_id": "chaos-B1-092fef-07",
-     "status": "COMPLETED",
-     "faults": [
-      "F6:wf=chaos-B1-092fef-07:node=scan_iam:hang=6.5"
-     ],
-     "rows": 31,
-     "duplicate_rows": 1,
-     "divergent_rows": 1,
-     "lost_rows": 0,
-     "orphan_rows": 0,
-     "duplicate_side_effects": 0,
-     "wrongly_committed": 0,
-     "details": [
-      "activity 2: row differs from history"
-     ]
-    },
-    {
-     "workflow_id": "chaos-B1-092fef-08",
-     "status": "COMPLETED",
-     "faults": [
-      "F1:wf=chaos-B1-092fef-08:node=list_assets"
+      "F1:wf=chaos-B1-c2e68c-04:node=enrich_cve_11"
      ],
      "rows": 30,
      "duplicate_rows": 0,
@@ -180,28 +114,27 @@
      "details": []
     },
     {
-     "workflow_id": "chaos-B1-092fef-09",
+     "workflow_id": "chaos-B1-c2e68c-05",
      "status": "COMPLETED",
      "faults": [
-      "F2:wf=chaos-B1-092fef-09:node=open_ticket"
+      "F2:wf=chaos-B1-c2e68c-05:node=open_ticket"
      ],
-     "rows": 32,
-     "duplicate_rows": 2,
-     "divergent_rows": 2,
+     "rows": 31,
+     "duplicate_rows": 1,
+     "divergent_rows": 1,
      "lost_rows": 0,
      "orphan_rows": 0,
-     "duplicate_side_effects": 1,
+     "duplicate_side_effects": 3,
      "wrongly_committed": 0,
      "details": [
-      "activity 2: row differs from history",
-      "activity 2: row differs from history"
+      "activity 3: row differs from history"
      ]
     },
     {
-     "workflow_id": "chaos-B1-092fef-10",
+     "workflow_id": "chaos-B1-c2e68c-06",
      "status": "COMPLETED",
      "faults": [
-      "F3:wf=chaos-B1-092fef-10:node=open_ticket"
+      "F3:wf=chaos-B1-c2e68c-06:node=notify_slack"
      ],
      "rows": 31,
      "duplicate_rows": 1,
@@ -213,10 +146,74 @@
      "details": []
     },
     {
-     "workflow_id": "chaos-B1-092fef-11",
+     "workflow_id": "chaos-B1-c2e68c-07",
      "status": "COMPLETED",
      "faults": [
-      "F6:wf=chaos-B1-092fef-11:node=enrich_cve_11:hang=6.5"
+      "F6:wf=chaos-B1-c2e68c-07:node=scan_iam:hang=6.5"
+     ],
+     "rows": 31,
+     "duplicate_rows": 1,
+     "divergent_rows": 1,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": [
+      "activity 2: row differs from history"
+     ]
+    },
+    {
+     "workflow_id": "chaos-B1-c2e68c-08",
+     "status": "COMPLETED",
+     "faults": [
+      "F1:wf=chaos-B1-c2e68c-08:node=list_assets"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1-c2e68c-09",
+     "status": "COMPLETED",
+     "faults": [
+      "F2:wf=chaos-B1-c2e68c-09:node=open_ticket"
+     ],
+     "rows": 31,
+     "duplicate_rows": 1,
+     "divergent_rows": 1,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 1,
+     "wrongly_committed": 0,
+     "details": [
+      "activity 27: row differs from history"
+     ]
+    },
+    {
+     "workflow_id": "chaos-B1-c2e68c-10",
+     "status": "COMPLETED",
+     "faults": [
+      "F3:wf=chaos-B1-c2e68c-10:node=open_ticket"
+     ],
+     "rows": 31,
+     "duplicate_rows": 1,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 1,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1-c2e68c-11",
+     "status": "COMPLETED",
+     "faults": [
+      "F6:wf=chaos-B1-c2e68c-11:node=enrich_cve_11:hang=6.5"
      ],
      "rows": 31,
      "duplicate_rows": 1,
@@ -230,10 +227,27 @@
      ]
     },
     {
-     "workflow_id": "chaos-B1-092fef-12",
+     "workflow_id": "chaos-B1-c2e68c-12",
      "status": "COMPLETED",
      "faults": [
-      "F1:wf=chaos-B1-092fef-12:node=score_risk"
+      "F1:wf=chaos-B1-c2e68c-12:node=score_risk"
+     ],
+     "rows": 31,
+     "duplicate_rows": 1,
+     "divergent_rows": 1,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": [
+      "activity 2: row differs from history"
+     ]
+    },
+    {
+     "workflow_id": "chaos-B1-c2e68c-13",
+     "status": "COMPLETED",
+     "faults": [
+      "F2:wf=chaos-B1-c2e68c-13:node=scan_iam"
      ],
      "rows": 30,
      "duplicate_rows": 0,
@@ -245,25 +259,10 @@
      "details": []
     },
     {
-     "workflow_id": "chaos-B1-092fef-13",
+     "workflow_id": "chaos-B1-c2e68c-14",
      "status": "COMPLETED",
      "faults": [
-      "F2:wf=chaos-B1-092fef-13:node=scan_iam"
-     ],
-     "rows": 30,
-     "duplicate_rows": 0,
-     "divergent_rows": 0,
-     "lost_rows": 0,
-     "orphan_rows": 0,
-     "duplicate_side_effects": 0,
-     "wrongly_committed": 0,
-     "details": []
-    },
-    {
-     "workflow_id": "chaos-B1-092fef-14",
-     "status": "COMPLETED",
-     "faults": [
-      "F3:wf=chaos-B1-092fef-14:node=enrich_cve_3"
+      "F3:wf=chaos-B1-c2e68c-14:node=enrich_cve_3"
      ],
      "rows": 31,
      "duplicate_rows": 1,
@@ -277,10 +276,10 @@
      ]
     },
     {
-     "workflow_id": "chaos-B1-092fef-15",
+     "workflow_id": "chaos-B1-c2e68c-15",
      "status": "COMPLETED",
      "faults": [
-      "F6:wf=chaos-B1-092fef-15:node=summarize:hang=6.5"
+      "F6:wf=chaos-B1-c2e68c-15:node=summarize:hang=6.5"
      ],
      "rows": 31,
      "duplicate_rows": 1,
@@ -294,10 +293,152 @@
      ]
     },
     {
-     "workflow_id": "chaos-B1-092fef-16",
+     "workflow_id": "chaos-B1-c2e68c-16",
      "status": "COMPLETED",
      "faults": [
-      "F1:wf=chaos-B1-092fef-16:node=enrich_cve_3"
+      "F1:wf=chaos-B1-c2e68c-16:node=enrich_cve_3"
+     ],
+     "rows": 31,
+     "duplicate_rows": 1,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 1,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1-c2e68c-17",
+     "status": "COMPLETED",
+     "faults": [
+      "F2:wf=chaos-B1-c2e68c-17:node=scan_network"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1-c2e68c-18",
+     "status": "COMPLETED",
+     "faults": [
+      "F3:wf=chaos-B1-c2e68c-18:node=notify_slack"
+     ],
+     "rows": 31,
+     "duplicate_rows": 1,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 1,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1-c2e68c-19",
+     "status": "COMPLETED",
+     "faults": [
+      "F6:wf=chaos-B1-c2e68c-19:node=list_assets:hang=6.5"
+     ],
+     "rows": 31,
+     "duplicate_rows": 1,
+     "divergent_rows": 1,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": [
+      "activity 1: row differs from history"
+     ]
+    },
+    {
+     "workflow_id": "chaos-B1-c2e68c-20",
+     "status": "COMPLETED",
+     "faults": [
+      "F1:wf=chaos-B1-c2e68c-20:node=enrich_cve_11"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1-c2e68c-21",
+     "status": "COMPLETED",
+     "faults": [
+      "F2:wf=chaos-B1-c2e68c-21:node=enrich_cve_17"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1-c2e68c-22",
+     "status": "COMPLETED",
+     "faults": [
+      "F3:wf=chaos-B1-c2e68c-22:node=enrich_cve_3"
+     ],
+     "rows": 32,
+     "duplicate_rows": 2,
+     "divergent_rows": 2,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": [
+      "activity 2: row differs from history",
+      "activity 8: row differs from history"
+     ]
+    },
+    {
+     "workflow_id": "chaos-B1-c2e68c-23",
+     "status": "COMPLETED",
+     "faults": [
+      "F6:wf=chaos-B1-c2e68c-23:node=summarize:hang=6.5"
+     ],
+     "rows": 31,
+     "duplicate_rows": 1,
+     "divergent_rows": 1,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": [
+      "activity 30: row differs from history"
+     ]
+    },
+    {
+     "workflow_id": "chaos-B1-c2e68c-24",
+     "status": "COMPLETED",
+     "faults": [
+      "F1:wf=chaos-B1-c2e68c-24:node=score_risk"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1-c2e68c-25",
+     "status": "COMPLETED",
+     "faults": [
+      "F2:wf=chaos-B1-c2e68c-25:node=summarize"
      ],
      "rows": 31,
      "duplicate_rows": 1,
@@ -311,10 +452,44 @@
      ]
     },
     {
-     "workflow_id": "chaos-B1-092fef-17",
+     "workflow_id": "chaos-B1-c2e68c-26",
      "status": "COMPLETED",
      "faults": [
-      "F2:wf=chaos-B1-092fef-17:node=scan_network"
+      "F3:wf=chaos-B1-c2e68c-26:node=scan_iam"
+     ],
+     "rows": 33,
+     "duplicate_rows": 3,
+     "divergent_rows": 1,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 2,
+     "wrongly_committed": 0,
+     "details": [
+      "activity 2: row differs from history"
+     ]
+    },
+    {
+     "workflow_id": "chaos-B1-c2e68c-27",
+     "status": "COMPLETED",
+     "faults": [
+      "F6:wf=chaos-B1-c2e68c-27:node=scan_iam:hang=6.5"
+     ],
+     "rows": 31,
+     "duplicate_rows": 1,
+     "divergent_rows": 1,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": [
+      "activity 2: row differs from history"
+     ]
+    },
+    {
+     "workflow_id": "chaos-B1-c2e68c-28",
+     "status": "COMPLETED",
+     "faults": [
+      "F1:wf=chaos-B1-c2e68c-28:node=enrich_cve_17"
      ],
      "rows": 30,
      "duplicate_rows": 0,
@@ -326,25 +501,45 @@
      "details": []
     },
     {
-     "workflow_id": "chaos-B1-092fef-18",
+     "workflow_id": "chaos-B1-c2e68c-29",
      "status": "COMPLETED",
      "faults": [
-      "F3:wf=chaos-B1-092fef-18:node=notify_slack"
+      "F2:wf=chaos-B1-c2e68c-29:node=notify_slack"
      ],
      "rows": 31,
      "duplicate_rows": 1,
-     "divergent_rows": 0,
+     "divergent_rows": 1,
      "lost_rows": 0,
      "orphan_rows": 0,
      "duplicate_side_effects": 1,
      "wrongly_committed": 0,
-     "details": []
+     "details": [
+      "activity 11: row differs from history"
+     ]
     },
     {
-     "workflow_id": "chaos-B1-092fef-19",
+     "workflow_id": "chaos-B1-c2e68c-30",
      "status": "COMPLETED",
      "faults": [
-      "F6:wf=chaos-B1-092fef-19:node=list_assets:hang=6.5"
+      "F3:wf=chaos-B1-c2e68c-30:node=enrich_cve_17"
+     ],
+     "rows": 32,
+     "duplicate_rows": 2,
+     "divergent_rows": 2,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": [
+      "activity 16: row differs from history",
+      "activity 22: row differs from history"
+     ]
+    },
+    {
+     "workflow_id": "chaos-B1-c2e68c-31",
+     "status": "COMPLETED",
+     "faults": [
+      "F6:wf=chaos-B1-c2e68c-31:node=list_assets:hang=6.5"
      ],
      "rows": 31,
      "duplicate_rows": 1,
@@ -356,30 +551,12 @@
      "details": [
       "activity 1: row differs from history"
      ]
-    }
-   ]
-  },
-  {
-   "config": "B1u",
-   "runs": 20,
-   "fault_injections": 20,
-   "faults_declared": 20,
-   "faults_fired_once": true,
-   "worker_restarts": 15,
-   "completed": 20,
-   "rows": 600,
-   "duplicate_rows": 0,
-   "divergent_rows": 5,
-   "lost_rows": 0,
-   "orphan_rows": 0,
-   "duplicate_side_effects": 4,
-   "wrongly_committed": 0,
-   "per_run": [
+    },
     {
-     "workflow_id": "chaos-B1u-c61d29-00",
+     "workflow_id": "chaos-B1-c2e68c-32",
      "status": "COMPLETED",
      "faults": [
-      "F1:wf=chaos-B1u-c61d29-00:node=scan_network"
+      "F1:wf=chaos-B1-c2e68c-32:node=score_risk"
      ],
      "rows": 30,
      "duplicate_rows": 0,
@@ -391,10 +568,10 @@
      "details": []
     },
     {
-     "workflow_id": "chaos-B1u-c61d29-01",
+     "workflow_id": "chaos-B1-c2e68c-33",
      "status": "COMPLETED",
      "faults": [
-      "F2:wf=chaos-B1u-c61d29-01:node=scan_network"
+      "F2:wf=chaos-B1-c2e68c-33:node=enrich_cve_11"
      ],
      "rows": 30,
      "duplicate_rows": 0,
@@ -406,10 +583,59 @@
      "details": []
     },
     {
-     "workflow_id": "chaos-B1u-c61d29-02",
+     "workflow_id": "chaos-B1-c2e68c-34",
      "status": "COMPLETED",
      "faults": [
-      "F3:wf=chaos-B1u-c61d29-02:node=open_ticket"
+      "F3:wf=chaos-B1-c2e68c-34:node=enrich_cve_17"
+     ],
+     "rows": 31,
+     "duplicate_rows": 1,
+     "divergent_rows": 1,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": [
+      "activity 22: row differs from history"
+     ]
+    },
+    {
+     "workflow_id": "chaos-B1-c2e68c-35",
+     "status": "COMPLETED",
+     "faults": [
+      "F6:wf=chaos-B1-c2e68c-35:node=enrich_cve_17:hang=6.5"
+     ],
+     "rows": 31,
+     "duplicate_rows": 1,
+     "divergent_rows": 1,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": [
+      "activity 22: row differs from history"
+     ]
+    },
+    {
+     "workflow_id": "chaos-B1-c2e68c-36",
+     "status": "COMPLETED",
+     "faults": [
+      "F1:wf=chaos-B1-c2e68c-36:node=enrich_cve_11"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1-c2e68c-37",
+     "status": "COMPLETED",
+     "faults": [
+      "F2:wf=chaos-B1-c2e68c-37:node=open_ticket"
      ],
      "rows": 30,
      "duplicate_rows": 0,
@@ -421,10 +647,1109 @@
      "details": []
     },
     {
-     "workflow_id": "chaos-B1u-c61d29-03",
+     "workflow_id": "chaos-B1-c2e68c-38",
      "status": "COMPLETED",
      "faults": [
-      "F6:wf=chaos-B1u-c61d29-03:node=enrich_cve_17:hang=6.5"
+      "F3:wf=chaos-B1-c2e68c-38:node=score_risk"
+     ],
+     "rows": 32,
+     "duplicate_rows": 2,
+     "divergent_rows": 2,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": [
+      "activity 16: row differs from history",
+      "activity 27: row differs from history"
+     ]
+    },
+    {
+     "workflow_id": "chaos-B1-c2e68c-39",
+     "status": "COMPLETED",
+     "faults": [
+      "F6:wf=chaos-B1-c2e68c-39:node=enrich_cve_17:hang=6.5"
+     ],
+     "rows": 31,
+     "duplicate_rows": 1,
+     "divergent_rows": 1,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": [
+      "activity 22: row differs from history"
+     ]
+    },
+    {
+     "workflow_id": "chaos-B1-c2e68c-40",
+     "status": "COMPLETED",
+     "faults": [
+      "F1:wf=chaos-B1-c2e68c-40:node=enrich_cve_17"
+     ],
+     "rows": 31,
+     "duplicate_rows": 1,
+     "divergent_rows": 1,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": [
+      "activity 9: row differs from history"
+     ]
+    },
+    {
+     "workflow_id": "chaos-B1-c2e68c-41",
+     "status": "COMPLETED",
+     "faults": [
+      "F2:wf=chaos-B1-c2e68c-41:node=open_ticket"
+     ],
+     "rows": 31,
+     "duplicate_rows": 1,
+     "divergent_rows": 1,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 2,
+     "wrongly_committed": 0,
+     "details": [
+      "activity 4: row differs from history"
+     ]
+    },
+    {
+     "workflow_id": "chaos-B1-c2e68c-42",
+     "status": "COMPLETED",
+     "faults": [
+      "F3:wf=chaos-B1-c2e68c-42:node=scan_iam"
+     ],
+     "rows": 34,
+     "duplicate_rows": 4,
+     "divergent_rows": 4,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": [
+      "activity 2: row differs from history",
+      "activity 2: row differs from history",
+      "activity 4: row differs from history",
+      "activity 15: row differs from history"
+     ]
+    },
+    {
+     "workflow_id": "chaos-B1-c2e68c-43",
+     "status": "COMPLETED",
+     "faults": [
+      "F6:wf=chaos-B1-c2e68c-43:node=summarize:hang=6.5"
+     ],
+     "rows": 31,
+     "duplicate_rows": 1,
+     "divergent_rows": 1,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": [
+      "activity 30: row differs from history"
+     ]
+    },
+    {
+     "workflow_id": "chaos-B1-c2e68c-44",
+     "status": "COMPLETED",
+     "faults": [
+      "F1:wf=chaos-B1-c2e68c-44:node=summarize"
+     ],
+     "rows": 31,
+     "duplicate_rows": 1,
+     "divergent_rows": 1,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": [
+      "activity 1: row differs from history"
+     ]
+    },
+    {
+     "workflow_id": "chaos-B1-c2e68c-45",
+     "status": "COMPLETED",
+     "faults": [
+      "F2:wf=chaos-B1-c2e68c-45:node=notify_slack"
+     ],
+     "rows": 31,
+     "duplicate_rows": 1,
+     "divergent_rows": 1,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 1,
+     "wrongly_committed": 0,
+     "details": [
+      "activity 4: row differs from history"
+     ]
+    },
+    {
+     "workflow_id": "chaos-B1-c2e68c-46",
+     "status": "COMPLETED",
+     "faults": [
+      "F3:wf=chaos-B1-c2e68c-46:node=notify_slack"
+     ],
+     "rows": 32,
+     "duplicate_rows": 2,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 2,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1-c2e68c-47",
+     "status": "COMPLETED",
+     "faults": [
+      "F6:wf=chaos-B1-c2e68c-47:node=summarize:hang=6.5"
+     ],
+     "rows": 31,
+     "duplicate_rows": 1,
+     "divergent_rows": 1,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": [
+      "activity 30: row differs from history"
+     ]
+    },
+    {
+     "workflow_id": "chaos-B1-c2e68c-48",
+     "status": "COMPLETED",
+     "faults": [
+      "F1:wf=chaos-B1-c2e68c-48:node=scan_iam"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 1,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1-c2e68c-49",
+     "status": "COMPLETED",
+     "faults": [
+      "F2:wf=chaos-B1-c2e68c-49:node=open_ticket"
+     ],
+     "rows": 31,
+     "duplicate_rows": 1,
+     "divergent_rows": 1,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 1,
+     "wrongly_committed": 0,
+     "details": [
+      "activity 8: row differs from history"
+     ]
+    },
+    {
+     "workflow_id": "chaos-B1-c2e68c-50",
+     "status": "COMPLETED",
+     "faults": [
+      "F3:wf=chaos-B1-c2e68c-50:node=summarize"
+     ],
+     "rows": 31,
+     "duplicate_rows": 1,
+     "divergent_rows": 1,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": [
+      "activity 30: row differs from history"
+     ]
+    },
+    {
+     "workflow_id": "chaos-B1-c2e68c-51",
+     "status": "COMPLETED",
+     "faults": [
+      "F6:wf=chaos-B1-c2e68c-51:node=scan_network:hang=6.5"
+     ],
+     "rows": 31,
+     "duplicate_rows": 1,
+     "divergent_rows": 1,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": [
+      "activity 3: row differs from history"
+     ]
+    },
+    {
+     "workflow_id": "chaos-B1-c2e68c-52",
+     "status": "COMPLETED",
+     "faults": [
+      "F1:wf=chaos-B1-c2e68c-52:node=score_risk"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1-c2e68c-53",
+     "status": "COMPLETED",
+     "faults": [
+      "F2:wf=chaos-B1-c2e68c-53:node=notify_slack"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 1,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1-c2e68c-54",
+     "status": "COMPLETED",
+     "faults": [
+      "F3:wf=chaos-B1-c2e68c-54:node=enrich_cve_11"
+     ],
+     "rows": 31,
+     "duplicate_rows": 1,
+     "divergent_rows": 1,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": [
+      "activity 16: row differs from history"
+     ]
+    },
+    {
+     "workflow_id": "chaos-B1-c2e68c-55",
+     "status": "COMPLETED",
+     "faults": [
+      "F6:wf=chaos-B1-c2e68c-55:node=list_assets:hang=6.5"
+     ],
+     "rows": 31,
+     "duplicate_rows": 1,
+     "divergent_rows": 1,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": [
+      "activity 1: row differs from history"
+     ]
+    },
+    {
+     "workflow_id": "chaos-B1-c2e68c-56",
+     "status": "COMPLETED",
+     "faults": [
+      "F1:wf=chaos-B1-c2e68c-56:node=summarize"
+     ],
+     "rows": 31,
+     "duplicate_rows": 1,
+     "divergent_rows": 1,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": [
+      "activity 4: row differs from history"
+     ]
+    },
+    {
+     "workflow_id": "chaos-B1-c2e68c-57",
+     "status": "COMPLETED",
+     "faults": [
+      "F2:wf=chaos-B1-c2e68c-57:node=list_assets"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1-c2e68c-58",
+     "status": "COMPLETED",
+     "faults": [
+      "F3:wf=chaos-B1-c2e68c-58:node=notify_slack"
+     ],
+     "rows": 33,
+     "duplicate_rows": 3,
+     "divergent_rows": 2,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 1,
+     "wrongly_committed": 0,
+     "details": [
+      "activity 1: row differs from history",
+      "activity 7: row differs from history"
+     ]
+    },
+    {
+     "workflow_id": "chaos-B1-c2e68c-59",
+     "status": "COMPLETED",
+     "faults": [
+      "F6:wf=chaos-B1-c2e68c-59:node=scan_iam:hang=6.5"
+     ],
+     "rows": 31,
+     "duplicate_rows": 1,
+     "divergent_rows": 1,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": [
+      "activity 2: row differs from history"
+     ]
+    },
+    {
+     "workflow_id": "chaos-B1-c2e68c-60",
+     "status": "COMPLETED",
+     "faults": [
+      "F1:wf=chaos-B1-c2e68c-60:node=score_risk"
+     ],
+     "rows": 31,
+     "duplicate_rows": 1,
+     "divergent_rows": 1,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": [
+      "activity 1: row differs from history"
+     ]
+    },
+    {
+     "workflow_id": "chaos-B1-c2e68c-61",
+     "status": "COMPLETED",
+     "faults": [
+      "F2:wf=chaos-B1-c2e68c-61:node=notify_slack"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 1,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1-c2e68c-62",
+     "status": "COMPLETED",
+     "faults": [
+      "F3:wf=chaos-B1-c2e68c-62:node=list_assets"
+     ],
+     "rows": 31,
+     "duplicate_rows": 1,
+     "divergent_rows": 1,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": [
+      "activity 1: row differs from history"
+     ]
+    },
+    {
+     "workflow_id": "chaos-B1-c2e68c-63",
+     "status": "COMPLETED",
+     "faults": [
+      "F6:wf=chaos-B1-c2e68c-63:node=list_assets:hang=6.5"
+     ],
+     "rows": 31,
+     "duplicate_rows": 1,
+     "divergent_rows": 1,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": [
+      "activity 1: row differs from history"
+     ]
+    },
+    {
+     "workflow_id": "chaos-B1-c2e68c-64",
+     "status": "COMPLETED",
+     "faults": [
+      "F1:wf=chaos-B1-c2e68c-64:node=scan_network"
+     ],
+     "rows": 32,
+     "duplicate_rows": 2,
+     "divergent_rows": 2,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": [
+      "activity 1: row differs from history",
+      "activity 4: row differs from history"
+     ]
+    },
+    {
+     "workflow_id": "chaos-B1-c2e68c-65",
+     "status": "COMPLETED",
+     "faults": [
+      "F2:wf=chaos-B1-c2e68c-65:node=notify_slack"
+     ],
+     "rows": 31,
+     "duplicate_rows": 1,
+     "divergent_rows": 1,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 1,
+     "wrongly_committed": 0,
+     "details": [
+      "activity 13: row differs from history"
+     ]
+    },
+    {
+     "workflow_id": "chaos-B1-c2e68c-66",
+     "status": "COMPLETED",
+     "faults": [
+      "F3:wf=chaos-B1-c2e68c-66:node=notify_slack"
+     ],
+     "rows": 32,
+     "duplicate_rows": 2,
+     "divergent_rows": 1,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 1,
+     "wrongly_committed": 0,
+     "details": [
+      "activity 1: row differs from history"
+     ]
+    },
+    {
+     "workflow_id": "chaos-B1-c2e68c-67",
+     "status": "COMPLETED",
+     "faults": [
+      "F6:wf=chaos-B1-c2e68c-67:node=list_assets:hang=6.5"
+     ],
+     "rows": 31,
+     "duplicate_rows": 1,
+     "divergent_rows": 1,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": [
+      "activity 1: row differs from history"
+     ]
+    },
+    {
+     "workflow_id": "chaos-B1-c2e68c-68",
+     "status": "COMPLETED",
+     "faults": [
+      "F1:wf=chaos-B1-c2e68c-68:node=scan_network"
+     ],
+     "rows": 32,
+     "duplicate_rows": 2,
+     "divergent_rows": 2,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": [
+      "activity 2: row differs from history",
+      "activity 4: row differs from history"
+     ]
+    },
+    {
+     "workflow_id": "chaos-B1-c2e68c-69",
+     "status": "COMPLETED",
+     "faults": [
+      "F2:wf=chaos-B1-c2e68c-69:node=summarize"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 1,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1-c2e68c-70",
+     "status": "COMPLETED",
+     "faults": [
+      "F3:wf=chaos-B1-c2e68c-70:node=enrich_cve_11"
+     ],
+     "rows": 32,
+     "duplicate_rows": 2,
+     "divergent_rows": 2,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": [
+      "activity 1: row differs from history",
+      "activity 16: row differs from history"
+     ]
+    },
+    {
+     "workflow_id": "chaos-B1-c2e68c-71",
+     "status": "COMPLETED",
+     "faults": [
+      "F6:wf=chaos-B1-c2e68c-71:node=scan_network:hang=6.5"
+     ],
+     "rows": 31,
+     "duplicate_rows": 1,
+     "divergent_rows": 1,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": [
+      "activity 3: row differs from history"
+     ]
+    },
+    {
+     "workflow_id": "chaos-B1-c2e68c-72",
+     "status": "COMPLETED",
+     "faults": [
+      "F1:wf=chaos-B1-c2e68c-72:node=enrich_cve_17"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1-c2e68c-73",
+     "status": "COMPLETED",
+     "faults": [
+      "F2:wf=chaos-B1-c2e68c-73:node=list_assets"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1-c2e68c-74",
+     "status": "COMPLETED",
+     "faults": [
+      "F3:wf=chaos-B1-c2e68c-74:node=notify_slack"
+     ],
+     "rows": 33,
+     "duplicate_rows": 3,
+     "divergent_rows": 2,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 1,
+     "wrongly_committed": 0,
+     "details": [
+      "activity 4: row differs from history",
+      "activity 4: row differs from history"
+     ]
+    },
+    {
+     "workflow_id": "chaos-B1-c2e68c-75",
+     "status": "COMPLETED",
+     "faults": [
+      "F6:wf=chaos-B1-c2e68c-75:node=score_risk:hang=6.5"
+     ],
+     "rows": 31,
+     "duplicate_rows": 1,
+     "divergent_rows": 1,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": [
+      "activity 27: row differs from history"
+     ]
+    },
+    {
+     "workflow_id": "chaos-B1-c2e68c-76",
+     "status": "COMPLETED",
+     "faults": [
+      "F1:wf=chaos-B1-c2e68c-76:node=score_risk"
+     ],
+     "rows": 31,
+     "duplicate_rows": 1,
+     "divergent_rows": 1,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": [
+      "activity 1: row differs from history"
+     ]
+    },
+    {
+     "workflow_id": "chaos-B1-c2e68c-77",
+     "status": "COMPLETED",
+     "faults": [
+      "F2:wf=chaos-B1-c2e68c-77:node=notify_slack"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 1,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1-c2e68c-78",
+     "status": "COMPLETED",
+     "faults": [
+      "F3:wf=chaos-B1-c2e68c-78:node=notify_slack"
+     ],
+     "rows": 32,
+     "duplicate_rows": 2,
+     "divergent_rows": 1,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 1,
+     "wrongly_committed": 0,
+     "details": [
+      "activity 1: row differs from history"
+     ]
+    },
+    {
+     "workflow_id": "chaos-B1-c2e68c-79",
+     "status": "COMPLETED",
+     "faults": [
+      "F6:wf=chaos-B1-c2e68c-79:node=enrich_cve_3:hang=6.5"
+     ],
+     "rows": 31,
+     "duplicate_rows": 1,
+     "divergent_rows": 1,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": [
+      "activity 8: row differs from history"
+     ]
+    },
+    {
+     "workflow_id": "chaos-B1-c2e68c-80",
+     "status": "COMPLETED",
+     "faults": [
+      "F1:wf=chaos-B1-c2e68c-80:node=score_risk"
+     ],
+     "rows": 32,
+     "duplicate_rows": 2,
+     "divergent_rows": 2,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": [
+      "activity 2: row differs from history",
+      "activity 3: row differs from history"
+     ]
+    },
+    {
+     "workflow_id": "chaos-B1-c2e68c-81",
+     "status": "COMPLETED",
+     "faults": [
+      "F2:wf=chaos-B1-c2e68c-81:node=scan_iam"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1-c2e68c-82",
+     "status": "COMPLETED",
+     "faults": [
+      "F3:wf=chaos-B1-c2e68c-82:node=list_assets"
+     ],
+     "rows": 32,
+     "duplicate_rows": 2,
+     "divergent_rows": 2,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 1,
+     "wrongly_committed": 0,
+     "details": [
+      "activity 1: row differs from history",
+      "activity 1: row differs from history"
+     ]
+    },
+    {
+     "workflow_id": "chaos-B1-c2e68c-83",
+     "status": "COMPLETED",
+     "faults": [
+      "F6:wf=chaos-B1-c2e68c-83:node=scan_iam:hang=6.5"
+     ],
+     "rows": 31,
+     "duplicate_rows": 1,
+     "divergent_rows": 1,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": [
+      "activity 2: row differs from history"
+     ]
+    },
+    {
+     "workflow_id": "chaos-B1-c2e68c-84",
+     "status": "COMPLETED",
+     "faults": [
+      "F1:wf=chaos-B1-c2e68c-84:node=enrich_cve_3"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1-c2e68c-85",
+     "status": "COMPLETED",
+     "faults": [
+      "F2:wf=chaos-B1-c2e68c-85:node=summarize"
+     ],
+     "rows": 32,
+     "duplicate_rows": 2,
+     "divergent_rows": 2,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": [
+      "activity 22: row differs from history",
+      "activity 30: row differs from history"
+     ]
+    },
+    {
+     "workflow_id": "chaos-B1-c2e68c-86",
+     "status": "COMPLETED",
+     "faults": [
+      "F3:wf=chaos-B1-c2e68c-86:node=enrich_cve_3"
+     ],
+     "rows": 32,
+     "duplicate_rows": 2,
+     "divergent_rows": 2,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": [
+      "activity 1: row differs from history",
+      "activity 8: row differs from history"
+     ]
+    },
+    {
+     "workflow_id": "chaos-B1-c2e68c-87",
+     "status": "COMPLETED",
+     "faults": [
+      "F6:wf=chaos-B1-c2e68c-87:node=enrich_cve_11:hang=6.5"
+     ],
+     "rows": 31,
+     "duplicate_rows": 1,
+     "divergent_rows": 1,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": [
+      "activity 16: row differs from history"
+     ]
+    },
+    {
+     "workflow_id": "chaos-B1-c2e68c-88",
+     "status": "COMPLETED",
+     "faults": [
+      "F1:wf=chaos-B1-c2e68c-88:node=enrich_cve_3"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1-c2e68c-89",
+     "status": "COMPLETED",
+     "faults": [
+      "F2:wf=chaos-B1-c2e68c-89:node=notify_slack"
+     ],
+     "rows": 31,
+     "duplicate_rows": 1,
+     "divergent_rows": 1,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 1,
+     "wrongly_committed": 0,
+     "details": [
+      "activity 5: row differs from history"
+     ]
+    },
+    {
+     "workflow_id": "chaos-B1-c2e68c-90",
+     "status": "COMPLETED",
+     "faults": [
+      "F3:wf=chaos-B1-c2e68c-90:node=notify_slack"
+     ],
+     "rows": 31,
+     "duplicate_rows": 1,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 1,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1-c2e68c-91",
+     "status": "COMPLETED",
+     "faults": [
+      "F6:wf=chaos-B1-c2e68c-91:node=summarize:hang=6.5"
+     ],
+     "rows": 31,
+     "duplicate_rows": 1,
+     "divergent_rows": 1,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": [
+      "activity 30: row differs from history"
+     ]
+    },
+    {
+     "workflow_id": "chaos-B1-c2e68c-92",
+     "status": "COMPLETED",
+     "faults": [
+      "F1:wf=chaos-B1-c2e68c-92:node=score_risk"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1-c2e68c-93",
+     "status": "COMPLETED",
+     "faults": [
+      "F2:wf=chaos-B1-c2e68c-93:node=open_ticket"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 1,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1-c2e68c-94",
+     "status": "COMPLETED",
+     "faults": [
+      "F3:wf=chaos-B1-c2e68c-94:node=enrich_cve_3"
+     ],
+     "rows": 31,
+     "duplicate_rows": 1,
+     "divergent_rows": 1,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": [
+      "activity 8: row differs from history"
+     ]
+    },
+    {
+     "workflow_id": "chaos-B1-c2e68c-95",
+     "status": "COMPLETED",
+     "faults": [
+      "F6:wf=chaos-B1-c2e68c-95:node=enrich_cve_3:hang=6.5"
+     ],
+     "rows": 31,
+     "duplicate_rows": 1,
+     "divergent_rows": 1,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": [
+      "activity 8: row differs from history"
+     ]
+    },
+    {
+     "workflow_id": "chaos-B1-c2e68c-96",
+     "status": "COMPLETED",
+     "faults": [
+      "F1:wf=chaos-B1-c2e68c-96:node=enrich_cve_11"
+     ],
+     "rows": 31,
+     "duplicate_rows": 1,
+     "divergent_rows": 1,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": [
+      "activity 1: row differs from history"
+     ]
+    },
+    {
+     "workflow_id": "chaos-B1-c2e68c-97",
+     "status": "COMPLETED",
+     "faults": [
+      "F2:wf=chaos-B1-c2e68c-97:node=notify_slack"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 1,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1-c2e68c-98",
+     "status": "COMPLETED",
+     "faults": [
+      "F3:wf=chaos-B1-c2e68c-98:node=scan_iam"
+     ],
+     "rows": 34,
+     "duplicate_rows": 4,
+     "divergent_rows": 4,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": [
+      "activity 2: row differs from history",
+      "activity 2: row differs from history",
+      "activity 4: row differs from history",
+      "activity 25: row differs from history"
+     ]
+    },
+    {
+     "workflow_id": "chaos-B1-c2e68c-99",
+     "status": "COMPLETED",
+     "faults": [
+      "F6:wf=chaos-B1-c2e68c-99:node=score_risk:hang=6.5"
+     ],
+     "rows": 31,
+     "duplicate_rows": 1,
+     "divergent_rows": 1,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": [
+      "activity 27: row differs from history"
+     ]
+    }
+   ]
+  },
+  {
+   "config": "B1u",
+   "runs": 100,
+   "fault_injections": 100,
+   "faults_declared": 100,
+   "faults_fired_once": true,
+   "worker_restarts": 75,
+   "completed": 100,
+   "rows": 3000,
+   "duplicate_rows": 0,
+   "divergent_rows": 25,
+   "lost_rows": 0,
+   "orphan_rows": 0,
+   "duplicate_side_effects": 34,
+   "wrongly_committed": 0,
+   "per_run": [
+    {
+     "workflow_id": "chaos-B1u-039e9a-00",
+     "status": "COMPLETED",
+     "faults": [
+      "F1:wf=chaos-B1u-039e9a-00:node=scan_network"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1u-039e9a-01",
+     "status": "COMPLETED",
+     "faults": [
+      "F2:wf=chaos-B1u-039e9a-01:node=scan_network"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1u-039e9a-02",
+     "status": "COMPLETED",
+     "faults": [
+      "F3:wf=chaos-B1u-039e9a-02:node=open_ticket"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 1,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1u-039e9a-03",
+     "status": "COMPLETED",
+     "faults": [
+      "F6:wf=chaos-B1u-039e9a-03:node=enrich_cve_17:hang=6.5"
      ],
      "rows": 30,
      "duplicate_rows": 0,
@@ -438,10 +1763,10 @@
      ]
     },
     {
-     "workflow_id": "chaos-B1u-c61d29-04",
+     "workflow_id": "chaos-B1u-039e9a-04",
      "status": "COMPLETED",
      "faults": [
-      "F1:wf=chaos-B1u-c61d29-04:node=enrich_cve_17"
+      "F1:wf=chaos-B1u-039e9a-04:node=enrich_cve_17"
      ],
      "rows": 30,
      "duplicate_rows": 0,
@@ -453,10 +1778,10 @@
      "details": []
     },
     {
-     "workflow_id": "chaos-B1u-c61d29-05",
+     "workflow_id": "chaos-B1u-039e9a-05",
      "status": "COMPLETED",
      "faults": [
-      "F2:wf=chaos-B1u-c61d29-05:node=enrich_cve_11"
+      "F2:wf=chaos-B1u-039e9a-05:node=enrich_cve_11"
      ],
      "rows": 30,
      "duplicate_rows": 0,
@@ -468,10 +1793,10 @@
      "details": []
     },
     {
-     "workflow_id": "chaos-B1u-c61d29-06",
+     "workflow_id": "chaos-B1u-039e9a-06",
      "status": "COMPLETED",
      "faults": [
-      "F3:wf=chaos-B1u-c61d29-06:node=open_ticket"
+      "F3:wf=chaos-B1u-039e9a-06:node=open_ticket"
      ],
      "rows": 30,
      "duplicate_rows": 0,
@@ -483,10 +1808,10 @@
      "details": []
     },
     {
-     "workflow_id": "chaos-B1u-c61d29-07",
+     "workflow_id": "chaos-B1u-039e9a-07",
      "status": "COMPLETED",
      "faults": [
-      "F6:wf=chaos-B1u-c61d29-07:node=enrich_cve_11:hang=6.5"
+      "F6:wf=chaos-B1u-039e9a-07:node=enrich_cve_11:hang=6.5"
      ],
      "rows": 30,
      "duplicate_rows": 0,
@@ -500,10 +1825,10 @@
      ]
     },
     {
-     "workflow_id": "chaos-B1u-c61d29-08",
+     "workflow_id": "chaos-B1u-039e9a-08",
      "status": "COMPLETED",
      "faults": [
-      "F1:wf=chaos-B1u-c61d29-08:node=enrich_cve_3"
+      "F1:wf=chaos-B1u-039e9a-08:node=enrich_cve_3"
      ],
      "rows": 30,
      "duplicate_rows": 0,
@@ -515,10 +1840,10 @@
      "details": []
     },
     {
-     "workflow_id": "chaos-B1u-c61d29-09",
+     "workflow_id": "chaos-B1u-039e9a-09",
      "status": "COMPLETED",
      "faults": [
-      "F2:wf=chaos-B1u-c61d29-09:node=notify_slack"
+      "F2:wf=chaos-B1u-039e9a-09:node=notify_slack"
      ],
      "rows": 30,
      "duplicate_rows": 0,
@@ -530,10 +1855,10 @@
      "details": []
     },
     {
-     "workflow_id": "chaos-B1u-c61d29-10",
+     "workflow_id": "chaos-B1u-039e9a-10",
      "status": "COMPLETED",
      "faults": [
-      "F3:wf=chaos-B1u-c61d29-10:node=scan_network"
+      "F3:wf=chaos-B1u-039e9a-10:node=scan_network"
      ],
      "rows": 30,
      "duplicate_rows": 0,
@@ -545,10 +1870,10 @@
      "details": []
     },
     {
-     "workflow_id": "chaos-B1u-c61d29-11",
+     "workflow_id": "chaos-B1u-039e9a-11",
      "status": "COMPLETED",
      "faults": [
-      "F6:wf=chaos-B1u-c61d29-11:node=score_risk:hang=6.5"
+      "F6:wf=chaos-B1u-039e9a-11:node=score_risk:hang=6.5"
      ],
      "rows": 30,
      "duplicate_rows": 0,
@@ -562,10 +1887,10 @@
      ]
     },
     {
-     "workflow_id": "chaos-B1u-c61d29-12",
+     "workflow_id": "chaos-B1u-039e9a-12",
      "status": "COMPLETED",
      "faults": [
-      "F1:wf=chaos-B1u-c61d29-12:node=scan_iam"
+      "F1:wf=chaos-B1u-039e9a-12:node=scan_iam"
      ],
      "rows": 30,
      "duplicate_rows": 0,
@@ -577,10 +1902,10 @@
      "details": []
     },
     {
-     "workflow_id": "chaos-B1u-c61d29-13",
+     "workflow_id": "chaos-B1u-039e9a-13",
      "status": "COMPLETED",
      "faults": [
-      "F2:wf=chaos-B1u-c61d29-13:node=scan_iam"
+      "F2:wf=chaos-B1u-039e9a-13:node=scan_iam"
      ],
      "rows": 30,
      "duplicate_rows": 0,
@@ -592,10 +1917,10 @@
      "details": []
     },
     {
-     "workflow_id": "chaos-B1u-c61d29-14",
+     "workflow_id": "chaos-B1u-039e9a-14",
      "status": "COMPLETED",
      "faults": [
-      "F3:wf=chaos-B1u-c61d29-14:node=enrich_cve_11"
+      "F3:wf=chaos-B1u-039e9a-14:node=enrich_cve_11"
      ],
      "rows": 30,
      "duplicate_rows": 0,
@@ -607,10 +1932,10 @@
      "details": []
     },
     {
-     "workflow_id": "chaos-B1u-c61d29-15",
+     "workflow_id": "chaos-B1u-039e9a-15",
      "status": "COMPLETED",
      "faults": [
-      "F6:wf=chaos-B1u-c61d29-15:node=enrich_cve_11:hang=6.5"
+      "F6:wf=chaos-B1u-039e9a-15:node=enrich_cve_11:hang=6.5"
      ],
      "rows": 30,
      "duplicate_rows": 0,
@@ -624,10 +1949,10 @@
      ]
     },
     {
-     "workflow_id": "chaos-B1u-c61d29-16",
+     "workflow_id": "chaos-B1u-039e9a-16",
      "status": "COMPLETED",
      "faults": [
-      "F1:wf=chaos-B1u-c61d29-16:node=summarize"
+      "F1:wf=chaos-B1u-039e9a-16:node=summarize"
      ],
      "rows": 30,
      "duplicate_rows": 0,
@@ -639,10 +1964,10 @@
      "details": []
     },
     {
-     "workflow_id": "chaos-B1u-c61d29-17",
+     "workflow_id": "chaos-B1u-039e9a-17",
      "status": "COMPLETED",
      "faults": [
-      "F2:wf=chaos-B1u-c61d29-17:node=score_risk"
+      "F2:wf=chaos-B1u-039e9a-17:node=score_risk"
      ],
      "rows": 30,
      "duplicate_rows": 0,
@@ -654,10 +1979,10 @@
      "details": []
     },
     {
-     "workflow_id": "chaos-B1u-c61d29-18",
+     "workflow_id": "chaos-B1u-039e9a-18",
      "status": "COMPLETED",
      "faults": [
-      "F3:wf=chaos-B1u-c61d29-18:node=notify_slack"
+      "F3:wf=chaos-B1u-039e9a-18:node=notify_slack"
      ],
      "rows": 30,
      "duplicate_rows": 0,
@@ -669,10 +1994,10 @@
      "details": []
     },
     {
-     "workflow_id": "chaos-B1u-c61d29-19",
+     "workflow_id": "chaos-B1u-039e9a-19",
      "status": "COMPLETED",
      "faults": [
-      "F6:wf=chaos-B1u-c61d29-19:node=score_risk:hang=6.5"
+      "F6:wf=chaos-B1u-039e9a-19:node=score_risk:hang=6.5"
      ],
      "rows": 30,
      "duplicate_rows": 0,
@@ -683,19 +2008,1259 @@
      "wrongly_committed": 0,
      "details": [
       "activity 27: row differs from history"
+     ]
+    },
+    {
+     "workflow_id": "chaos-B1u-039e9a-20",
+     "status": "COMPLETED",
+     "faults": [
+      "F1:wf=chaos-B1u-039e9a-20:node=summarize"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1u-039e9a-21",
+     "status": "COMPLETED",
+     "faults": [
+      "F2:wf=chaos-B1u-039e9a-21:node=notify_slack"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 1,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1u-039e9a-22",
+     "status": "COMPLETED",
+     "faults": [
+      "F3:wf=chaos-B1u-039e9a-22:node=open_ticket"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 1,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1u-039e9a-23",
+     "status": "COMPLETED",
+     "faults": [
+      "F6:wf=chaos-B1u-039e9a-23:node=score_risk:hang=6.5"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 1,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": [
+      "activity 27: row differs from history"
+     ]
+    },
+    {
+     "workflow_id": "chaos-B1u-039e9a-24",
+     "status": "COMPLETED",
+     "faults": [
+      "F1:wf=chaos-B1u-039e9a-24:node=enrich_cve_3"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1u-039e9a-25",
+     "status": "COMPLETED",
+     "faults": [
+      "F2:wf=chaos-B1u-039e9a-25:node=enrich_cve_11"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1u-039e9a-26",
+     "status": "COMPLETED",
+     "faults": [
+      "F3:wf=chaos-B1u-039e9a-26:node=summarize"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1u-039e9a-27",
+     "status": "COMPLETED",
+     "faults": [
+      "F6:wf=chaos-B1u-039e9a-27:node=score_risk:hang=6.5"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 1,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": [
+      "activity 27: row differs from history"
+     ]
+    },
+    {
+     "workflow_id": "chaos-B1u-039e9a-28",
+     "status": "COMPLETED",
+     "faults": [
+      "F1:wf=chaos-B1u-039e9a-28:node=enrich_cve_17"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1u-039e9a-29",
+     "status": "COMPLETED",
+     "faults": [
+      "F2:wf=chaos-B1u-039e9a-29:node=enrich_cve_17"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1u-039e9a-30",
+     "status": "COMPLETED",
+     "faults": [
+      "F3:wf=chaos-B1u-039e9a-30:node=enrich_cve_11"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1u-039e9a-31",
+     "status": "COMPLETED",
+     "faults": [
+      "F6:wf=chaos-B1u-039e9a-31:node=scan_iam:hang=6.5"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 1,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": [
+      "activity 2: row differs from history"
+     ]
+    },
+    {
+     "workflow_id": "chaos-B1u-039e9a-32",
+     "status": "COMPLETED",
+     "faults": [
+      "F1:wf=chaos-B1u-039e9a-32:node=score_risk"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1u-039e9a-33",
+     "status": "COMPLETED",
+     "faults": [
+      "F2:wf=chaos-B1u-039e9a-33:node=notify_slack"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 1,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1u-039e9a-34",
+     "status": "COMPLETED",
+     "faults": [
+      "F3:wf=chaos-B1u-039e9a-34:node=open_ticket"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 1,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1u-039e9a-35",
+     "status": "COMPLETED",
+     "faults": [
+      "F6:wf=chaos-B1u-039e9a-35:node=list_assets:hang=6.5"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 1,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": [
+      "activity 1: row differs from history"
+     ]
+    },
+    {
+     "workflow_id": "chaos-B1u-039e9a-36",
+     "status": "COMPLETED",
+     "faults": [
+      "F1:wf=chaos-B1u-039e9a-36:node=scan_network"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1u-039e9a-37",
+     "status": "COMPLETED",
+     "faults": [
+      "F2:wf=chaos-B1u-039e9a-37:node=enrich_cve_11"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1u-039e9a-38",
+     "status": "COMPLETED",
+     "faults": [
+      "F3:wf=chaos-B1u-039e9a-38:node=list_assets"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 1,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1u-039e9a-39",
+     "status": "COMPLETED",
+     "faults": [
+      "F6:wf=chaos-B1u-039e9a-39:node=scan_network:hang=6.5"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 1,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": [
+      "activity 3: row differs from history"
+     ]
+    },
+    {
+     "workflow_id": "chaos-B1u-039e9a-40",
+     "status": "COMPLETED",
+     "faults": [
+      "F1:wf=chaos-B1u-039e9a-40:node=scan_iam"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1u-039e9a-41",
+     "status": "COMPLETED",
+     "faults": [
+      "F2:wf=chaos-B1u-039e9a-41:node=notify_slack"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 2,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1u-039e9a-42",
+     "status": "COMPLETED",
+     "faults": [
+      "F3:wf=chaos-B1u-039e9a-42:node=open_ticket"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 1,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1u-039e9a-43",
+     "status": "COMPLETED",
+     "faults": [
+      "F6:wf=chaos-B1u-039e9a-43:node=scan_iam:hang=6.5"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 1,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": [
+      "activity 2: row differs from history"
+     ]
+    },
+    {
+     "workflow_id": "chaos-B1u-039e9a-44",
+     "status": "COMPLETED",
+     "faults": [
+      "F1:wf=chaos-B1u-039e9a-44:node=scan_iam"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 1,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1u-039e9a-45",
+     "status": "COMPLETED",
+     "faults": [
+      "F2:wf=chaos-B1u-039e9a-45:node=open_ticket"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 1,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1u-039e9a-46",
+     "status": "COMPLETED",
+     "faults": [
+      "F3:wf=chaos-B1u-039e9a-46:node=open_ticket"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 1,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1u-039e9a-47",
+     "status": "COMPLETED",
+     "faults": [
+      "F6:wf=chaos-B1u-039e9a-47:node=list_assets:hang=6.5"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 1,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": [
+      "activity 1: row differs from history"
+     ]
+    },
+    {
+     "workflow_id": "chaos-B1u-039e9a-48",
+     "status": "COMPLETED",
+     "faults": [
+      "F1:wf=chaos-B1u-039e9a-48:node=scan_iam"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1u-039e9a-49",
+     "status": "COMPLETED",
+     "faults": [
+      "F2:wf=chaos-B1u-039e9a-49:node=notify_slack"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 1,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1u-039e9a-50",
+     "status": "COMPLETED",
+     "faults": [
+      "F3:wf=chaos-B1u-039e9a-50:node=notify_slack"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 1,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1u-039e9a-51",
+     "status": "COMPLETED",
+     "faults": [
+      "F6:wf=chaos-B1u-039e9a-51:node=score_risk:hang=6.5"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 1,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": [
+      "activity 27: row differs from history"
+     ]
+    },
+    {
+     "workflow_id": "chaos-B1u-039e9a-52",
+     "status": "COMPLETED",
+     "faults": [
+      "F1:wf=chaos-B1u-039e9a-52:node=enrich_cve_3"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1u-039e9a-53",
+     "status": "COMPLETED",
+     "faults": [
+      "F2:wf=chaos-B1u-039e9a-53:node=scan_iam"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1u-039e9a-54",
+     "status": "COMPLETED",
+     "faults": [
+      "F3:wf=chaos-B1u-039e9a-54:node=list_assets"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1u-039e9a-55",
+     "status": "COMPLETED",
+     "faults": [
+      "F6:wf=chaos-B1u-039e9a-55:node=list_assets:hang=6.5"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 1,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": [
+      "activity 1: row differs from history"
+     ]
+    },
+    {
+     "workflow_id": "chaos-B1u-039e9a-56",
+     "status": "COMPLETED",
+     "faults": [
+      "F1:wf=chaos-B1u-039e9a-56:node=score_risk"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1u-039e9a-57",
+     "status": "COMPLETED",
+     "faults": [
+      "F2:wf=chaos-B1u-039e9a-57:node=open_ticket"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 1,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1u-039e9a-58",
+     "status": "COMPLETED",
+     "faults": [
+      "F3:wf=chaos-B1u-039e9a-58:node=summarize"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1u-039e9a-59",
+     "status": "COMPLETED",
+     "faults": [
+      "F6:wf=chaos-B1u-039e9a-59:node=list_assets:hang=6.5"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 1,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": [
+      "activity 1: row differs from history"
+     ]
+    },
+    {
+     "workflow_id": "chaos-B1u-039e9a-60",
+     "status": "COMPLETED",
+     "faults": [
+      "F1:wf=chaos-B1u-039e9a-60:node=list_assets"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1u-039e9a-61",
+     "status": "COMPLETED",
+     "faults": [
+      "F2:wf=chaos-B1u-039e9a-61:node=score_risk"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 1,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1u-039e9a-62",
+     "status": "COMPLETED",
+     "faults": [
+      "F3:wf=chaos-B1u-039e9a-62:node=notify_slack"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 1,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1u-039e9a-63",
+     "status": "COMPLETED",
+     "faults": [
+      "F6:wf=chaos-B1u-039e9a-63:node=scan_network:hang=6.5"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 1,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": [
+      "activity 3: row differs from history"
+     ]
+    },
+    {
+     "workflow_id": "chaos-B1u-039e9a-64",
+     "status": "COMPLETED",
+     "faults": [
+      "F1:wf=chaos-B1u-039e9a-64:node=enrich_cve_17"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1u-039e9a-65",
+     "status": "COMPLETED",
+     "faults": [
+      "F2:wf=chaos-B1u-039e9a-65:node=scan_iam"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1u-039e9a-66",
+     "status": "COMPLETED",
+     "faults": [
+      "F3:wf=chaos-B1u-039e9a-66:node=notify_slack"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 1,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1u-039e9a-67",
+     "status": "COMPLETED",
+     "faults": [
+      "F6:wf=chaos-B1u-039e9a-67:node=list_assets:hang=6.5"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 1,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": [
+      "activity 1: row differs from history"
+     ]
+    },
+    {
+     "workflow_id": "chaos-B1u-039e9a-68",
+     "status": "COMPLETED",
+     "faults": [
+      "F1:wf=chaos-B1u-039e9a-68:node=enrich_cve_17"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1u-039e9a-69",
+     "status": "COMPLETED",
+     "faults": [
+      "F2:wf=chaos-B1u-039e9a-69:node=open_ticket"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 1,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1u-039e9a-70",
+     "status": "COMPLETED",
+     "faults": [
+      "F3:wf=chaos-B1u-039e9a-70:node=enrich_cve_3"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1u-039e9a-71",
+     "status": "COMPLETED",
+     "faults": [
+      "F6:wf=chaos-B1u-039e9a-71:node=enrich_cve_11:hang=6.5"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 1,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": [
+      "activity 16: row differs from history"
+     ]
+    },
+    {
+     "workflow_id": "chaos-B1u-039e9a-72",
+     "status": "COMPLETED",
+     "faults": [
+      "F1:wf=chaos-B1u-039e9a-72:node=enrich_cve_3"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1u-039e9a-73",
+     "status": "COMPLETED",
+     "faults": [
+      "F2:wf=chaos-B1u-039e9a-73:node=open_ticket"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 1,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1u-039e9a-74",
+     "status": "COMPLETED",
+     "faults": [
+      "F3:wf=chaos-B1u-039e9a-74:node=notify_slack"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 1,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1u-039e9a-75",
+     "status": "COMPLETED",
+     "faults": [
+      "F6:wf=chaos-B1u-039e9a-75:node=enrich_cve_17:hang=6.5"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 1,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": [
+      "activity 22: row differs from history"
+     ]
+    },
+    {
+     "workflow_id": "chaos-B1u-039e9a-76",
+     "status": "COMPLETED",
+     "faults": [
+      "F1:wf=chaos-B1u-039e9a-76:node=enrich_cve_17"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1u-039e9a-77",
+     "status": "COMPLETED",
+     "faults": [
+      "F2:wf=chaos-B1u-039e9a-77:node=enrich_cve_17"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1u-039e9a-78",
+     "status": "COMPLETED",
+     "faults": [
+      "F3:wf=chaos-B1u-039e9a-78:node=open_ticket"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 1,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1u-039e9a-79",
+     "status": "COMPLETED",
+     "faults": [
+      "F6:wf=chaos-B1u-039e9a-79:node=score_risk:hang=6.5"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 1,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": [
+      "activity 27: row differs from history"
+     ]
+    },
+    {
+     "workflow_id": "chaos-B1u-039e9a-80",
+     "status": "COMPLETED",
+     "faults": [
+      "F1:wf=chaos-B1u-039e9a-80:node=list_assets"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1u-039e9a-81",
+     "status": "COMPLETED",
+     "faults": [
+      "F2:wf=chaos-B1u-039e9a-81:node=open_ticket"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 1,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1u-039e9a-82",
+     "status": "COMPLETED",
+     "faults": [
+      "F3:wf=chaos-B1u-039e9a-82:node=enrich_cve_17"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1u-039e9a-83",
+     "status": "COMPLETED",
+     "faults": [
+      "F6:wf=chaos-B1u-039e9a-83:node=summarize:hang=6.5"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 1,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": [
+      "activity 30: row differs from history"
+     ]
+    },
+    {
+     "workflow_id": "chaos-B1u-039e9a-84",
+     "status": "COMPLETED",
+     "faults": [
+      "F1:wf=chaos-B1u-039e9a-84:node=scan_network"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 1,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1u-039e9a-85",
+     "status": "COMPLETED",
+     "faults": [
+      "F2:wf=chaos-B1u-039e9a-85:node=open_ticket"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 1,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1u-039e9a-86",
+     "status": "COMPLETED",
+     "faults": [
+      "F3:wf=chaos-B1u-039e9a-86:node=open_ticket"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 1,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1u-039e9a-87",
+     "status": "COMPLETED",
+     "faults": [
+      "F6:wf=chaos-B1u-039e9a-87:node=list_assets:hang=6.5"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 1,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": [
+      "activity 1: row differs from history"
+     ]
+    },
+    {
+     "workflow_id": "chaos-B1u-039e9a-88",
+     "status": "COMPLETED",
+     "faults": [
+      "F1:wf=chaos-B1u-039e9a-88:node=scan_network"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 1,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1u-039e9a-89",
+     "status": "COMPLETED",
+     "faults": [
+      "F2:wf=chaos-B1u-039e9a-89:node=notify_slack"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 1,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1u-039e9a-90",
+     "status": "COMPLETED",
+     "faults": [
+      "F3:wf=chaos-B1u-039e9a-90:node=enrich_cve_11"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 1,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1u-039e9a-91",
+     "status": "COMPLETED",
+     "faults": [
+      "F6:wf=chaos-B1u-039e9a-91:node=scan_network:hang=6.5"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 1,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": [
+      "activity 3: row differs from history"
+     ]
+    },
+    {
+     "workflow_id": "chaos-B1u-039e9a-92",
+     "status": "COMPLETED",
+     "faults": [
+      "F1:wf=chaos-B1u-039e9a-92:node=summarize"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1u-039e9a-93",
+     "status": "COMPLETED",
+     "faults": [
+      "F2:wf=chaos-B1u-039e9a-93:node=enrich_cve_17"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1u-039e9a-94",
+     "status": "COMPLETED",
+     "faults": [
+      "F3:wf=chaos-B1u-039e9a-94:node=notify_slack"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 2,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1u-039e9a-95",
+     "status": "COMPLETED",
+     "faults": [
+      "F6:wf=chaos-B1u-039e9a-95:node=enrich_cve_17:hang=6.5"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 1,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": [
+      "activity 22: row differs from history"
+     ]
+    },
+    {
+     "workflow_id": "chaos-B1u-039e9a-96",
+     "status": "COMPLETED",
+     "faults": [
+      "F1:wf=chaos-B1u-039e9a-96:node=list_assets"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1u-039e9a-97",
+     "status": "COMPLETED",
+     "faults": [
+      "F2:wf=chaos-B1u-039e9a-97:node=scan_iam"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1u-039e9a-98",
+     "status": "COMPLETED",
+     "faults": [
+      "F3:wf=chaos-B1u-039e9a-98:node=list_assets"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-B1u-039e9a-99",
+     "status": "COMPLETED",
+     "faults": [
+      "F6:wf=chaos-B1u-039e9a-99:node=enrich_cve_11:hang=6.5"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 1,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": [
+      "activity 16: row differs from history"
      ]
     }
    ]
   },
   {
    "config": "SL",
-   "runs": 20,
-   "fault_injections": 20,
-   "faults_declared": 20,
+   "runs": 100,
+   "fault_injections": 100,
+   "faults_declared": 100,
    "faults_fired_once": true,
-   "worker_restarts": 17,
-   "completed": 20,
-   "rows": 600,
+   "worker_restarts": 84,
+   "completed": 100,
+   "rows": 3000,
    "duplicate_rows": 0,
    "divergent_rows": 0,
    "lost_rows": 0,
@@ -704,10 +3269,10 @@
    "wrongly_committed": 0,
    "per_run": [
     {
-     "workflow_id": "chaos-SL-a8688a-00",
+     "workflow_id": "chaos-SL-26e06e-00",
      "status": "COMPLETED",
      "faults": [
-      "F1:wf=chaos-SL-a8688a-00:node=enrich_cve_17"
+      "F1:wf=chaos-SL-26e06e-00:node=enrich_cve_17"
      ],
      "rows": 30,
      "duplicate_rows": 0,
@@ -719,10 +3284,10 @@
      "details": []
     },
     {
-     "workflow_id": "chaos-SL-a8688a-01",
+     "workflow_id": "chaos-SL-26e06e-01",
      "status": "COMPLETED",
      "faults": [
-      "F2:wf=chaos-SL-a8688a-01:node=notify_slack"
+      "F2:wf=chaos-SL-26e06e-01:node=notify_slack"
      ],
      "rows": 30,
      "duplicate_rows": 0,
@@ -734,10 +3299,10 @@
      "details": []
     },
     {
-     "workflow_id": "chaos-SL-a8688a-02",
+     "workflow_id": "chaos-SL-26e06e-02",
      "status": "COMPLETED",
      "faults": [
-      "F3:wf=chaos-SL-a8688a-02:node=scan_iam"
+      "F3:wf=chaos-SL-26e06e-02:node=scan_iam"
      ],
      "rows": 30,
      "duplicate_rows": 0,
@@ -749,10 +3314,10 @@
      "details": []
     },
     {
-     "workflow_id": "chaos-SL-a8688a-03",
+     "workflow_id": "chaos-SL-26e06e-03",
      "status": "COMPLETED",
      "faults": [
-      "F4:wf=chaos-SL-a8688a-03:node=summarize"
+      "F4:wf=chaos-SL-26e06e-03:node=summarize"
      ],
      "rows": 30,
      "duplicate_rows": 0,
@@ -764,10 +3329,10 @@
      "details": []
     },
     {
-     "workflow_id": "chaos-SL-a8688a-04",
+     "workflow_id": "chaos-SL-26e06e-04",
      "status": "COMPLETED",
      "faults": [
-      "F5:wf=chaos-SL-a8688a-04"
+      "F5:wf=chaos-SL-26e06e-04"
      ],
      "rows": 30,
      "duplicate_rows": 0,
@@ -779,10 +3344,10 @@
      "details": []
     },
     {
-     "workflow_id": "chaos-SL-a8688a-05",
+     "workflow_id": "chaos-SL-26e06e-05",
      "status": "COMPLETED",
      "faults": [
-      "F6:wf=chaos-SL-a8688a-05:node=list_assets:hang=6.5"
+      "F6:wf=chaos-SL-26e06e-05:node=list_assets:hang=6.5"
      ],
      "rows": 30,
      "duplicate_rows": 0,
@@ -794,10 +3359,10 @@
      "details": []
     },
     {
-     "workflow_id": "chaos-SL-a8688a-06",
+     "workflow_id": "chaos-SL-26e06e-06",
      "status": "COMPLETED",
      "faults": [
-      "F1:wf=chaos-SL-a8688a-06:node=scan_iam"
+      "F1:wf=chaos-SL-26e06e-06:node=scan_iam"
      ],
      "rows": 30,
      "duplicate_rows": 0,
@@ -809,10 +3374,10 @@
      "details": []
     },
     {
-     "workflow_id": "chaos-SL-a8688a-07",
+     "workflow_id": "chaos-SL-26e06e-07",
      "status": "COMPLETED",
      "faults": [
-      "F2:wf=chaos-SL-a8688a-07:node=list_assets"
+      "F2:wf=chaos-SL-26e06e-07:node=list_assets"
      ],
      "rows": 30,
      "duplicate_rows": 0,
@@ -824,10 +3389,10 @@
      "details": []
     },
     {
-     "workflow_id": "chaos-SL-a8688a-08",
+     "workflow_id": "chaos-SL-26e06e-08",
      "status": "COMPLETED",
      "faults": [
-      "F3:wf=chaos-SL-a8688a-08:node=notify_slack"
+      "F3:wf=chaos-SL-26e06e-08:node=notify_slack"
      ],
      "rows": 30,
      "duplicate_rows": 0,
@@ -839,10 +3404,10 @@
      "details": []
     },
     {
-     "workflow_id": "chaos-SL-a8688a-09",
+     "workflow_id": "chaos-SL-26e06e-09",
      "status": "COMPLETED",
      "faults": [
-      "F4:wf=chaos-SL-a8688a-09:node=enrich_cve_11"
+      "F4:wf=chaos-SL-26e06e-09:node=enrich_cve_11"
      ],
      "rows": 30,
      "duplicate_rows": 0,
@@ -854,10 +3419,10 @@
      "details": []
     },
     {
-     "workflow_id": "chaos-SL-a8688a-10",
+     "workflow_id": "chaos-SL-26e06e-10",
      "status": "COMPLETED",
      "faults": [
-      "F5:wf=chaos-SL-a8688a-10"
+      "F5:wf=chaos-SL-26e06e-10"
      ],
      "rows": 30,
      "duplicate_rows": 0,
@@ -869,10 +3434,10 @@
      "details": []
     },
     {
-     "workflow_id": "chaos-SL-a8688a-11",
+     "workflow_id": "chaos-SL-26e06e-11",
      "status": "COMPLETED",
      "faults": [
-      "F6:wf=chaos-SL-a8688a-11:node=enrich_cve_17:hang=6.5"
+      "F6:wf=chaos-SL-26e06e-11:node=enrich_cve_17:hang=6.5"
      ],
      "rows": 30,
      "duplicate_rows": 0,
@@ -884,10 +3449,10 @@
      "details": []
     },
     {
-     "workflow_id": "chaos-SL-a8688a-12",
+     "workflow_id": "chaos-SL-26e06e-12",
      "status": "COMPLETED",
      "faults": [
-      "F1:wf=chaos-SL-a8688a-12:node=scan_network"
+      "F1:wf=chaos-SL-26e06e-12:node=scan_network"
      ],
      "rows": 30,
      "duplicate_rows": 0,
@@ -899,10 +3464,10 @@
      "details": []
     },
     {
-     "workflow_id": "chaos-SL-a8688a-13",
+     "workflow_id": "chaos-SL-26e06e-13",
      "status": "COMPLETED",
      "faults": [
-      "F2:wf=chaos-SL-a8688a-13:node=open_ticket"
+      "F2:wf=chaos-SL-26e06e-13:node=open_ticket"
      ],
      "rows": 30,
      "duplicate_rows": 0,
@@ -914,10 +3479,10 @@
      "details": []
     },
     {
-     "workflow_id": "chaos-SL-a8688a-14",
+     "workflow_id": "chaos-SL-26e06e-14",
      "status": "COMPLETED",
      "faults": [
-      "F3:wf=chaos-SL-a8688a-14:node=enrich_cve_11"
+      "F3:wf=chaos-SL-26e06e-14:node=enrich_cve_11"
      ],
      "rows": 30,
      "duplicate_rows": 0,
@@ -929,10 +3494,10 @@
      "details": []
     },
     {
-     "workflow_id": "chaos-SL-a8688a-15",
+     "workflow_id": "chaos-SL-26e06e-15",
      "status": "COMPLETED",
      "faults": [
-      "F4:wf=chaos-SL-a8688a-15:node=list_assets"
+      "F4:wf=chaos-SL-26e06e-15:node=list_assets"
      ],
      "rows": 30,
      "duplicate_rows": 0,
@@ -944,10 +3509,10 @@
      "details": []
     },
     {
-     "workflow_id": "chaos-SL-a8688a-16",
+     "workflow_id": "chaos-SL-26e06e-16",
      "status": "COMPLETED",
      "faults": [
-      "F5:wf=chaos-SL-a8688a-16"
+      "F5:wf=chaos-SL-26e06e-16"
      ],
      "rows": 30,
      "duplicate_rows": 0,
@@ -959,10 +3524,10 @@
      "details": []
     },
     {
-     "workflow_id": "chaos-SL-a8688a-17",
+     "workflow_id": "chaos-SL-26e06e-17",
      "status": "COMPLETED",
      "faults": [
-      "F6:wf=chaos-SL-a8688a-17:node=enrich_cve_3:hang=6.5"
+      "F6:wf=chaos-SL-26e06e-17:node=enrich_cve_3:hang=6.5"
      ],
      "rows": 30,
      "duplicate_rows": 0,
@@ -974,10 +3539,10 @@
      "details": []
     },
     {
-     "workflow_id": "chaos-SL-a8688a-18",
+     "workflow_id": "chaos-SL-26e06e-18",
      "status": "COMPLETED",
      "faults": [
-      "F1:wf=chaos-SL-a8688a-18:node=score_risk"
+      "F1:wf=chaos-SL-26e06e-18:node=score_risk"
      ],
      "rows": 30,
      "duplicate_rows": 0,
@@ -989,10 +3554,1210 @@
      "details": []
     },
     {
-     "workflow_id": "chaos-SL-a8688a-19",
+     "workflow_id": "chaos-SL-26e06e-19",
      "status": "COMPLETED",
      "faults": [
-      "F2:wf=chaos-SL-a8688a-19:node=open_ticket"
+      "F2:wf=chaos-SL-26e06e-19:node=open_ticket"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-SL-26e06e-20",
+     "status": "COMPLETED",
+     "faults": [
+      "F3:wf=chaos-SL-26e06e-20:node=notify_slack"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-SL-26e06e-21",
+     "status": "COMPLETED",
+     "faults": [
+      "F4:wf=chaos-SL-26e06e-21:node=enrich_cve_11"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-SL-26e06e-22",
+     "status": "COMPLETED",
+     "faults": [
+      "F5:wf=chaos-SL-26e06e-22"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-SL-26e06e-23",
+     "status": "COMPLETED",
+     "faults": [
+      "F6:wf=chaos-SL-26e06e-23:node=scan_network:hang=6.5"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-SL-26e06e-24",
+     "status": "COMPLETED",
+     "faults": [
+      "F1:wf=chaos-SL-26e06e-24:node=scan_network"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-SL-26e06e-25",
+     "status": "COMPLETED",
+     "faults": [
+      "F2:wf=chaos-SL-26e06e-25:node=summarize"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-SL-26e06e-26",
+     "status": "COMPLETED",
+     "faults": [
+      "F3:wf=chaos-SL-26e06e-26:node=score_risk"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-SL-26e06e-27",
+     "status": "COMPLETED",
+     "faults": [
+      "F4:wf=chaos-SL-26e06e-27:node=enrich_cve_3"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-SL-26e06e-28",
+     "status": "COMPLETED",
+     "faults": [
+      "F5:wf=chaos-SL-26e06e-28"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-SL-26e06e-29",
+     "status": "COMPLETED",
+     "faults": [
+      "F6:wf=chaos-SL-26e06e-29:node=enrich_cve_3:hang=6.5"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-SL-26e06e-30",
+     "status": "COMPLETED",
+     "faults": [
+      "F1:wf=chaos-SL-26e06e-30:node=enrich_cve_17"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-SL-26e06e-31",
+     "status": "COMPLETED",
+     "faults": [
+      "F2:wf=chaos-SL-26e06e-31:node=enrich_cve_17"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-SL-26e06e-32",
+     "status": "COMPLETED",
+     "faults": [
+      "F3:wf=chaos-SL-26e06e-32:node=notify_slack"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-SL-26e06e-33",
+     "status": "COMPLETED",
+     "faults": [
+      "F4:wf=chaos-SL-26e06e-33:node=score_risk"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-SL-26e06e-34",
+     "status": "COMPLETED",
+     "faults": [
+      "F5:wf=chaos-SL-26e06e-34"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-SL-26e06e-35",
+     "status": "COMPLETED",
+     "faults": [
+      "F6:wf=chaos-SL-26e06e-35:node=enrich_cve_3:hang=6.5"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-SL-26e06e-36",
+     "status": "COMPLETED",
+     "faults": [
+      "F1:wf=chaos-SL-26e06e-36:node=list_assets"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-SL-26e06e-37",
+     "status": "COMPLETED",
+     "faults": [
+      "F2:wf=chaos-SL-26e06e-37:node=enrich_cve_3"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-SL-26e06e-38",
+     "status": "COMPLETED",
+     "faults": [
+      "F3:wf=chaos-SL-26e06e-38:node=open_ticket"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-SL-26e06e-39",
+     "status": "COMPLETED",
+     "faults": [
+      "F4:wf=chaos-SL-26e06e-39:node=list_assets"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-SL-26e06e-40",
+     "status": "COMPLETED",
+     "faults": [
+      "F5:wf=chaos-SL-26e06e-40"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-SL-26e06e-41",
+     "status": "COMPLETED",
+     "faults": [
+      "F6:wf=chaos-SL-26e06e-41:node=scan_network:hang=6.5"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-SL-26e06e-42",
+     "status": "COMPLETED",
+     "faults": [
+      "F1:wf=chaos-SL-26e06e-42:node=list_assets"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-SL-26e06e-43",
+     "status": "COMPLETED",
+     "faults": [
+      "F2:wf=chaos-SL-26e06e-43:node=notify_slack"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-SL-26e06e-44",
+     "status": "COMPLETED",
+     "faults": [
+      "F3:wf=chaos-SL-26e06e-44:node=enrich_cve_17"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-SL-26e06e-45",
+     "status": "COMPLETED",
+     "faults": [
+      "F4:wf=chaos-SL-26e06e-45:node=score_risk"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-SL-26e06e-46",
+     "status": "COMPLETED",
+     "faults": [
+      "F5:wf=chaos-SL-26e06e-46"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-SL-26e06e-47",
+     "status": "COMPLETED",
+     "faults": [
+      "F6:wf=chaos-SL-26e06e-47:node=enrich_cve_11:hang=6.5"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-SL-26e06e-48",
+     "status": "COMPLETED",
+     "faults": [
+      "F1:wf=chaos-SL-26e06e-48:node=enrich_cve_3"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-SL-26e06e-49",
+     "status": "COMPLETED",
+     "faults": [
+      "F2:wf=chaos-SL-26e06e-49:node=notify_slack"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-SL-26e06e-50",
+     "status": "COMPLETED",
+     "faults": [
+      "F3:wf=chaos-SL-26e06e-50:node=scan_iam"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-SL-26e06e-51",
+     "status": "COMPLETED",
+     "faults": [
+      "F4:wf=chaos-SL-26e06e-51:node=enrich_cve_3"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-SL-26e06e-52",
+     "status": "COMPLETED",
+     "faults": [
+      "F5:wf=chaos-SL-26e06e-52"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-SL-26e06e-53",
+     "status": "COMPLETED",
+     "faults": [
+      "F6:wf=chaos-SL-26e06e-53:node=summarize:hang=6.5"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-SL-26e06e-54",
+     "status": "COMPLETED",
+     "faults": [
+      "F1:wf=chaos-SL-26e06e-54:node=enrich_cve_11"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-SL-26e06e-55",
+     "status": "COMPLETED",
+     "faults": [
+      "F2:wf=chaos-SL-26e06e-55:node=enrich_cve_17"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-SL-26e06e-56",
+     "status": "COMPLETED",
+     "faults": [
+      "F3:wf=chaos-SL-26e06e-56:node=open_ticket"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-SL-26e06e-57",
+     "status": "COMPLETED",
+     "faults": [
+      "F4:wf=chaos-SL-26e06e-57:node=list_assets"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-SL-26e06e-58",
+     "status": "COMPLETED",
+     "faults": [
+      "F5:wf=chaos-SL-26e06e-58"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-SL-26e06e-59",
+     "status": "COMPLETED",
+     "faults": [
+      "F6:wf=chaos-SL-26e06e-59:node=enrich_cve_17:hang=6.5"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-SL-26e06e-60",
+     "status": "COMPLETED",
+     "faults": [
+      "F1:wf=chaos-SL-26e06e-60:node=enrich_cve_11"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-SL-26e06e-61",
+     "status": "COMPLETED",
+     "faults": [
+      "F2:wf=chaos-SL-26e06e-61:node=open_ticket"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-SL-26e06e-62",
+     "status": "COMPLETED",
+     "faults": [
+      "F3:wf=chaos-SL-26e06e-62:node=scan_network"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-SL-26e06e-63",
+     "status": "COMPLETED",
+     "faults": [
+      "F4:wf=chaos-SL-26e06e-63:node=summarize"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-SL-26e06e-64",
+     "status": "COMPLETED",
+     "faults": [
+      "F5:wf=chaos-SL-26e06e-64"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-SL-26e06e-65",
+     "status": "COMPLETED",
+     "faults": [
+      "F6:wf=chaos-SL-26e06e-65:node=summarize:hang=6.5"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-SL-26e06e-66",
+     "status": "COMPLETED",
+     "faults": [
+      "F1:wf=chaos-SL-26e06e-66:node=list_assets"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-SL-26e06e-67",
+     "status": "COMPLETED",
+     "faults": [
+      "F2:wf=chaos-SL-26e06e-67:node=scan_iam"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-SL-26e06e-68",
+     "status": "COMPLETED",
+     "faults": [
+      "F3:wf=chaos-SL-26e06e-68:node=scan_network"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-SL-26e06e-69",
+     "status": "COMPLETED",
+     "faults": [
+      "F4:wf=chaos-SL-26e06e-69:node=enrich_cve_11"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-SL-26e06e-70",
+     "status": "COMPLETED",
+     "faults": [
+      "F5:wf=chaos-SL-26e06e-70"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-SL-26e06e-71",
+     "status": "COMPLETED",
+     "faults": [
+      "F6:wf=chaos-SL-26e06e-71:node=summarize:hang=6.5"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-SL-26e06e-72",
+     "status": "COMPLETED",
+     "faults": [
+      "F1:wf=chaos-SL-26e06e-72:node=scan_iam"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-SL-26e06e-73",
+     "status": "COMPLETED",
+     "faults": [
+      "F2:wf=chaos-SL-26e06e-73:node=enrich_cve_11"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-SL-26e06e-74",
+     "status": "COMPLETED",
+     "faults": [
+      "F3:wf=chaos-SL-26e06e-74:node=enrich_cve_17"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-SL-26e06e-75",
+     "status": "COMPLETED",
+     "faults": [
+      "F4:wf=chaos-SL-26e06e-75:node=scan_iam"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-SL-26e06e-76",
+     "status": "COMPLETED",
+     "faults": [
+      "F5:wf=chaos-SL-26e06e-76"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-SL-26e06e-77",
+     "status": "COMPLETED",
+     "faults": [
+      "F6:wf=chaos-SL-26e06e-77:node=enrich_cve_17:hang=6.5"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-SL-26e06e-78",
+     "status": "COMPLETED",
+     "faults": [
+      "F1:wf=chaos-SL-26e06e-78:node=score_risk"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-SL-26e06e-79",
+     "status": "COMPLETED",
+     "faults": [
+      "F2:wf=chaos-SL-26e06e-79:node=notify_slack"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-SL-26e06e-80",
+     "status": "COMPLETED",
+     "faults": [
+      "F3:wf=chaos-SL-26e06e-80:node=enrich_cve_17"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-SL-26e06e-81",
+     "status": "COMPLETED",
+     "faults": [
+      "F4:wf=chaos-SL-26e06e-81:node=enrich_cve_3"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-SL-26e06e-82",
+     "status": "COMPLETED",
+     "faults": [
+      "F5:wf=chaos-SL-26e06e-82"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-SL-26e06e-83",
+     "status": "COMPLETED",
+     "faults": [
+      "F6:wf=chaos-SL-26e06e-83:node=enrich_cve_17:hang=6.5"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-SL-26e06e-84",
+     "status": "COMPLETED",
+     "faults": [
+      "F1:wf=chaos-SL-26e06e-84:node=summarize"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-SL-26e06e-85",
+     "status": "COMPLETED",
+     "faults": [
+      "F2:wf=chaos-SL-26e06e-85:node=list_assets"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-SL-26e06e-86",
+     "status": "COMPLETED",
+     "faults": [
+      "F3:wf=chaos-SL-26e06e-86:node=enrich_cve_3"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-SL-26e06e-87",
+     "status": "COMPLETED",
+     "faults": [
+      "F4:wf=chaos-SL-26e06e-87:node=enrich_cve_3"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-SL-26e06e-88",
+     "status": "COMPLETED",
+     "faults": [
+      "F5:wf=chaos-SL-26e06e-88"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-SL-26e06e-89",
+     "status": "COMPLETED",
+     "faults": [
+      "F6:wf=chaos-SL-26e06e-89:node=score_risk:hang=6.5"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-SL-26e06e-90",
+     "status": "COMPLETED",
+     "faults": [
+      "F1:wf=chaos-SL-26e06e-90:node=enrich_cve_17"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-SL-26e06e-91",
+     "status": "COMPLETED",
+     "faults": [
+      "F2:wf=chaos-SL-26e06e-91:node=open_ticket"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-SL-26e06e-92",
+     "status": "COMPLETED",
+     "faults": [
+      "F3:wf=chaos-SL-26e06e-92:node=list_assets"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-SL-26e06e-93",
+     "status": "COMPLETED",
+     "faults": [
+      "F4:wf=chaos-SL-26e06e-93:node=score_risk"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-SL-26e06e-94",
+     "status": "COMPLETED",
+     "faults": [
+      "F5:wf=chaos-SL-26e06e-94"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-SL-26e06e-95",
+     "status": "COMPLETED",
+     "faults": [
+      "F6:wf=chaos-SL-26e06e-95:node=summarize:hang=6.5"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-SL-26e06e-96",
+     "status": "COMPLETED",
+     "faults": [
+      "F1:wf=chaos-SL-26e06e-96:node=scan_network"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-SL-26e06e-97",
+     "status": "COMPLETED",
+     "faults": [
+      "F2:wf=chaos-SL-26e06e-97:node=score_risk"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-SL-26e06e-98",
+     "status": "COMPLETED",
+     "faults": [
+      "F3:wf=chaos-SL-26e06e-98:node=score_risk"
+     ],
+     "rows": 30,
+     "duplicate_rows": 0,
+     "divergent_rows": 0,
+     "lost_rows": 0,
+     "orphan_rows": 0,
+     "duplicate_side_effects": 0,
+     "wrongly_committed": 0,
+     "details": []
+    },
+    {
+     "workflow_id": "chaos-SL-26e06e-99",
+     "status": "COMPLETED",
+     "faults": [
+      "F4:wf=chaos-SL-26e06e-99:node=enrich_cve_17"
      ],
      "rows": 30,
      "duplicate_rows": 0,

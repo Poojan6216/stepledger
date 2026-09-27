@@ -196,8 +196,8 @@ def build(d: dict[str, Any]) -> list[Any]:
         [
             f"Ledger write p50 {ov['ledger_write_ms_p50']} ms, p95 "
             f"{ov['ledger_write_ms_p95']} ms; {ov['wall_overhead_per_node_ms']} ms of "
-            "wall clock per node; history added per node "
-            f"{d['history_overhead']['marginal_plugin_bytes_per_node']} bytes."
+            "wall clock per node; marginal header bytes per node in history "
+            f"{d['history_overhead']['marginal_header_bytes_per_node']} between 10, 20, 40 and 80 nodes."
         ]
     )
     story += [Paragraph("What holds under attack", H2)]

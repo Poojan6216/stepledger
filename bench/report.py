@@ -313,7 +313,7 @@ def build_results(d: dict[str, Any]) -> str:
         f"{d['chaos']['configs'][0]['runs']} runs per config of the {d['chaos']['nodes']}-node agent; "
         "the fake LLM answers differently on every attempt. Each run gets one seeded fault: "
         "Stepledger F1 to F6, the baselines F1, F2, F3, F6. Every row is checked against "
-        "Temporal's history. `uv run python -m bench.chaos --runs 20`",
+        f"Temporal's history. `{d['chaos']['command'].strip()}`",
         "",
         chaos_table(d),
         "",
@@ -378,6 +378,12 @@ def build_results(d: dict[str, Any]) -> str:
         f"{cost['journal']['replayed_nodes_committing_first_decision'][0]} replayed nodes committed "
         "the first attempt's model response.",
         "",
+        "The wasted-call numbers come from the fake model's billing hook in the bench, not from the "
+        "ledger. Stepledger's own `sl_retry_waste` view counts only attempts that reached the ledger "
+        f"({cost['journal']['ledger_retry_waste_tokens']:,} tokens in this run), because a worker that "
+        "dies right after the model call never writes a row; with the journal on, that call is in "
+        "`sl_llm_calls`.",
+        "",
         "## Overhead",
         "",
         f"30-node agent, 1 KiB per node, storage driver off, {ov['runs_per_config']} runs each on the "
@@ -389,7 +395,14 @@ def build_results(d: dict[str, Any]) -> str:
         + ", ".join(f"{v['ledger_write_ms_p95']} ms at {k} KiB" for k, v in th.items())
         + "; that sweep has no without-plugin baseline. `uv run python -m bench.overhead --runs 10`",
         "",
-        "History bytes the plugin adds (one run per size, storage driver off): "
+        "History the plugin adds (storage driver off), measured on the with-plugin history itself: "
+        "`stepledger-*` header bytes "
+        + ", ".join(f"{r['header_bytes']:,} at {r['nodes']} nodes" for r in ho["rows"])
+        + f", a marginal {ho['marginal_header_bytes_per_node']} bytes per node between sizes (the "
+        "first node carries no commits header, and the seal Activity's events add "
+        f"{ho['seal_event_bytes'][0]:,} bytes, both once per run). As "
+        f"context, total history with the plugin minus without it, each the minimum of "
+        f"{ho['samples_per_series']} runs: "
         + ", ".join(f"{r['plugin_bytes']:,} at {r['nodes']} nodes" for r in ho["rows"])
         + f"; marginal bytes per node {ho['marginal_plugin_bytes_per_node']}. "
         "`uv run python -m bench.history_overhead`",
@@ -530,7 +543,7 @@ def build_readme(d: dict[str, Any]) -> str:
         "```",
         "",
         "Requires Python 3.11 or later, `temporalio[langgraph]` 1.33.x and `langgraph` 1.2.x (the tested "
-        "ranges: both upstream features are experimental in the SDK and Stepledger reads four private "
+        "ranges: both upstream features are experimental in the SDK and Stepledger reads five private "
         "symbols, see the section on private APIs), and Postgres (tested on 16). For the local "
         "environment the tests and benches use (Postgres plus a Temporal dev server with explicit "
         "payload and history limits): `scripts/dev.sh up`.",
@@ -586,8 +599,9 @@ def build_readme(d: dict[str, Any]) -> str:
         f"- **Small overhead.** For the ledger write alone (storage driver off, 1 KiB nodes, 10 runs on "
         f"a local dev server): p95 {ov['ledger_write_ms_p95']} ms and about "
         f"{round(ov['wall_overhead_per_node_ms'], 1)} ms of wall clock per node; about "
-        f"{round(ho['marginal_plugin_bytes_per_node'][-1])} bytes of history per node (one run per "
-        "size; the commit header grows with pending ids after failed carriers).",
+        f"{round(ho['marginal_header_bytes_per_node'][-1])} bytes of headers per node in history, "
+        "the same from 10 to 80 nodes (the commit header grows only with pending ids after failed "
+        "carriers).",
         "",
         "All numbers come from `bench/results/*.json` via the commands in [RESULTS.md](https://github.com/Poojan6216/stepledger/blob/main/RESULTS.md).",
         "",
@@ -652,6 +666,12 @@ def build_readme(d: dict[str, Any]) -> str:
                 for m in ("no-journal", "journal")
             ],
         ),
+        "",
+        "The wasted-call numbers come from the fake model's billing hook in the bench, not from the "
+        "ledger. Stepledger's own `sl_retry_waste` view counts only attempts that reached the ledger "
+        f"({cost['journal']['ledger_retry_waste_tokens']:,} tokens in this run), because a worker that "
+        "dies right after the model call never writes a row; with the journal on, that call is in "
+        "`sl_llm_calls`.",
         "",
         "### The run ledger",
         "",

@@ -55,6 +55,9 @@ TABLES = {"B1": "bench_naive_nodes", "B1u": "bench_naive_upsert"}
 # 5 s start-to-close + 0.5 s retry backoff + attempt 2 + its commit on the next node: a zombie of
 # an early node wakes while the run is still going, so it meets a COMMITTED row (R2).
 ZOMBIE_HANG_S = 6.5
+# Per-run wait. At 100 concurrent runs on one laptop, a run behind 80+ worker restarts can
+# legitimately take over five minutes; a run that outlives this is recorded, not raised.
+RUN_TIMEOUT_S = 1200
 
 
 @dataclass
@@ -169,7 +172,7 @@ async def _run_batch(client: Client, tq: str, cfg: RunConfig, plans: list[RunPla
 
     async def result(h: Any) -> Any:
         try:
-            await asyncio.wait_for(h.result(), timeout=300)
+            await asyncio.wait_for(h.result(), timeout=RUN_TIMEOUT_S)
             return h
         except Exception as e:  # recorded, not raised: a run that does not complete is a finding
             return e
