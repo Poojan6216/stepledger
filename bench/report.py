@@ -514,14 +514,11 @@ def build_readme(d: dict[str, Any]) -> str:
         f"With smaller outputs the 50 MiB history limit comes first.",
         f"- **Per-node writes are at-least-once.** Under injected crashes, a plain insert produced "
         f"{chaos['B1']['duplicate_rows']} duplicate and {chaos['B1']['divergent_rows']} divergent "
-        f"- **Per-node writes are at-least-once.** Under injected crashes, a plain insert produced "
-        f"{chaos['B1']['duplicate_rows']} duplicate and {chaos['B1']['divergent_rows']} divergent "
         f"rows in {chaos['B1']['runs']} runs; an upsert still produced "
         f"{chaos['B1u']['divergent_rows']} divergent rows (a stale attempt overwriting the "
         "accepted answer). Retried nodes also repeated their external calls: "
         f"{chaos['B1']['duplicate_side_effects']} and {chaos['B1u']['duplicate_side_effects']} "
         "duplicate side effects reached the fake ticket and Slack targets in those runs.",
-        "- **External Storage fixes history, but storage then grows with the square of the run:** "
         "- **External Storage fixes history, but storage then grows with the square of the run:** "
         "one object per payload, and every node input is a slightly longer copy of the last "
         "(history itself still grows, linearly, with references and sub-threshold payloads).",
@@ -567,16 +564,10 @@ def build_readme(d: dict[str, Any]) -> str:
         "",
         f"- **One row per node Activity execution, fenced and committed against history.** Across "
         f"{sl['runs']} crash-injected runs (the worker killed at fault points F1 to F5, and "
-        f"zombie attempts writing late at F6), "
-        f"Stepledger had {sl['duplicate_rows']} duplicate, {sl['divergent_rows']} divergent, "
-        f"{sl['lost_rows']} lost and {sl['orphan_rows']} orphan rows, and "
-        f"- **One row per node Activity execution, fenced and committed against history.** Across "
-        f"{sl['runs']} crash-injected runs (the worker killed at fault points F1 to F5, and "
         f"zombie attempts writing late at F6), Stepledger had {sl['duplicate_rows']} duplicate, "
         f"{sl['divergent_rows']} divergent, {sl['lost_rows']} lost and {sl['orphan_rows']} orphan "
         "rows, each checked against the result Temporal recorded; with `once()` on the two effect "
         f"nodes, {sl['duplicate_side_effects']} duplicate side effects reached the targets.",
-        f"- **Past the wall.** With the dedup driver the 40-node run that stops B1 completes; the "
         f"- **Past the wall.** With the dedup driver the 40-node run that stops B1 completes; the "
         f"largest payload left in history is {s['cliff_largest_payload_kib']['B4']} KiB (nothing "
         f"above the 64 KiB threshold) and history is {s['cliff_history_mib']['B4']} MiB.",
@@ -592,8 +583,6 @@ def build_readme(d: dict[str, Any]) -> str:
         "not accept (a fake model at a fixed token count, priced at claude-haiku-4-5 list rates) fell "
         f"from USD {cost['no-journal']['wasted_usd']} to USD {cost['journal']['wasted_usd']} "
         f"({s['retry_waste_cut_percent']}% less) under the same seeded crash plan.",
-        f"- **Small overhead.** Ledger write p95 {ov['ledger_write_ms_p95']} ms; "
-        f"{ov['wall_overhead_per_node_ms']} ms of wall clock per node; about "
         f"- **Small overhead.** For the ledger write alone (storage driver off, 1 KiB nodes, 10 runs on "
         f"a local dev server): p95 {ov['ledger_write_ms_p95']} ms and about "
         f"{round(ov['wall_overhead_per_node_ms'], 1)} ms of wall clock per node; about "
